@@ -23,6 +23,9 @@ log.txt
 /platforms
 /plugins
 
+# Firebase (local deploy/cache)
+/.firebase/
+
 # Compiled output
 /dist
 /tmp
@@ -52,6 +55,42 @@ yarn-error.log
 !.vscode/extensions.json
 .history/*
 
+# AI tools / assistants (workspace artifacts)
+.adal/
+.agent/
+.agents/
+.augment/
+.claude/
+.codebuddy/
+.commandcode/
+.continue/
+.cortex/
+.crush/
+.factory/
+.goose/
+.iflow/
+.junie/
+.kilocode/
+.kiro/
+.kode/
+.mcpjam/
+.mux/
+.neovate/
+.openhands/
+.pi/
+.pochi/
+.qoder/
+.qwen/
+.roo/
+.trae/
+.vibe/
+.windsurf/
+.zencoder/
+skills/
+skills-lock.json
+
+# Extra folders not part of Ionic app
+Sito/
 
 # Miscellaneous
 /.angular
