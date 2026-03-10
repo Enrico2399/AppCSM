@@ -12,6 +12,12 @@
 /* Core CSS required for Ionic components to work properly */
 @import "@ionic/angular/css/core.css";
 
+@import "leaflet/dist/leaflet.css";
+/* Core CSS required for Ionic components to work properly */
+@import "@ionic/angular/css/core.css";
+/* Leaflet styles */
+@import "leaflet/dist/leaflet.css";
+
 /* Basic CSS for apps built with Ionic */
 @import "@ionic/angular/css/normalize.css";
 @import "@ionic/angular/css/structure.css";
@@ -35,3 +41,244 @@
 /* @import "@ionic/angular/css/palettes/dark.always.css"; */
 /* @import "@ionic/angular/css/palettes/dark.class.css"; */
 @import '@ionic/angular/css/palettes/dark.system.css';
+
+:root {
+  --bg-dark: #121212;
+  --text-light: #f4f4f4;
+  --accent: #ffffff;
+  --accent-blue: #4da6ff;
+  --accent-purple: #a855f7;
+  --danger: #ff4d4d;
+  --card-bg: rgba(255, 255, 255, 0.08);
+  --border-color: rgba(255, 255, 255, 0.1);
+  --input-bg: rgba(255, 255, 255, 0.05);
+  --border: rgba(255, 255, 255, 0.1);
+  --wa-green: #25D366;
+  
+  /* Modern Transitions */
+  --transition-fast: 0.2s ease-in-out;
+  --transition-slow: 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+  
+  /* Elevation */
+  --shadow-sm: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+  --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+}
+
+/* Light Theme Variables */
+body.light-theme {
+  --bg-dark: #f5f6fa;
+  --text-light: #2f3640;
+  --accent: #2f3640;
+  --accent-blue: #0984e3;
+  --accent-purple: #8c7ae6;
+  --danger: #e84118;
+  --card-bg: rgba(0, 0, 0, 0.05);
+  --border-color: rgba(0, 0, 0, 0.1);
+  --input-bg: rgba(0, 0, 0, 0.03);
+  --border: rgba(0, 0, 0, 0.1);
+  
+  --ion-background-color: var(--bg-dark);
+  --ion-text-color: var(--text-light);
+
+  /* Shared Light Adjustments */
+  a { color: var(--accent-blue); }
+
+  /* Navbar adjustments for Light Mode */
+  .global-header .navbar {
+    background: rgba(255, 255, 255, 0.95);
+    border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+  }
+
+  .global-header .navbar a {
+    color: #2f3640;
+  }
+  
+  .global-header .navbar a.active {
+    border-bottom-color: #2f3640;
+  }
+
+  .roadmap-nav a.active {
+    border-bottom-color: var(--accent-purple);
+  }
+
+  /* Modals */
+  .modal-content {
+    background: #ffffff;
+    color: #2f3640;
+    border-color: rgba(0,0,0,0.1);
+  }
+
+  .name-input {
+    background: rgba(0,0,0,0.05) !important;
+    color: #2f3640 !important;
+    border-color: rgba(0,0,0,0.2) !important;
+  }
+  
+  .save-btn {
+    background: #2f3640 !important;
+    color: white !important;
+  }
+  
+  hr { border-top-color: rgba(0,0,0,0.1); }
+
+  /* Other components overrides */
+  .btn-action { color: #121212 !important; box-shadow: 0 4px 15px rgba(0,0,0,0.05) !important; }
+  .btn-add, .btn-send { background: #2f3640 !important; color: white !important; }
+  textarea, input[type="text"], select { color: var(--text-light) !important; background: var(--card-bg) !important; border-color: var(--border-color) !important; }
+  .advice-box, #dynamic-description-area { background: rgba(0,0,0,0.03); border-color: rgba(0,0,0,0.1); color: var(--text-light); }
+  .archetype-card.selected { background: rgba(0,0,0,0.1); border-color: var(--accent); box-shadow: 0 0 10px rgba(0,0,0,0.1); }
+  .detail-container { background: rgba(255,255,255,0.9); border: 1px solid rgba(0,0,0,0.1); color: var(--text-light); }
+  .btn-back { background: var(--accent); color: white; }
+  .wip-badge { color: white; }
+  .community-list li { background: rgba(0,0,0,0.05); }
+  .pitch-container { background: linear-gradient(145deg, #ffffff, #f0f0f0); border-color: rgba(0,0,0,0.1); }
+  .mode-btn { color: var(--text-light); }
+  input[name="help-mode"]:checked + .mode-btn { background: rgba(0,0,0,0.05); color: var(--text-light); border-color: var(--text-light); }
+}
+
+/* SHARED AUTH STYLES */
+.auth-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
+  z-index: 20000;
+  padding: 60px 20px;
+  overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
+  
+  body.light-theme & {
+    background: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%);
+  }
+}
+
+.auth-card {
+  background: rgba(255, 255, 255, 0.05);
+  backdrop-filter: blur(20px);
+  padding: 40px;
+  border-radius: 30px;
+  width: 100%;
+  max-width: 400px;
+  box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  text-align: center;
+  position: relative;
+  
+  body.light-theme & {
+    background: rgba(255, 255, 255, 0.95);
+    box-shadow: 0 15px 35px rgba(0, 0, 0, 0.1);
+    border: 1px solid rgba(0, 0, 0, 0.05);
+  }
+}
+
+.auth-theme-toggle {
+  position: absolute;
+  top: 20px;
+  right: 20px;
+  font-size: 1.5rem;
+  cursor: pointer;
+  transition: transform 0.3s;
+  color: white;
+  &:hover { transform: scale(1.2); }
+  body.light-theme & { color: #1e293b; }
+}
+
+.auth-header {
+  h1 { font-size: 2rem; margin-bottom: 10px; color: white; body.light-theme & { color: #1e293b; } }
+  p { color: #94a3b8; margin-bottom: 30px; body.light-theme & { color: #64748b; } }
+}
+
+.auth-input {
+  --background: rgba(255, 255, 255, 0.1);
+  --border-radius: 12px;
+  margin-bottom: 15px;
+  color: white;
+  --padding-start: 15px;
+  
+  body.light-theme & {
+    --background: rgba(0, 0, 0, 0.05);
+    color: #1e293b;
+    --placeholder-color: #64748b;
+  }
+}
+
+.btn-primary {
+  width: 100%; padding: 15px; border-radius: 12px; background: #3b82f6; color: white;
+  border: none; font-weight: bold; font-size: 1rem; cursor: pointer; transition: 0.3s; margin-top: 10px;
+  &:hover { background: #2563eb; transform: translateY(-2px); }
+}
+
+.divider {
+  display: flex; align-items: center; text-align: center; margin: 25px 0; color: #64748b;
+  &::before, &::after { content: ''; flex: 1; border-bottom: 1px solid rgba(255, 255, 255, 0.1); }
+  span { padding: 0 10px; font-size: 0.8rem; text-transform: uppercase; }
+  body.light-theme & {
+     color: #94a3b8;
+     &::before, &::after { border-bottom: 1px solid rgba(0, 0, 0, 0.1); }
+  }
+}
+
+.btn-google, .btn-ghost {
+  width: 100%; padding: 15px; border-radius: 12px; background: white; color: #334155;
+  border: none; font-weight: bold; display: flex; align-items: center; justify-content: center;
+  gap: 10px; cursor: pointer; transition: 0.3s;
+  &:hover { background: #f8fafc; transform: translateY(-2px); }
+  ion-icon { font-size: 1.2rem; }
+  body.light-theme & { border: 1px solid #e2e8f0; }
+}
+
+.btn-google ion-icon { color: #4285F4; }
+.btn-ghost { margin-top: 10px; ion-icon { color: #64748b; } }
+
+.toggle-auth {
+  margin-top: 25px; font-size: 0.9rem; color: #94a3b8;
+  a { color: #3b82f6; text-decoration: none; font-weight: bold; cursor: pointer; margin-left: 5px; }
+  body.light-theme & { color: #64748b; }
+}
+
+.auth-methods-tab {
+  display: flex; gap: 10px; margin-bottom: 20px; justify-content: center;
+  .tab-btn {
+    flex: 1; padding: 8px; background: rgba(255, 255, 255, 0.05); border: 1px solid rgba(255, 255, 255, 0.1);
+    color: white; border-radius: 8px; font-size: 0.8rem; cursor: pointer;
+    &.active { background: white; color: black; font-weight: bold; }
+    body.light-theme & {
+      background: rgba(0, 0, 0, 0.05); border: 1px solid rgba(0, 0, 0, 0.05); color: #64748b;
+      &.active { background: #3b82f6; color: white; }
+    }
+  }
+}
+
+/* SHARED MODAL STYLES */
+.rectangular-modal {
+  --width: 90%; --max-width: 400px; --height: auto; --max-height: 250px;
+  --border-radius: 15px; --background: transparent;
+  align-items: center; justify-content: center;
+}
+
+.modal-window {
+  background: rgba(255, 255, 255, 0.95); padding: 25px; border-radius: 15px;
+  box-shadow: 0 30px 60px rgba(0,0,0,0.5); color: #222;
+  body.light-theme & { background: white; color: #1e293b; }
+}
+
+.modal-header {
+  display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;
+  border-bottom: 1px solid rgba(0,0,0,0.1); padding-bottom: 10px;
+  h3 { margin: 0; font-size: 1.3rem; font-weight: bold; }
+}
+
+.close-icon-btn {
+  background: none; border: none; font-size: 1.5rem; cursor: pointer; color: #666;
+  display: flex; align-items: center; justify-content: center; transition: color 0.2s;
+  &:hover { color: #000; }
+}
+
+.modal-body {
+  p { text-align: left; line-height: 1.5; margin: 0; }
+}

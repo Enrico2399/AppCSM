@@ -1,0 +1,67 @@
+<ion-header [translucent]="true">
+  <ion-toolbar>
+    <ion-title>Cronologia Emozionale</ion-title>
+    <ion-buttons slot="start">
+      <ion-button routerLink="/home">← Casa</ion-button>
+    </ion-buttons>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content [fullscreen]="true">
+  <div class="container">
+    <header>
+      <h1>Il tuo Percorso</h1>
+      <p>Analisi delle tue frequenze emozionali e suggerimenti per il benessere.</p>
+    </header>
+
+    <div *ngIf="isLoading()" class="loading-state">
+      <ion-spinner name="crescent"></ion-spinner>
+      <p>Caricamento dati...</p>
+    </div>
+
+    <div *ngIf="!isLoading() && history().length === 0" class="empty-state">
+      <div class="empty-icon">📂</div>
+      <h3>Ancora nessun dato</h3>
+      <p>Torna alla ruota e seleziona come ti senti per iniziare il tuo diario.</p>
+      <ion-button expand="block" routerLink="/home" style="--background: white; --color: black; --border-radius: 20px; font-weight: bold; margin-top: 15px;">Vai alla Ruota</ion-button>
+    </div>
+
+    <ng-container *ngIf="!isLoading() && history().length > 0">
+      
+      <!-- STATS GRID -->
+      <div class="stats-grid">
+        <div class="stat-card" *ngFor="let mood of moodData()" [style.border-top-color]="mood.color">
+          <span class="stat-icon">{{ mood.icon }}</span>
+          <span class="stat-count">{{ stats()[mood.key] }}</span>
+          <span class="stat-label">{{ mood.title }}</span>
+        </div>
+      </div>
+
+      <!-- ANALYTICS DASHBOARD -->
+      <div class="dashboard">
+        <div class="chart-container">
+          <canvas id="moodChart"></canvas>
+        </div>
+
+        <div class="advice-box" [innerHTML]="adviceHtml()">
+        </div>
+      </div>
+
+      <!-- DETAILED LIST -->
+      <div class="history-section">
+        <h2 style="margin: 40px 0 20px; text-align: center;">Diario Recente</h2>
+        <div class="history-list">
+          <div class="history-item" *ngFor="let log of history()" [style.border-left-color]="getMoodColor(log.moodKey)">
+            <div class="mood-icon">{{ log.icon }}</div>
+            <div class="log-details">
+              <h3>{{ log.moodTitle }}</h3>
+              <p class="timestamp">{{ formatDate(log.timestamp) }}</p>
+              <p class="thought" *ngIf="log.thought">"{{ log.thought }}"</p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </ng-container>
+  </div>
+</ion-content>

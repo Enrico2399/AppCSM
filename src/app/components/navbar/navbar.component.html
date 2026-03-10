@@ -1,0 +1,58 @@
+<header class="global-header" *ngIf="authService.user$ | async as user; else noAuth">
+  <!-- PRIMARY ROW: MAIN LINKS -->
+  <nav class="navbar" aria-label="Navigazione principale">
+    <div class="nav-links">
+      <a routerLinkActive="active" [routerLinkActiveOptions]="{exact: true}" (click)="goHome()" (keydown.enter)="goHome()" role="button" tabindex="0">Mood Wheel</a>
+      <a routerLink="/archetipi" routerLinkActive="active">Pantheon Archetipico</a>
+      <a routerLink="/community" routerLinkActive="active">Community</a>
+      <a routerLink="/help" routerLinkActive="active">SOS Help</a>
+    </div>
+  </nav>
+
+  <!-- SECONDARY ROW: ROADMAP + ACTIONS -->
+  <nav class="navbar roadmap-nav" aria-label="Navigazione secondaria">
+    <div class="nav-links">
+      <a routerLink="/roadmap" routerLinkActive="active" style="color: violet;">Nuovi Sviluppi</a>
+      
+      <a (click)="toggleTheme()" (keydown.enter)="toggleTheme()" class="theme-icon" role="button" tabindex="0" aria-label="Cambia tema">
+        {{ isLightMode ? '🌙' : '☀️' }}
+      </a>
+      
+      <div class="user-chip" (click)="openProfileModal()" role="button" tabindex="0">
+        <span class="user-name">{{ user.displayName || 'Utente' }}</span>
+        <ion-avatar class="user-avatar">
+          <img *ngIf="user.photoURL" [src]="user.photoURL" alt="Avatar" />
+          <ion-icon *ngIf="!user.photoURL" name="person-circle-outline" style="font-size: 32px; color: var(--ion-color-medium);"></ion-icon>
+        </ion-avatar>
+      </div>
+    </div>
+  </nav>
+</header>
+
+<ng-template #noAuth></ng-template>
+
+<ion-modal [isOpen]="isProfileOpen" (didDismiss)="closeProfileModal()" cssClass="profile-modal">
+  <ng-template>
+    <div class="modal-content">
+      <div class="profile-header" *ngIf="authService.user$ | async as user">
+        <ion-avatar style="width: 80px; height: 80px; margin: 0 auto 15px; display: flex; align-items: center; justify-content: center; background: rgba(255,255,255,0.1); border-radius: 50%;">
+          <img *ngIf="user.photoURL" [src]="user.photoURL" alt="Avatar" style="width: 100%; height: 100%;" />
+          <ion-icon *ngIf="!user.photoURL" name="person-circle-outline" style="font-size: 60px; color: var(--ion-color-medium);"></ion-icon>
+        </ion-avatar>
+        <h3>{{ user.displayName }}</h3>
+        <p style="opacity: 0.7;">{{ user.email }}</p>
+      </div>
+      
+      <hr>
+      
+      <button (click)="logout()" class="logout-btn">Esci dall'account</button>
+      
+      <hr>
+      
+      <p class="danger-label">Zona Pericolosa:</p>
+      <button (click)="clearAllData()" class="danger-btn">CANCELLA TUTTI I DATI LOCALI</button>
+      
+      <button (click)="closeProfileModal()" class="close-txt" aria-label="Chiudi profilo">Chiudi</button>
+    </div>
+  </ng-template>
+</ion-modal>

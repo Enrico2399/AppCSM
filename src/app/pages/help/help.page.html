@@ -1,0 +1,94 @@
+<ion-content [fullscreen]="true">
+  <div class="container">
+    
+    <div class="emergency-banner">
+      <h1>Non sei solo.</h1>
+      <p>Se sei in pericolo immediato, chiama subito uno di questi numeri:</p>
+      <div class="num-list">
+        <div class="num-item" (click)="callNumber('112')" (keydown.enter)="callNumber('112')" role="button" tabindex="0" aria-label="Chiama emergenza 112">📞 112</div>
+        <div class="num-item" (click)="callNumber('196')" (keydown.enter)="callNumber('196')" role="button" tabindex="0" aria-label="Chiama emergenza 196">📞 196</div>
+        <div class="num-item" (click)="callNumber('0223272327')" (keydown.enter)="callNumber('0223272327')" role="button" tabindex="0" aria-label="Chiama emergenza 0 2 2 3 2 7 2 3 2 7">📞 02 2327 2327</div>
+      </div>
+    </div>
+
+    <div class="builder-box">
+      <h2>🛠️ Creatore di Aiuto Personalizzato</h2>
+      
+      <label for="issue-type">Cosa stai attraversando?</label>
+      <select id="issue-type" [(ngModel)]="selectedIssue">
+        <option value="" disabled selected>Seleziona la tua condizione...</option>
+        <option value="ansia">Ansia / Attacco di Panico</option>
+        <option value="suicidio">Pensieri Oscuri / Crisi Grave</option>
+        <option value="fisico">Dolore Fisico / Malessere</option>
+        <option value="rabbia">Rabbia Incontrollata</option>
+      </select>
+
+      <label id="help-mode-label">Metodo di supporto:</label>
+      <div class="mode-selector" role="radiogroup" aria-labelledby="help-mode-label">
+        <label>
+          <input type="radio" name="help-mode" value="wa" [(ngModel)]="helpMode">
+          <div class="mode-btn">
+            <span>📱</span>
+            <strong>Contatto Diretto</strong>
+          </div>
+        </label>
+        <label>
+          <input type="radio" name="help-mode" value="self" [(ngModel)]="helpMode">
+          <div class="mode-btn">
+            <span>📖</span>
+            <strong>Auto-Aiuto</strong>
+          </div>
+        </label>
+      </div>
+
+      <div id="wa-section" *ngIf="helpMode === 'wa'">
+        <label for="trust-phone">Contatto di Fiducia</label>
+        <input type="text" id="trust-phone" [(ngModel)]="trustPhone" placeholder="Numero (es. 393331234567)">
+        <label for="sos-text">Messaggio preimpostato</label>
+        <textarea id="sos-text" [(ngModel)]="sosText" rows="2"></textarea>
+      </div>
+
+      <div id="self-section" *ngIf="helpMode === 'self'">
+        <label for="comfort-resource">La tua ancora di salvezza (testo o link)</label>
+        <textarea id="comfort-resource" [(ngModel)]="comfortResource" rows="4" placeholder="Scrivi qualcosa di importante..."></textarea>
+      </div>
+
+      <button class="btn-action main-action-btn" (click)="executePlan()">
+        {{ helpMode === 'wa' ? 'FATTI AIUTARE' : 'ATTIVA AUTO-AIUTO' }}
+      </button>
+    </div>
+
+    <div id="crisis-container">
+      
+      <!-- Generated Cards via Execute -->
+      <div class="crisis-section" *ngFor="let card of generatedCards" [innerHTML]="card.html">
+      </div>
+
+      <!-- Static Crisis Info -->
+      <div class="crisis-section" *ngFor="let crisis of crisisData">
+        <div class="crisis-card">
+          <h2>{{crisis.title}}</h2>
+          <p><strong>Cosa fare ora:</strong> {{crisis.action}}</p>
+          <div class="community-suggestions">
+            <div *ngFor="let comment of crisis.comments">
+              <div class="suggestion-item">
+                <span>{{comment.text}}</span>
+                <div class="vote-section">
+                  <span [attr.aria-label]="comment.likes + ' voti'">{{comment.likes}}</span>
+                  <button class="vote-btn" (click)="addLike(crisis, comment)" aria-label="Aggiungi voto al commento">▲</button>
+                </div>
+              </div>
+            </div>
+
+            <div class="add-comment">
+              <input type="text" [(ngModel)]="crisis.newComment" placeholder="Aggiungi un consiglio..." aria-label="Inserisci un consiglio per gestire la crisi">
+              <button class="btn-send" (click)="postComment(crisis)">Invia</button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+
+  </div>
+</ion-content>

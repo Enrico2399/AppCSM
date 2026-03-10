@@ -1,0 +1,102 @@
+import { Injectable } from '@angular/core';
+
+@Injectable({
+  providedIn: 'root',
+})
+export class StorageService {
+  
+  constructor() { }
+
+  getUserName(): string {
+    return localStorage.getItem('moodWheel_userName') || 'Utente Demo';
+  }
+
+  setUserName(name: string): void {
+    if (name.trim() !== '') {
+      localStorage.setItem('moodWheel_userName', name.trim());
+    }
+  }
+
+  hasVoted(featureId: string): boolean {
+    return localStorage.getItem('voted_' + featureId) !== null;
+  }
+
+  setVoted(featureId: string): void {
+    localStorage.setItem('voted_' + featureId, 'true');
+  }
+
+  getCommunityTips(color?: string): string[] {
+    const key = color ? `community_tips_${color}` : 'community_tips';
+    const saved = localStorage.getItem(key);
+    if (!saved && color) {
+      // Seed default tips if none exist for a specific color
+      const defaults = this.getDefaultTips(color);
+      this.saveCommunityTips(defaults, color);
+      return defaults;
+    }
+    return saved ? JSON.parse(saved) : [];
+  }
+
+  private getDefaultTips(color: string): string[] {
+    const defaultTips: Record<string, string[]> = {
+      'rosso': [
+        "Corri sul posto per 30 secondi per trasformare la rabbia in energia fisica.",
+        "Scrivi su un foglio cosa ti fa arrabbiare e strappalo simbolicamene."
+      ],
+      'giallo': [
+        "Espanditi: apri le braccia e guarda verso l'alto per 1 minuto per aumentare l'ottimismo.",
+        "Cerca una canzone ritmata e balla liberamente per 2 minuti."
+      ],
+      'blu': [
+        "Ascolta il suono della pioggia o delle onde del mare per abbassare il battito cardiaco.",
+        "Visualizza un cielo limpido e immagina di fluttuare tra le nuvole."
+      ],
+      'verde': [
+        "Fai una breve passeggiata in un parco o immergi le mani nella terra di una pianta.",
+        "Pratica la respirazione quadrata (inspira 4s, trattieni 4s, espira 4s, trattieni 4s)."
+      ],
+      'arancio': [
+        "Inizia un piccolo progetto creativo, come uno schizzo veloce o un origami.",
+        "Cucina qualcosa di colorato o mangia un frutto dal sapore intenso."
+      ],
+      'viola': [
+        "Medita per 5 minuti focalizzandoti su una luce viola tra le sopracciglia.",
+        "Leggi una poesia o un brano di un libro che stimoli la tua immaginazione."
+      ],
+      'bianco': [
+        "Semplifica la tua scrivania: togli tutto ciò che non è essenziale.",
+        "Fai una doccia tiepida immaginando che l'acqua porti via il superfluo."
+      ],
+      'nero': [
+        "Imposta dei confini chiari per la giornata: decidi una cosa che oggi NON farai.",
+        "Scrivi i tuoi pensieri più profondi in un diario per dar loro una forma definita."
+      ],
+      'grigio': [
+        "Ascolta del rumore bianco o rosa per neutralizzare le distrazioni esterne.",
+        "Osserva un oggetto neutro e descrivilo mentalmente senza dare giudizi."
+      ]
+    };
+    return defaultTips[color] || [];
+  }
+
+  saveCommunityTips(tips: string[], color?: string): void {
+    const key = color ? `community_tips_${color}` : 'community_tips';
+    localStorage.setItem(key, JSON.stringify(tips));
+  }
+
+  addCommunityTip(tip: string, color?: string): void {
+    const tips = this.getCommunityTips(color);
+    tips.push(tip);
+    this.saveCommunityTips(tips, color);
+  }
+
+  removeCommunityTip(tip: string, color?: string): void {
+    let tips = this.getCommunityTips(color);
+    tips = tips.filter(t => t !== tip);
+    this.saveCommunityTips(tips, color);
+  }
+
+  clearAllData(): void {
+    localStorage.clear();
+  }
+}

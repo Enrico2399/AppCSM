@@ -1,0 +1,49 @@
+<ion-content [fullscreen]="true">
+  <div class="container">
+    <div class="header-section">
+      <div class="wip-badge">Work in Progress</div>
+      <h1>Vota cosa vorresti subito</h1>
+      <p>La tua opinione guida lo sviluppo della tecnologia empatica.</p>
+    </div>
+
+    <div class="intro-box">
+      Presentare una demo che tocca la salute mentale richiede un equilibrio delicato tra <strong>tecnologia</strong> ed <strong>empatia</strong>. Per rendere il progetto un vero supporto, ecco le evoluzioni in programma:
+    </div>
+
+    <div id="roadmap-items">
+      <section class="feature-section" *ngFor="let feature of features">
+        <h2 class="feature-title">{{feature.title}}</h2>
+        <div class="feature-content">
+          <div class="sub-area">
+            <strong>Cosa aggiungere:</strong>
+            {{feature.descAdd}}
+          </div>
+          <div class="sub-area">
+            <strong>{{feature.descWhyLabel}}:</strong>
+            {{feature.descWhy}}
+          </div>
+        </div>
+        <div class="vote-footer">
+          <span class="vote-count">{{votes()[feature.id] || 0}} voti</span>
+          <button 
+            class="like-btn" 
+            [ngClass]="{'voted': hasVoted(feature.id)}" 
+            (click)="vote(feature.id)"
+            [attr.aria-pressed]="hasVoted(feature.id)"
+            [attr.aria-label]="hasVoted(feature.id) ? 'Voto rimosso da ' + feature.title : 'Vota per ' + feature.title">
+            {{ hasVoted(feature.id) ? '❤️ Votato' : '👍 Mi serve' }}
+          </button>
+        </div>
+      </section>
+    </div>
+
+    <div class="pitch-container">
+      <h2 style="margin-top: 0; text-align: center;">Obiettivi</h2>
+      
+      <div class="pitch-item" *ngFor="let pitch of pitchItems">
+        <h4>{{pitch.title}}</h4>
+        <p>"{{pitch.desc}}"</p>
+      </div>
+    </div>
+  </div>
+</ion-content>

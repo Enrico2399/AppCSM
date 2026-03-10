@@ -1,20 +1,211 @@
-<ion-header [translucent]="true">
-  <ion-toolbar>
-    <ion-title>
-      Blank
-    </ion-title>
-  </ion-toolbar>
-</ion-header>
+<ion-content [fullscreen]="true" [style.--background]="activeMood() ? getMoodColor(activeMood()!.class) : 'var(--bg-dark)'">
+  
+  <!-- AUTH GUARD OVERLAY -->
+  <div class="auth-overlay" *ngIf="!(authService.user$ | async)">
+    <div class="auth-card">
+      <div class="auth-header">
+        <div class="auth-theme-toggle" (click)="toggleTheme()" role="button" tabindex="0">
+          {{ isLightMode() ? '🌙' : '☀️' }}
+        </div>
+        <img src="assets/icon/favicon.png" alt="CSM Logo" style="width: 60px; margin-bottom: 10px;" />
+        <h1>Benvenuto in CSM</h1>
+        <p>Accedi per esplorare il mondo dei colori</p>
+      </div>
 
-<ion-content [fullscreen]="true">
-  <ion-header collapse="condense">
-    <ion-toolbar>
-      <ion-title size="large">Blank</ion-title>
-    </ion-toolbar>
-  </ion-header>
+      <div class="auth-body">
+        <!-- MODE SELECTOR FOR AUTH -->
+        <div class="auth-methods-tab" *ngIf="!isRegistering()">
+           <button class="tab-btn" [class.active]="authMethod() === 'email'" (click)="authMethod.set('email')">Email</button>
+           <button class="tab-btn" [class.active]="authMethod() === 'phone'" (click)="authMethod.set('phone')">Telefono</button>
+        </div>
 
-  <div id="container">
-    <strong>Ready to create an app?</strong>
-    <p>Start with Ionic <a target="_blank" rel="noopener noreferrer" href="https://ionicframework.com/docs/components">UI Components</a></p>
+        <!-- EMAIL LOGIN/REGISTER -->
+        <div *ngIf="authMethod() === 'email' || isRegistering()">
+          <div *ngIf="!isRegistering()">
+            <ion-item lines="none" class="auth-input">
+              <ion-input type="email" placeholder="Email" [ngModel]="email()" (ngModelChange)="email.set($event)"></ion-input>
+            </ion-item>
+            <ion-item lines="none" class="auth-input">
+              <ion-input type="password" placeholder="Password" [ngModel]="password()" (ngModelChange)="password.set($event)"></ion-input>
+            </ion-item>
+            <button class="btn-primary" (click)="handleEmailLogin()">Accedi</button>
+          </div>
+
+          <div *ngIf="isRegistering()">
+            <ion-item lines="none" class="auth-input">
+              <ion-input type="text" placeholder="Nome" [ngModel]="name()" (ngModelChange)="name.set($event)"></ion-input>
+            </ion-item>
+            <ion-item lines="none" class="auth-input">
+              <ion-input type="email" placeholder="Email" [ngModel]="email()" (ngModelChange)="email.set($event)"></ion-input>
+            </ion-item>
+            <ion-item lines="none" class="auth-input">
+              <ion-input type="password" placeholder="Password" [ngModel]="password()" (ngModelChange)="password.set($event)"></ion-input>
+            </ion-item>
+            <button class="btn-primary" (click)="handleRegister()">Registrati</button>
+          </div>
+        </div>
+
+        <!-- PHONE LOGIN -->
+        <div *ngIf="authMethod() === 'phone' && !isRegistering()">
+          <div *ngIf="!showOtpInput()">
+            <ion-item lines="none" class="auth-input">
+              <ion-input type="tel" placeholder="+39 333 1234567" [ngModel]="phone()" (ngModelChange)="phone.set($event)"></ion-input>
+            </ion-item>
+            <button class="btn-primary" (click)="handlePhoneLogin()">Invia SMS</button>
+          </div>
+          <div *ngIf="showOtpInput()">
+            <ion-item lines="none" class="auth-input">
+              <ion-input type="text" placeholder="Codice OTP" [ngModel]="otp()" (ngModelChange)="otp.set($event)"></ion-input>
+            </ion-item>
+            <button class="btn-primary" (click)="handleVerifyOtp()">Verifica Codice</button>
+          </div>
+          <div id="recaptcha-container"></div>
+        </div>
+
+        <div class="divider"><span>oppure</span></div>
+
+        <button class="btn-google" (click)="handleLogin()">
+          <ion-icon name="logo-google" slot="start"></ion-icon>
+          Continua con Google
+        </button>
+
+        <button class="btn-ghost" (click)="handleAnonymousLogin()">
+          <ion-icon name="person-circle-outline" slot="start"></ion-icon>
+          Entra come Ospite (Anonimo)
+        </button>
+
+        <p class="toggle-auth">
+          {{ isRegistering() ? 'Hai già un account?' : 'Non hai un account?' }}
+          <a (click)="toggleAuthMode()">{{ isRegistering() ? 'Accedi' : 'Registrati' }}</a>
+        </p>
+      </div>
+    </div>
   </div>
+
+  <ng-container *ngIf="authService.user$ | async as user">
+    <!-- (Legend now in global navbar) -->
+
+    <!-- HOME VIEW (THE WHEEL) -->
+    <div id="home-view" *ngIf="!activeMood()">
+      <h1>Come ti senti oggi?</h1>
+      <p>Seleziona un colore dal disco</p>
+      
+      <div class="wheel-container">
+        <div 
+          class="slice {{mood.class}}" 
+          *ngFor="let mood of moods(); let i = index"
+          [style.transform]="getSliceTransform(i)"
+          (click)="selectMood(mood)"
+          (keydown.enter)="selectMood(mood)"
+          role="button"
+          tabindex="0"
+          [attr.aria-label]="'Seleziona umore ' + mood.title">
+          
+          <div class="slice-content" [style.transform]="getContentTransform(i)">
+          </div>
+        </div>
+      </div>
+
+      <div class="header-section">
+        <button class="btn-history" routerLink="/history">Vai alla tua Cronologia</button>
+        
+        <div class="wip-badge">
+          <button routerLink="/roadmap">Work in Progress</button>
+        </div>
+        
+        <!-- HOME VIEW LEGEND -->
+        <div class="home-legend">
+          <div class="legend-scroll">
+            <div class="legend-chip" *ngFor="let mood of moods()" 
+                 (click)="openPopup(mood)">
+              <span class="chip-text">{{ mood.icon }} {{ mood.title }}</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div id="detail-view" *ngIf="activeMood()">
+      <button class="btn-back" (click)="goHome()" aria-label="Torna al disco">← Torna al Disco</button>
+      
+      <!-- IN-DETAIL LEGEND -->
+      <div class="persistent-legend" style="background: transparent; border: none; margin-bottom: 20px;">
+        <div class="legend-scroll">
+          <div class="legend-chip" *ngFor="let mood of moods()" (click)="selectMood(mood)" [class.active]="activeMood()?.key === mood.key">
+            <span class="chip-text">{{ mood.icon }} {{ mood.title }}</span>
+          </div>
+        </div>
+      </div>
+      
+      <div class="detail-container">
+        <div class="header-mood" *ngIf="activeMood() as mood">
+          <h1>{{mood.title}}</h1>
+          <span style="font-size: 3rem;" aria-hidden="true">{{mood.icon}}</span>
+        </div>
+
+        <div class="grid-sections" *ngIf="activeMood() as mood">
+          <div class="section-box">
+            <h3>Psicologia ed Effetti</h3>
+            <p>{{mood.psych}}</p>
+            <p><strong>Effetto:</strong> {{mood.effect}}</p>
+          </div>
+
+          <div class="section-box">
+            <h3>Esercizio Consigliato</h3>
+            <p>{{mood.exercise}}</p>
+          </div>
+        </div>
+
+        <!-- NEW: PERSONAL NOTES & QUICK REGISTER -->
+        <div class="section-box" style="margin-top:20px;">
+          <h3>Registra il tuo Stato d'Animo</h3>
+          
+          <div class="note-registration">
+            <p style="font-size: 0.85rem; opacity: 0.7; margin-bottom: 12px;">Vuoi aggiungere un pensiero o registrare direttamente?</p>
+            
+            <div class="input-actions">
+              <input type="text" [ngModel]="moodNote()" (ngModelChange)="moodNote.set($event)" placeholder="Scrivi un pensiero (opzionale)..." aria-label="Inserisci una nota personale">
+              <div class="button-group">
+                <button class="btn-primary" (click)="saveMoodLog()">Registra con Note</button>
+                <button class="btn-secondary" (click)="quickSaveMoodLog()">Registra Direttamente</button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="section-box" style="margin-top:20px;">
+          <h3>Suggerimenti della Community</h3>
+          <ul class="community-list">
+            <li *ngFor="let tip of communityTips()">
+              <span>✨ {{tip}}</span>
+              <button *ngIf="!isSeededTip(tip)" (click)="removeTip(tip)" style="background:none; border:none; color:var(--danger); cursor:pointer;" aria-label="Rimuovi consiglio">✖</button>
+            </li>
+          </ul>
+          
+          <div class="tip-input-group">
+            <input type="text" [ngModel]="newTip()" (ngModelChange)="newTip.set($event)" placeholder="Aggiungi un consiglio..." aria-label="Inserisci un nuovo consiglio">
+            <button (click)="addTip()">Invia</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </ng-container>
+
+  <!-- LEGEND POPUP MODAL (Rectangular Window) -->
+  <ion-modal [isOpen]="isPopupOpen()" (didDismiss)="closePopup()" class="rectangular-modal">
+    <ng-template>
+      <div class="modal-window">
+        <div class="modal-header">
+          <h3>{{ popupTitle() }}</h3>
+          <button (click)="closePopup()" class="close-icon-btn">
+            <ion-icon name="close-outline"></ion-icon>
+          </button>
+        </div>
+        <div class="modal-body">
+          <p>{{ popupDesc() }}</p>
+        </div>
+      </div>
+    </ng-template>
+  </ion-modal>
+
 </ion-content>

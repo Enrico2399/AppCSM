@@ -1,0 +1,61 @@
+<ion-content [fullscreen]="true">
+  <div class="container">
+    <header>
+      <h1>Pantheon Archetipico</h1>
+      <p>Seleziona un'icona per scoprirne il significato e mappare i tuoi pensieri.</p>
+    </header>
+
+    <div class="archetype-grid">
+      <div 
+        class="archetype-card" 
+        *ngFor="let arch of archetypes()" 
+        [ngClass]="{'selected': arch.key === selectedKey()}"
+        (click)="selectArchetype(arch)"
+        (keydown.enter)="selectArchetype(arch)"
+        role="button"
+        tabindex="0"
+        [attr.aria-pressed]="arch.key === selectedKey()"
+        [attr.aria-label]="arch.name">
+        <span aria-hidden="true">{{arch.icon}}</span>
+        <h4>{{arch.name}}</h4>
+      </div>
+    </div>
+
+    <div id="dynamic-description-area" *ngIf="selectedArchetype() as archetype">
+      <h2 style="margin-top:0;">{{archetype.icon}} {{archetype.name}}</h2>
+      <p style="color: #ccc;">{{archetype.description}}</p>
+    </div>
+
+    <div class="dashboard">
+      <div class="input-box">
+        <h3>{{ selectedArchetype() ? 'Pensiero per: ' + selectedArchetype()!.name : 'Clicca su un archetipo sopra' }}</h3>
+        <textarea [ngModel]="thoughtInput()" (ngModelChange)="thoughtInput.set($event)" rows="5" placeholder="Quale pensiero vuoi associare a questo archetipo?"></textarea>
+        <button class="btn-add" (click)="saveThought()">Registra nel Pantheon</button>
+      </div>
+
+      <div class="chart-container">
+        <canvas id="archetypeChart"></canvas>
+      </div>
+
+      <div class="advice-box" [innerHTML]="adviceHtml()">
+      </div>
+    </div>
+  </div>
+
+  <!-- STATUS POPUP MODAL (Rectangular Window) -->
+  <ion-modal [isOpen]="isPopupOpen()" (didDismiss)="closePopup()" class="rectangular-modal">
+    <ng-template>
+      <div class="modal-window">
+        <div class="modal-header">
+          <h3>{{ popupTitle() }}</h3>
+          <button (click)="closePopup()" class="close-icon-btn">
+            <ion-icon name="close-outline"></ion-icon>
+          </button>
+        </div>
+        <div class="modal-body">
+          <p>{{ popupDesc() }}</p>
+        </div>
+      </div>
+    </ng-template>
+  </ion-modal>
+</ion-content>

@@ -1,0 +1,62 @@
+<ion-content [fullscreen]="true">
+  <div class="container">
+    <header>
+      <h1>Spazio Community</h1>
+      <p>Condividi come ti senti e connettiti con gli altri.</p>
+    </header>
+
+    <!-- POST SECTION -->
+    <div class="post-box glass-card">
+      <h3>Cosa vuoi condividere?</h3>
+      
+      <div class="mood-selector">
+        <div 
+          *ngFor="let mood of moods" 
+          class="mood-chip" 
+          [style.background-color]="mood.color"
+          [class.selected]="selectedMoodKey() === mood.key"
+          (click)="selectMood(mood.key)">
+          {{ mood.icon }}
+        </div>
+      </div>
+
+      <div class="input-container">
+        <textarea 
+          [(ngModel)]="messageInput" 
+          rows="3" 
+          placeholder="Scrivi un messaggio alla community..."></textarea>
+        <button class="btn-send" (click)="sendMessage()">Invia Messaggio</button>
+      </div>
+    </div>
+
+    <!-- FEED SECTION -->
+    <div class="feed">
+      <div *ngFor="let msg of messages()" class="message-card glass-card" [style.border-left-color]="getMoodColor(msg.moodKey)">
+        <div class="message-header">
+          <span class="username">{{ msg.userName }}</span>
+          <span class="time">{{ formatDate(msg.timestamp) }}</span>
+        </div>
+        <div class="message-body">
+          <p>{{ msg.message }}</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- STATUS POPUP MODAL (Rectangular Window) -->
+  <ion-modal [isOpen]="isPopupOpen()" (didDismiss)="closePopup()" class="rectangular-modal">
+    <ng-template>
+      <div class="modal-window">
+        <div class="modal-header">
+          <h3>{{ popupTitle() }}</h3>
+          <button (click)="closePopup()" class="close-icon-btn">
+            <ion-icon name="close-outline"></ion-icon>
+          </button>
+        </div>
+        <div class="modal-body">
+          <p>{{ popupDesc() }}</p>
+        </div>
+      </div>
+    </ng-template>
+  </ion-modal>
+</ion-content>

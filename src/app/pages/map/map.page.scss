@@ -1,0 +1,22 @@
+// Contenitore principale della pagina
+ion-content {
+  --background: #f4f4f4;
+}
+
+// L'ID deve corrispondere a quello usato nell'HTML (<div id="map">)
+#map {
+  height: 100%;
+  width: 100%;
+  z-index: 1; // Assicura che la mappa stia sotto i menu ma sopra lo sfondo
+}
+
+// Fix per assicurarci che i controlli di Leaflet non finiscano sotto la toolbar
+.leaflet-top, .leaflet-bottom {
+  z-index: 1000 !important;
+}
+
+// Opzionale: stile per il pulsante flottante
+ion-fab-button {
+  --background: #3880ff;
+  --color: white;
+}
