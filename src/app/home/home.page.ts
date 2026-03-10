@@ -4,14 +4,8 @@ import { FormsModule } from '@angular/forms';
 import { RouterModule } from '@angular/router';
 import { 
   IonContent, 
-  IonHeader, 
-  IonToolbar, 
-  IonButtons, 
-  IonButton, 
   IonIcon, 
-  IonAvatar, 
   IonModal,
-  IonTitle,
   IonItem,
   IonInput
 } from '@ionic/angular/standalone';
@@ -43,15 +37,10 @@ interface Mood {
     AsyncPipe,
     FormsModule,
     RouterModule,
+    RouterModule,
     IonContent,
-    IonHeader,
-    IonToolbar,
-    IonButtons,
-    IonButton,
     IonIcon,
-    IonAvatar,
     IonModal,
-    IonTitle,
     IonItem,
     IonInput
   ]
@@ -81,6 +70,7 @@ export class HomePage implements OnInit {
   isPopupOpen = signal<boolean>(false);
   popupTitle = signal<string>('');
   popupDesc = signal<string>('');
+  statusMessage = signal<string>('');
 
   // Auth fields
   email = signal<string>('');
@@ -228,10 +218,39 @@ export class HomePage implements OnInit {
     this.isPopupOpen.set(false);
   }
 
+  // Simple Focus Trap for Accessibility
+  handleKeyDown(event: KeyboardEvent, elementSelector: string) {
+    if (event.key !== 'Tab') return;
+
+    const focusableElements = 'button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])';
+    const modal = document.querySelector(elementSelector);
+    if (!modal) return;
+
+    const firstFocusableElement = modal.querySelectorAll(focusableElements)[0] as HTMLElement;
+    const focusableContent = modal.querySelectorAll(focusableElements);
+    const lastFocusableElement = focusableContent[focusableContent.length - 1] as HTMLElement;
+
+    if (event.shiftKey) { // if shift key pressed for shift + tab combination
+      if (document.activeElement === firstFocusableElement) {
+        lastFocusableElement.focus(); // add focus for the last focusable element
+        event.preventDefault();
+      }
+    } else { // if tab key is pressed
+      if (document.activeElement === lastFocusableElement) { // if focused has reached to last focusable element then focus first focusable element after pressing tab
+        firstFocusableElement.focus(); // add focus for the first focusable element
+        event.preventDefault();
+      }
+    }
+  }
+
   showStatus(title: string, message: string) {
     this.popupTitle.set(title);
     this.popupDesc.set(message);
     this.isPopupOpen.set(true);
+    // Announce to screen readers
+    this.statusMessage.set(`${title}: ${message}`);
+    // Clear after a short delay so it can be re-announced if the same message appears
+    setTimeout(() => this.statusMessage.set(''), 3000);
   }
 
   async handleLogin() {

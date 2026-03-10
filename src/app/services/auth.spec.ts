@@ -1,13 +1,24 @@
 import { TestBed } from '@angular/core/testing';
 
-import { Auth } from './auth';
+import { AuthService } from './auth';
+import { FirebaseService } from './firebase/firebase';
 
-describe('Auth', () => {
-  let service: Auth;
+describe('AuthService', () => {
+  let service: AuthService;
+  let firebaseServiceMock: any;
 
   beforeEach(() => {
-    TestBed.configureTestingModule({});
-    service = TestBed.inject(Auth);
+    firebaseServiceMock = {
+      auth: {}
+    };
+
+    TestBed.configureTestingModule({
+      providers: [
+        AuthService,
+        { provide: FirebaseService, useValue: firebaseServiceMock }
+      ]
+    });
+    service = TestBed.inject(AuthService);
   });
 
   it('should be created', () => {

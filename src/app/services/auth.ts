@@ -13,13 +13,16 @@ import {
   signInAnonymously,
   RecaptchaVerifier,
   signInWithPhoneNumber,
-  ConfirmationResult
+  ConfirmationResult,
+  Auth // Added Auth import
 } from 'firebase/auth';
+import { Database } from 'firebase/database'; // Added Database import
 
 @Injectable({ providedIn: 'root' })
 export class AuthService {
   private firebaseService = inject(FirebaseService);
-  private userSubject = new BehaviorSubject<User | null>(null);
+  // undefined = caricamento, null = non loggato, User = loggato
+  private userSubject = new BehaviorSubject<User | null | undefined>(undefined);
   
   user$ = this.userSubject.asObservable();
 

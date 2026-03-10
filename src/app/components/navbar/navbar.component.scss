@@ -49,26 +49,41 @@
 .user-chip {
   display: flex;
   align-items: center;
-  gap: 10px;
-  background: rgba(255, 255, 255, 0.1);
-  padding: 5px 12px;
-  border-radius: 20px;
+  justify-content: center;
+  gap: 12px;
+  background: rgba(255, 255, 255, 0.08);
+  padding: 6px 16px;
+  border-radius: 25px;
   cursor: pointer;
-  transition: 0.3s;
+  transition: all 0.2s ease;
+  min-height: 40px;
+  border: 1px solid rgba(255, 255, 255, 0.1);
 
   &:hover {
-    background: rgba(255, 255, 255, 0.2);
+    background: rgba(255, 255, 255, 0.15);
+    transform: translateY(-1px);
   }
 
   .user-name {
     color: white;
-    font-size: 0.85rem;
-    font-weight: 500;
+    font-size: 0.9rem;
+    font-weight: 700;
+    line-height: 1;
   }
 
   .user-avatar {
-    width: 24px;
-    height: 24px;
+    width: 28px;
+    height: 28px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0;
+    padding: 0;
+    
+    ion-icon {
+      font-size: 28px !important;
+      margin: 0 !important;
+    }
   }
 }
 
@@ -77,9 +92,13 @@
   .navbar { border-bottom: 1px solid #ccc; background: rgba(255,255,255,0.9); }
   .navbar a { color: #555; }
   .navbar a.active { color: #3b82f6; }
-  .user-chip { background: rgba(0,0,0,0.05); }
+  .user-chip { background: rgba(0,0,0,0.05); } /* Elevation */
+  --shadow-sm: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+  --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
   .roadmap-nav { background: rgba(240,240,240,0.9); }
 }
+
+
 
 .roadmap-nav {
   height: 50px;
