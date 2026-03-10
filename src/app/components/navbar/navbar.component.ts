@@ -3,9 +3,14 @@ import { CommonModule, AsyncPipe } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { RouterModule, Router } from '@angular/router';
 import { 
+  IonHeader, 
+  IonToolbar, 
+  IonButtons, 
+  IonButton, 
   IonIcon, 
   IonAvatar, 
-  IonModal
+  IonModal,
+  IonTitle
 } from '@ionic/angular/standalone';
 import { StorageService } from '../../services/storage/storage';
 import { AuthService } from '../../services/auth';
@@ -22,9 +27,14 @@ import { logOutOutline, moon, sunny, personOutline, personCircleOutline } from '
     FormsModule, 
     RouterModule, 
     AsyncPipe,
+    IonHeader, 
+    IonToolbar, 
+    IonButtons, 
+    IonButton, 
     IonIcon, 
     IonAvatar, 
-    IonModal
+    IonModal,
+    IonTitle
   ]
 })
 export class NavbarComponent implements OnInit {

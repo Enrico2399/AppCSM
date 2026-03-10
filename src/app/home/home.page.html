@@ -1,15 +1,13 @@
-<ion-content id="main-content" [fullscreen]="true" [style.--background]="activeMood() ? getMoodColor(activeMood()!.class) : 'var(--bg-dark)'">
+<ion-content [fullscreen]="true" [style.--background]="activeMood() ? getMoodColor(activeMood()!.class) : 'var(--bg-dark)'">
   
   <!-- AUTH GUARD OVERLAY -->
-  <div class="auth-overlay" *ngIf="(authService.user$ | async) === null" (keydown)="handleKeyDown($event, '.auth-card')">
-    <!-- Status Announcer for Screen Readers -->
-    <div class="screen-reader-only" aria-live="polite" [innerText]="statusMessage()"></div>
+  <div class="auth-overlay" *ngIf="!(authService.user$ | async)">
     <div class="auth-card">
       <div class="auth-header">
-        <div class="auth-theme-toggle" (click)="toggleTheme()" (keydown.enter)="toggleTheme()" role="button" tabindex="0" [attr.aria-label]="isLightMode() ? 'Attiva modalità scura' : 'Attiva modalità chiara'">
+        <div class="auth-theme-toggle" (click)="toggleTheme()" role="button" tabindex="0">
           {{ isLightMode() ? '🌙' : '☀️' }}
         </div>
-        <img src="assets/icon/favicon.png" alt="Logo CSM Treviso" style="width: 60px; margin-bottom: 10px;" />
+        <img src="assets/icon/favicon.png" alt="CSM Logo" style="width: 60px; margin-bottom: 10px;" />
         <h1>Benvenuto in CSM</h1>
         <p>Accedi per esplorare il mondo dei colori</p>
       </div>
@@ -92,17 +90,16 @@
       <h1>Come ti senti oggi?</h1>
       <p>Seleziona un colore dal disco</p>
       
-      <div class="wheel-container" role="listbox" aria-label="Ruota dell'umore. Seleziona il tuo stato d'animo attuale.">
-        <div *ngFor="let mood of moods(); let i = index" 
-             class="slice {{ mood.class }}"
-             [id]="'mood-' + mood.key"
-             role="option"
-             [attr.aria-selected]="activeMood()?.key === mood.key"
-             [attr.aria-label]="mood.title + ': ' + mood.psych"
-             [style.transform]="getSliceTransform(i)"
-             (click)="selectMood(mood)"
-             (keydown.enter)="selectMood(mood)"
-             tabindex="0">
+      <div class="wheel-container">
+        <div 
+          class="slice {{mood.class}}" 
+          *ngFor="let mood of moods(); let i = index"
+          [style.transform]="getSliceTransform(i)"
+          (click)="selectMood(mood)"
+          (keydown.enter)="selectMood(mood)"
+          role="button"
+          tabindex="0"
+          [attr.aria-label]="'Seleziona umore ' + mood.title">
           
           <div class="slice-content" [style.transform]="getContentTransform(i)">
           </div>
@@ -110,17 +107,17 @@
       </div>
 
       <div class="header-section">
-        <button class="btn-history" routerLink="/history" aria-label="Visualizza la tua cronologia degli umori">Vai alla tua Cronologia</button>
+        <button class="btn-history" routerLink="/history">Vai alla tua Cronologia</button>
         
         <div class="wip-badge">
-          <button routerLink="/roadmap" aria-label="Visualizza i prossimi sviluppi del progetto">Work in Progress</button>
+          <button routerLink="/roadmap">Work in Progress</button>
         </div>
         
         <!-- HOME VIEW LEGEND -->
         <div class="home-legend">
           <div class="legend-scroll">
             <div class="legend-chip" *ngFor="let mood of moods()" 
-                 (click)="openPopup(mood)" (keydown.enter)="openPopup(mood)" role="button" tabindex="0" [attr.aria-label]="'Info su umore ' + mood.title">
+                 (click)="openPopup(mood)">
               <span class="chip-text">{{ mood.icon }} {{ mood.title }}</span>
             </div>
           </div>
@@ -197,7 +194,7 @@
   <!-- LEGEND POPUP MODAL (Rectangular Window) -->
   <ion-modal [isOpen]="isPopupOpen()" (didDismiss)="closePopup()" class="rectangular-modal">
     <ng-template>
-      <div class="modal-window" (keydown)="handleKeyDown($event, '.modal-window')">
+      <div class="modal-window">
         <div class="modal-header">
           <h3>{{ popupTitle() }}</h3>
           <button (click)="closePopup()" class="close-icon-btn">

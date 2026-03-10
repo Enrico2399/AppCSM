@@ -64,62 +64,6 @@
   --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
 }
 
-body {
-  font-family: 'Atkinson Hyperlegible', sans-serif !important;
-}
-
-/* Accessibility Utilities */
-.screen-reader-only {
-  position: absolute;
-  width: 1px;
-  height: 1px;
-  padding: 0;
-  margin: -1px;
-  overflow: hidden;
-  clip: rect(0, 0, 0, 0);
-  white-space: nowrap;
-  border: 0;
-}
-
-.skip-link {
-  position: absolute;
-  top: -100px;
-  left: 0;
-  background: var(--accent-blue);
-  color: white;
-  padding: 10px 20px;
-  z-index: 99999;
-  transition: top 0.3s;
-  text-decoration: none;
-  font-weight: bold;
-  border-radius: 0 0 5px 5px;
-
-  &:focus {
-    top: 0;
-  }
-}
-
-/* Enhanced Focus Visibility */
-:focus-visible {
-  outline: 3px solid var(--accent-blue) !important;
-  outline-offset: 2px !important;
-}
-
-/* Scrollbar Accessibility */
-::-webkit-scrollbar {
-  width: 8px;
-}
-::-webkit-scrollbar-track {
-  background: var(--bg-dark);
-}
-::-webkit-scrollbar-thumb {
-  background: rgba(255, 255, 255, 0.2);
-  border-radius: 4px;
-  &:hover {
-    background: rgba(255, 255, 255, 0.3);
-  }
-}
-
 /* Light Theme Variables */
 body.light-theme {
   --bg-dark: #f5f6fa;
@@ -137,26 +81,59 @@ body.light-theme {
   --ion-text-color: var(--text-light);
 
   /* Shared Light Adjustments */
-  a { color: #004fb1; } /* Darker blue for better contrast on Light */
+  a { color: var(--accent-blue); }
 
   /* Navbar adjustments for Light Mode */
   .global-header .navbar {
-    background: rgba(255, 255, 255, 1); /* Full opacity for contrast */
-    border-bottom: 2px solid rgba(0, 0, 0, 0.1);
+    background: rgba(255, 255, 255, 0.95);
+    border-bottom: 1px solid rgba(0, 0, 0, 0.1);
   }
 
-  /* Improved Contrast for Secondary Buttons */
-  .btn-ghost {
-    border: 2px solid #64748b;
-    color: #334155;
+  .global-header .navbar a {
+    color: #2f3640;
   }
-}
+  
+  .global-header .navbar a.active {
+    border-bottom-color: #2f3640;
+  }
 
-/* Global Focus Styles */
-*:focus-visible {
-  outline: 4px solid var(--accent-blue) !important;
-  outline-offset: 3px !important;
-  border-radius: 4px;
+  .roadmap-nav a.active {
+    border-bottom-color: var(--accent-purple);
+  }
+
+  /* Modals */
+  .modal-content {
+    background: #ffffff;
+    color: #2f3640;
+    border-color: rgba(0,0,0,0.1);
+  }
+
+  .name-input {
+    background: rgba(0,0,0,0.05) !important;
+    color: #2f3640 !important;
+    border-color: rgba(0,0,0,0.2) !important;
+  }
+  
+  .save-btn {
+    background: #2f3640 !important;
+    color: white !important;
+  }
+  
+  hr { border-top-color: rgba(0,0,0,0.1); }
+
+  /* Other components overrides */
+  .btn-action { color: #121212 !important; box-shadow: 0 4px 15px rgba(0,0,0,0.05) !important; }
+  .btn-add, .btn-send { background: #2f3640 !important; color: white !important; }
+  textarea, input[type="text"], select { color: var(--text-light) !important; background: var(--card-bg) !important; border-color: var(--border-color) !important; }
+  .advice-box, #dynamic-description-area { background: rgba(0,0,0,0.03); border-color: rgba(0,0,0,0.1); color: var(--text-light); }
+  .archetype-card.selected { background: rgba(0,0,0,0.1); border-color: var(--accent); box-shadow: 0 0 10px rgba(0,0,0,0.1); }
+  .detail-container { background: rgba(255,255,255,0.9); border: 1px solid rgba(0,0,0,0.1); color: var(--text-light); }
+  .btn-back { background: var(--accent); color: white; }
+  .wip-badge { color: white; }
+  .community-list li { background: rgba(0,0,0,0.05); }
+  .pitch-container { background: linear-gradient(145deg, #ffffff, #f0f0f0); border-color: rgba(0,0,0,0.1); }
+  .mode-btn { color: var(--text-light); }
+  input[name="help-mode"]:checked + .mode-btn { background: rgba(0,0,0,0.05); color: var(--text-light); border-color: var(--text-light); }
 }
 
 /* SHARED AUTH STYLES */

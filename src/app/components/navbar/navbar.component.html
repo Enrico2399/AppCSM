@@ -2,26 +2,26 @@
   <!-- PRIMARY ROW: MAIN LINKS -->
   <nav class="navbar" aria-label="Navigazione principale">
     <div class="nav-links">
-      <a routerLinkActive="active" [routerLinkActiveOptions]="{exact: true}" (click)="goHome()" (keydown.enter)="goHome()" role="button" tabindex="0" aria-label="Vai alla Mood Wheel">Mood Wheel</a>
-      <a routerLink="/archetipi" routerLinkActive="active" aria-label="Esplora il Pantheon Archetipico">Pantheon Archetipico</a>
-      <a routerLink="/community" routerLinkActive="active" aria-label="Accedi alla Community">Community</a>
-      <a routerLink="/help" routerLinkActive="active" aria-label="Richiedi supporto SOS">SOS Help</a>
+      <a routerLinkActive="active" [routerLinkActiveOptions]="{exact: true}" (click)="goHome()" (keydown.enter)="goHome()" role="button" tabindex="0">Mood Wheel</a>
+      <a routerLink="/archetipi" routerLinkActive="active">Pantheon Archetipico</a>
+      <a routerLink="/community" routerLinkActive="active">Community</a>
+      <a routerLink="/help" routerLinkActive="active">SOS Help</a>
     </div>
   </nav>
 
   <!-- SECONDARY ROW: ROADMAP + ACTIONS -->
-  <nav class="navbar roadmap-nav" aria-label="Azioni utente e roadmap">
+  <nav class="navbar roadmap-nav" aria-label="Navigazione secondaria">
     <div class="nav-links">
-      <a routerLink="/roadmap" routerLinkActive="active" style="color: violet;" aria-label="Visualizza nuovi sviluppi">Nuovi Sviluppi</a>
+      <a routerLink="/roadmap" routerLinkActive="active" style="color: violet;">Nuovi Sviluppi</a>
       
-      <a (click)="toggleTheme()" (keydown.enter)="toggleTheme()" class="theme-icon" role="button" tabindex="0" [attr.aria-label]="isLightMode ? 'Attiva modalità scura' : 'Attiva modalità chiara'">
+      <a (click)="toggleTheme()" (keydown.enter)="toggleTheme()" class="theme-icon" role="button" tabindex="0" aria-label="Cambia tema">
         {{ isLightMode ? '🌙' : '☀️' }}
       </a>
       
-      <div class="user-chip" (click)="openProfileModal()" (keydown.enter)="openProfileModal()" role="button" tabindex="0" aria-label="Apri menu profilo">
+      <div class="user-chip" (click)="openProfileModal()" role="button" tabindex="0">
         <span class="user-name">{{ user.displayName || 'Utente' }}</span>
-        <ion-avatar class="user-avatar" aria-hidden="true">
-          <img *ngIf="user.photoURL" [src]="user.photoURL" alt="Foto profilo" />
+        <ion-avatar class="user-avatar">
+          <img *ngIf="user.photoURL" [src]="user.photoURL" alt="Avatar" />
           <ion-icon *ngIf="!user.photoURL" name="person-circle-outline" style="font-size: 32px; color: var(--ion-color-medium);"></ion-icon>
         </ion-avatar>
       </div>

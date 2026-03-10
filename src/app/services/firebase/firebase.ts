@@ -1,8 +1,7 @@
 import { Injectable } from '@angular/core';
 import { initializeApp, FirebaseApp } from 'firebase/app';
 import { getDatabase, ref, set, onValue, push, Database, query, limitToLast } from 'firebase/database';
-import { getAuth, Auth, User } from 'firebase/auth'; // Import User type
-import { BehaviorSubject } from 'rxjs'; // Import BehaviorSubject
+import { getAuth, Auth } from 'firebase/auth';
 
 @Injectable({
   providedIn: 'root',
@@ -26,11 +25,6 @@ export class FirebaseService {
     this.app = initializeApp(firebaseConfig);
     this.db = getDatabase(this.app);
     this.auth = getAuth(this.app);
-    
-    // Configura la persistenza locale (browser) in modo esplicito
-    import('firebase/auth').then(({ setPersistence, browserLocalPersistence }) => {
-      setPersistence(this.auth, browserLocalPersistence);
-    });
   }
 
   voteInFirebase(featureId: string, userName: string) {
