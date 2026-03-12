@@ -24,7 +24,14 @@ export class AuthService {
   user$ = this.userSubject.asObservable();
 
   constructor() {
-    onAuthStateChanged(this.firebaseService.auth, (user) => {
+    onAuthStateChanged(this.firebaseService.auth, async (user) => {
+      if (user) {
+        try {
+          await this.firebaseService.upsertUserProfile(user);
+        } catch (error) {
+          console.error('Errore aggiornando il profilo utente in Firebase', error);
+        }
+      }
       this.userSubject.next(user);
     });
   }
@@ -32,7 +39,11 @@ export class AuthService {
   async loginWithGoogle() {
     try {
       const provider = new GoogleAuthProvider();
-      return await signInWithPopup(this.firebaseService.auth, provider);
+      const res = await signInWithPopup(this.firebaseService.auth, provider);
+      if (res.user) {
+        await this.firebaseService.upsertUserProfile(res.user);
+      }
+      return res;
     } catch (error) {
       console.error("Errore Google Login:", error);
       throw error;
@@ -40,13 +51,18 @@ export class AuthService {
   }
 
   async loginWithEmail(email: string, pass: string) {
-    return await signInWithEmailAndPassword(this.firebaseService.auth, email, pass);
+    const res = await signInWithEmailAndPassword(this.firebaseService.auth, email, pass);
+    if (res.user) {
+      await this.firebaseService.upsertUserProfile(res.user);
+    }
+    return res;
   }
 
   async registerWithEmail(email: string, pass: string, name: string) {
     const res = await createUserWithEmailAndPassword(this.firebaseService.auth, email, pass);
     if (res.user) {
       await updateProfile(res.user, { displayName: name });
+      await this.firebaseService.upsertUserProfile(res.user);
     }
     return res;
   }
@@ -56,7 +72,11 @@ export class AuthService {
   }
 
   async loginAnonymously() {
-    return await signInAnonymously(this.firebaseService.auth);
+    const res = await signInAnonymously(this.firebaseService.auth);
+    if (res.user) {
+      await this.firebaseService.upsertUserProfile(res.user);
+    }
+    return res;
   }
 
   setupRecaptcha(containerId: string) {

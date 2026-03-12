@@ -14,19 +14,42 @@
       <p>Analisi delle tue frequenze emozionali e suggerimenti per il benessere.</p>
     </header>
 
+    <div class="toolbar-row" *ngIf="!isLoading() && history().length > 0">
+      <div class="filters">
+        <button class="filter-btn" [class.active]="selectedRange() === 'all'" (click)="setRange('all')">
+          Tutto
+        </button>
+        <button class="filter-btn" [class.active]="selectedRange() === '7d'" (click)="setRange('7d')">
+          Ultimi 7 giorni
+        </button>
+        <button class="filter-btn" [class.active]="selectedRange() === '30d'" (click)="setRange('30d')">
+          Ultimi 30 giorni
+        </button>
+      </div>
+
+      <div class="actions">
+        <button class="export-btn" (click)="exportCsv()">
+          Esporta dati (CSV)
+        </button>
+        <button class="danger-btn" (click)="deleteHistory()">
+          Cancella diario
+        </button>
+      </div>
+    </div>
+
     <div *ngIf="isLoading()" class="loading-state">
       <ion-spinner name="crescent"></ion-spinner>
       <p>Caricamento dati...</p>
     </div>
 
-    <div *ngIf="!isLoading() && history().length === 0" class="empty-state">
+    <div *ngIf="!isLoading() && filteredHistory().length === 0" class="empty-state">
       <div class="empty-icon">📂</div>
       <h3>Ancora nessun dato</h3>
       <p>Torna alla ruota e seleziona come ti senti per iniziare il tuo diario.</p>
       <ion-button expand="block" routerLink="/home" style="--background: white; --color: black; --border-radius: 20px; font-weight: bold; margin-top: 15px;">Vai alla Ruota</ion-button>
     </div>
 
-    <ng-container *ngIf="!isLoading() && history().length > 0">
+    <ng-container *ngIf="!isLoading() && filteredHistory().length > 0">
       
       <!-- STATS GRID -->
       <div class="stats-grid">
@@ -51,7 +74,7 @@
       <div class="history-section">
         <h2 style="margin: 40px 0 20px; text-align: center;">Diario Recente</h2>
         <div class="history-list">
-          <div class="history-item" *ngFor="let log of history()" [style.border-left-color]="getMoodColor(log.moodKey)">
+          <div class="history-item" *ngFor="let log of filteredHistory()" [style.border-left-color]="getMoodColor(log.moodKey)">
             <div class="mood-icon">{{ log.icon }}</div>
             <div class="log-details">
               <h3>{{ log.moodTitle }}</h3>

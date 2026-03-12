@@ -1,4 +1,4 @@
-import { Component, OnInit, AfterViewInit, signal, computed, inject, effect } from '@angular/core';
+import { Component, OnInit, AfterViewInit, signal, computed, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { IonicModule } from '@ionic/angular';
 import { RouterModule } from '@angular/router';
@@ -36,8 +36,24 @@ export class HistoryPage implements OnInit, AfterViewInit {
   private authService = inject(AuthService);
 
   history = signal<MoodLog[]>([]);
+  filteredHistory = computed<MoodLog[]>(() => {
+    const all = this.history();
+    const range = this.selectedRange();
+    if (range === 'all') return all;
+
+    const now = new Date().getTime();
+    const days = range === '7d' ? 7 : 30;
+    const threshold = now - days * 24 * 60 * 60 * 1000;
+
+    return all.filter(log => {
+      const t = new Date(log.timestamp).getTime();
+      return !isNaN(t) && t >= threshold;
+    });
+  });
   isLoading = signal<boolean>(true);
   chart: any;
+
+  selectedRange = signal<'all' | '7d' | '30d'>('all');
 
   moodData = signal<MoodInfo[]>([
     { key: "rosso", title: "Rosso", icon: "🔥", color: "#e74c3c", highAdvice: "Hai molta energia o rabbia repressa. Prova a canalizzarla in attività fisica intensa.", lowAdvice: "Potresti sentirti spento o demotivato. Cerca un piccolo stimolo per riaccendere la passione." },
@@ -54,7 +70,7 @@ export class HistoryPage implements OnInit, AfterViewInit {
   stats = computed(() => {
     const counts: Record<string, number> = {};
     this.moodData().forEach(m => counts[m.key] = 0);
-    this.history().forEach(log => {
+    this.filteredHistory().forEach(log => {
       if (counts[log.moodKey] !== undefined) {
         counts[log.moodKey]++;
       }
@@ -202,5 +218,97 @@ export class HistoryPage implements OnInit, AfterViewInit {
   getMoodColor(moodKey: string): string {
     const mood = this.moodData().find(m => m.key === moodKey);
     return mood ? mood.color : '#ccc';
+  }
+
+  setRange(range: 'all' | '7d' | '30d') {
+    this.selectedRange.set(range);
+    this.updateChart();
+  }
+
+  async exportCsv() {
+    const data = this.filteredHistory();
+    if (!data.length) {
+      alert('Nessun dato da esportare per l\'intervallo selezionato.');
+      return;
+    }
+
+    const header = [
+      'timestamp_iso',
+      'data_it',
+      'ora_it',
+      'moodKey',
+      'moodTitle',
+      'icon',
+      'thought'
+    ].join(';');
+
+    const rows = data.map(log => {
+      const d = new Date(log.timestamp);
+      const dateIt = d.toLocaleDateString('it-IT');
+      const timeIt = d.toLocaleTimeString('it-IT', { hour: '2-digit', minute: '2-digit' });
+      const thought = (log.thought || '').replace(/"/g, '""');
+      return [
+        log.timestamp,
+        dateIt,
+        timeIt,
+        log.moodKey,
+        log.moodTitle,
+        log.icon,
+        `"${thought}"`
+      ].join(';');
+    });
+
+    // Riga di riepilogo per i grafici
+    const summaryHeader = '\n\n#RIEPILOGO_FREQUENZE';
+    const summaryRows = Object.entries(this.stats()).map(([key, value]) => {
+      const mood = this.moodData().find(m => m.key === key);
+      return [
+        mood?.key || key,
+        mood?.title || '',
+        value
+      ].join(';');
+    });
+
+    const csvContent = [header, ...rows, summaryHeader, 'moodKey;moodTitle;count', ...summaryRows].join('\n');
+
+    const blob = new Blob(['\ufeff' + csvContent], { type: 'text/csv;charset=utf-8;' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = 'diario_emozionale_csm.csv';
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    URL.revokeObjectURL(url);
+  }
+
+  async deleteHistory() {
+    const confirmDelete = confirm('Sei sicuro di voler cancellare TUTTO il diario emozionale? Questa azione non può essere annullata.');
+    if (!confirmDelete) {
+      return;
+    }
+
+    this.isLoading.set(true);
+    this.authService.user$.pipe(take(1)).subscribe(async user => {
+      if (!user) {
+        this.isLoading.set(false);
+        alert('Devi essere autenticato per cancellare il diario.');
+        return;
+      }
+      try {
+        await this.firebaseService.clearMoodHistory(user.uid);
+        this.history.set([]);
+        this.isLoading.set(false);
+        if (this.chart) {
+          this.chart.destroy();
+          this.chart = null;
+        }
+        alert('Diario emozionale cancellato con successo.');
+      } catch (err) {
+        console.error('Errore cancellazione diario', err);
+        this.isLoading.set(false);
+        alert('Si è verificato un errore durante la cancellazione del diario. Riprova più tardi.');
+      }
+    });
   }
 }

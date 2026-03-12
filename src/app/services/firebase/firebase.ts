@@ -1,7 +1,18 @@
 import { Injectable } from '@angular/core';
 import { initializeApp, FirebaseApp } from 'firebase/app';
-import { getDatabase, ref, set, onValue, push, Database, query, limitToLast } from 'firebase/database';
-import { getAuth, Auth } from 'firebase/auth';
+import { 
+  getDatabase, 
+  ref, 
+  set, 
+  onValue, 
+  push, 
+  Database, 
+  query, 
+  limitToLast,
+  get,
+  remove
+} from 'firebase/database';
+import { getAuth, Auth, User } from 'firebase/auth';
 
 @Injectable({
   providedIn: 'root',
@@ -25,6 +36,69 @@ export class FirebaseService {
     this.app = initializeApp(firebaseConfig);
     this.db = getDatabase(this.app);
     this.auth = getAuth(this.app);
+  }
+
+  async setUserConsent(userId: string, consent: boolean): Promise<void> {
+    await set(ref(this.db, `consents/${userId}`), {
+      consent,
+      updatedAt: new Date().toISOString()
+    });
+  }
+
+  async getUserConsent(userId: string): Promise<boolean> {
+    const snapshot = await get(ref(this.db, `consents/${userId}`));
+    const val = snapshot.val();
+    return !!(val && val.consent);
+  }
+
+  async deleteUserData(userId: string): Promise<void> {
+    const tasks: Promise<unknown>[] = [];
+
+    // Diario emozionale dell'utente
+    tasks.push(remove(ref(this.db, `moodHistory/${userId}`)));
+
+    // Consenso privacy dell'utente
+    tasks.push(remove(ref(this.db, `consents/${userId}`)));
+
+    await Promise.all(tasks);
+  }
+
+  async clearMoodHistory(userId: string): Promise<void> {
+    await remove(ref(this.db, `moodHistory/${userId}`));
+  }
+
+  async upsertUserProfile(user: User): Promise<void> {
+    const uid = user.uid;
+    const userRef = ref(this.db, `users/${uid}`);
+
+    const snapshot = await get(userRef);
+    const existing = snapshot.val() || {};
+
+    const now = new Date();
+    const nowIso = now.toISOString();
+
+    // Se l'ultimo accesso risale a più di 3 mesi fa, cancelliamo la cronologia emozionale
+    if (existing.lastLoginAt) {
+      const lastLogin = new Date(existing.lastLoginAt);
+      const diffMs = now.getTime() - lastLogin.getTime();
+      const diffDays = diffMs / (1000 * 60 * 60 * 24);
+      if (diffDays > 90) {
+        await remove(ref(this.db, `moodHistory/${uid}`));
+      }
+    }
+
+    const updatePayload = {
+      displayName: user.displayName || existing.displayName || null,
+      email: user.email || existing.email || null,
+      photoURL: user.photoURL || existing.photoURL || null,
+      providerId: user.providerData?.[0]?.providerId || existing.providerId || null,
+      themePreference: existing.themePreference || null,
+      role: existing.role || 'user',
+      createdAt: existing.createdAt || nowIso,
+      lastLoginAt: nowIso
+    };
+
+    await set(userRef, updatePayload);
   }
 
   voteInFirebase(featureId: string, userName: string) {

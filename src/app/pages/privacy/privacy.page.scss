@@ -1,0 +1,50 @@
+.privacy-content {
+  --background: transparent;
+}
+
+.privacy-container {
+  max-width: 800px;
+  margin: 64px auto 32px;
+  padding: 0 16px 32px;
+  box-sizing: border-box;
+  color: var(--ion-text-color, #f8f8f8);
+  font-size: 0.95rem;
+  line-height: 1.6;
+}
+
+.privacy-container h1 {
+  margin:130px 0 0 !important;
+  font-size: 1.6rem;
+  margin: 8px 0 16px;
+  text-align: center;
+}
+
+.privacy-container h2 {
+  font-size: 1.1rem;
+  margin: 20px 0 8px;
+}
+
+.privacy-container p {
+  margin-bottom: 10px;
+}
+
+.privacy-container p + p {
+  margin-top: 8px;
+}
+
+.privacy-container a {
+  color: #4ea3ff;
+  text-decoration: underline;
+}
+
+body.light-theme .privacy-container {
+  color: #333;
+}
+
+@media (max-width: 600px) {
+  .privacy-container {
+    margin: 56px 8px 24px;
+    padding: 0 8px 24px;
+  }
+}
+

@@ -18,12 +18,8 @@
         {{ isLightMode ? '🌙' : '☀️' }}
       </a>
       
-      <div class="user-chip" (click)="openProfileModal()" role="button" tabindex="0">
-        <span class="user-name">{{ user.displayName || 'Utente' }}</span>
-        <ion-avatar class="user-avatar">
-          <img *ngIf="user.photoURL" [src]="user.photoURL" alt="Avatar" />
-          <ion-icon *ngIf="!user.photoURL" name="person-circle-outline" style="font-size: 32px; color: var(--ion-color-medium);"></ion-icon>
-        </ion-avatar>
+      <div class="user-chip" (click)="openProfileModal()" role="button" tabindex="0" aria-label="Apri profilo utente">
+        <ion-icon name="person-circle-outline" style="font-size: 32px; color: var(--ion-color-medium);"></ion-icon>
       </div>
     </div>
   </nav>
@@ -36,8 +32,7 @@
     <div class="modal-content">
       <div class="profile-header" *ngIf="authService.user$ | async as user">
         <ion-avatar style="width: 80px; height: 80px; margin: 0 auto 15px; display: flex; align-items: center; justify-content: center; background: rgba(255,255,255,0.1); border-radius: 50%;">
-          <img *ngIf="user.photoURL" [src]="user.photoURL" alt="Avatar" style="width: 100%; height: 100%;" />
-          <ion-icon *ngIf="!user.photoURL" name="person-circle-outline" style="font-size: 60px; color: var(--ion-color-medium);"></ion-icon>
+          <ion-icon name="person-circle-outline" style="font-size: 60px; color: var(--ion-color-medium);"></ion-icon>
         </ion-avatar>
         <h3>{{ user.displayName }}</h3>
         <p style="opacity: 0.7;">{{ user.email }}</p>
@@ -49,8 +44,19 @@
       
       <hr>
       
-      <p class="danger-label">Zona Pericolosa:</p>
-      <button (click)="clearAllData()" class="danger-btn">CANCELLA TUTTI I DATI LOCALI</button>
+      <p class="danger-label">Gestione Dati:</p>
+      <button (click)="clearAllData()" class="danger-btn">Cancella dati locali sul dispositivo</button>
+      <button (click)="clearCloudData()" class="danger-btn">Cancella diario e consensi da CSM (cloud)</button>
+      
+      <p style="text-align: center; margin-top: 16px; font-size: 0.85rem; opacity: 0.9;">
+        Cancellazione automatica dei dati dopo 3 mesi di inattività
+      </p>
+      
+      <p style="text-align: center; margin-top: 8px;">
+        <a routerLink="/privacy" (click)="closeProfileModal()" style="font-size: 0.85rem;">
+          Informativa completa sulla privacy
+        </a>
+      </p>
       
       <button (click)="closeProfileModal()" class="close-txt" aria-label="Chiudi profilo">Chiudi</button>
     </div>

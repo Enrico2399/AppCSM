@@ -29,12 +29,17 @@ Questa analisi riassume lo stato attuale del progetto CSM-App (branch `modifiche
   - `moodHistory/{uid}` tramite `FirebaseService.logMood`.
   - `communityMessages` con `userId`, `userName`, `moodKey`, `message`.
   - `votes/{featureId}` e `logs` per votazioni roadmap.
+- Nodo utenti dedicato `users/{uid}` gestito da `FirebaseService.upsertUserProfile`, popolato automaticamente in `AuthService` su:
+  - login con Google,
+  - login email/password,
+  - registrazione email/password,
+  - login anonimo,
+  - login via telefono,
+  - cambio di stato auth (`onAuthStateChanged`).
 
-**Cosa manca**
-- Una collezione / nodo utente dedicato, ad esempio `users/{uid}`, che contenga:
-  - `displayName`, preferenze (tema, lingua, archetipi, percorso, ecc.).
-  - Eventuale ruolo (utente, terapeuta, admin) se richiesto dalla proposta.
-- Collegamento logico tra:
+**Cosa manca / step successivi possibili**
+- Estendere il profilo con ulteriori preferenze (tema, lingua, archetipi, percorso, ecc.) man mano che vengono introdotte nell’UI.
+- Collegamento logico più stretto tra:
   - `users/{uid}`,
   - `moodHistory/{uid}`,
   - messaggi community,

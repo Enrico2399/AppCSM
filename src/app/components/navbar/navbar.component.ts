@@ -14,8 +14,10 @@ import {
 } from '@ionic/angular/standalone';
 import { StorageService } from '../../services/storage/storage';
 import { AuthService } from '../../services/auth';
+import { FirebaseService } from '../../services/firebase/firebase';
 import { addIcons } from 'ionicons';
 import { logOutOutline, moon, sunny, personOutline, personCircleOutline } from 'ionicons/icons';
+import { take, firstValueFrom } from 'rxjs';
 
 @Component({
   selector: 'app-navbar',
@@ -41,6 +43,7 @@ export class NavbarComponent implements OnInit {
   public authService = inject(AuthService);
   private storageService = inject(StorageService);
   private router = inject(Router);
+  private firebaseService = inject(FirebaseService);
 
   isProfileOpen = false;
   userName = '';
@@ -96,6 +99,29 @@ export class NavbarComponent implements OnInit {
       this.storageService.clearAllData();
       alert("Dati eliminati. La pagina verrà ricaricata.");
       window.location.reload();
+    }
+  }
+
+  async clearCloudData() {
+    const user = await firstValueFrom(this.authService.user$.pipe(take(1)));
+    if (!user) {
+      alert("Nessun utente autenticato. Accedi per gestire i tuoi dati.");
+      return;
+    }
+
+    const confirmed = confirm(
+      "Sei sicuro? Verranno cancellati il tuo diario emozionale e i consensi associati al tuo account CSM."
+    );
+    if (!confirmed) {
+      return;
+    }
+
+    try {
+      await this.firebaseService.deleteUserData(user.uid);
+      alert("I tuoi dati CSM (diario e consensi) sono stati cancellati dal cloud.");
+    } catch (err) {
+      console.error("Errore cancellazione dati cloud", err);
+      alert("Si è verificato un errore durante la cancellazione dei dati. Riprova più tardi.");
     }
   }
 }

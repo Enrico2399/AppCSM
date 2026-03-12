@@ -21,7 +21,7 @@ import { StorageService } from '../services/storage/storage';
 import { AuthService } from '../services/auth';
 import { FirebaseService } from '../services/firebase/firebase';
 import { ConfirmationResult } from 'firebase/auth';
-import { take } from 'rxjs';
+import { take, firstValueFrom } from 'rxjs';
 
 interface Mood {
   key: string;
@@ -97,6 +97,10 @@ export class HomePage implements OnInit {
   recaptchaVerifier: any;
   isLightMode = signal<boolean>(false);
 
+  // Privacy & consenso
+  hasConsent = signal<boolean | null>(null);
+  showConsentModal = signal<boolean>(false);
+
   constructor(
     private storageService: StorageService,
     public authService: AuthService,
@@ -115,6 +119,19 @@ export class HomePage implements OnInit {
 
     window.addEventListener('themeChanged', () => {
       this.isLightMode.set(document.body.classList.contains('light-theme'));
+    });
+
+    this.authService.user$.pipe(take(1)).subscribe(user => {
+      if (!user) {
+        this.hasConsent.set(null);
+        return;
+      }
+      this.firebaseService.getUserConsent(user.uid).then(consent => {
+        this.hasConsent.set(consent);
+        if (!consent) {
+          this.showConsentModal.set(true);
+        }
+      });
     });
   }
 
@@ -135,6 +152,10 @@ export class HomePage implements OnInit {
   }
 
   saveMoodLog() {
+    if (this.hasConsent() === false) {
+      this.showStatus("Privacy", "Per salvare i tuoi dati devi prima accettare l'informativa privacy.");
+      return;
+    }
     const mood = this.activeMood();
     if (!mood) return;
 
@@ -156,6 +177,10 @@ export class HomePage implements OnInit {
   }
 
   quickSaveMoodLog() {
+    if (this.hasConsent() === false) {
+      this.showStatus("Privacy", "Per registrare le emozioni devi prima accettare l'informativa privacy.");
+      return;
+    }
     const mood = this.activeMood();
     if (!mood) return;
 
@@ -248,6 +273,28 @@ export class HomePage implements OnInit {
     } catch (err) {
       console.error("Logout failed", err);
     }
+  }
+
+  async acceptConsent() {
+    try {
+      const user = await firstValueFrom(this.authService.user$.pipe(take(1)));
+      if (!user) {
+        return;
+      }
+      await this.firebaseService.setUserConsent(user.uid, true);
+      this.hasConsent.set(true);
+      this.showConsentModal.set(false);
+    } catch (err) {
+      console.error("Errore salvataggio consenso", err);
+      this.showStatus("Errore", "Non è stato possibile salvare il consenso. Riprova più tardi.");
+    }
+  }
+
+  async declineConsent() {
+    // Se l'utente non accetta il consenso, lo disconnettiamo e chiudiamo l'accesso al diario
+    await this.handleLogout();
+    this.hasConsent.set(false);
+    this.showConsentModal.set(false);
   }
 
   async handleEmailLogin() {

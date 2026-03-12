@@ -208,4 +208,46 @@
     </ng-template>
   </ion-modal>
 
+  <!-- PRIVACY & CONSENT MODAL -->
+  <ion-modal [isOpen]="showConsentModal()" (didDismiss)="showConsentModal.set(false)" cssClass="consent-modal">
+    <ng-template>
+      <div class="modal-window">
+        <div class="modal-header">
+          <h3>Informativa Privacy & Consenso</h3>
+        </div>
+        <div class="modal-body">
+          <p style="font-size: 0.9rem; max-height: 260px; overflow-y: auto;">
+            <strong>INFORMATIVA PRIVACY AI SENSI DEL REGOLAMENTO UE 2016/679 (GDPR)</strong> – 
+            L'Azienda ULSS n. 2 Marca Trevigiana, con sede legale in Via dell'Ospedale n. 1, 31100 Treviso (TV),
+            in qualità di Titolare del trattamento, informa l’utente che i dati personali forniti tramite
+            l’applicazione AppCSM saranno trattati nel rispetto della normativa vigente. Il Responsabile della
+            Protezione dei Dati (DPO) è contattabile all'indirizzo email dpo@aulss2.veneto.it. Il trattamento
+            riguarda dati identificativi (nome, cognome, codice fiscale) e dati sensibili relativi allo stato di
+            salute necessari per l’erogazione dei servizi sanitari e terapeutici del Centro Salute Mentale (CSM).
+            La base giuridica del trattamento risiede nella necessità di garantire la diagnosi e la cura sanitaria
+            (Art. 9 GDPR) e nell’esecuzione di compiti di interesse pubblico. I dati saranno trattati con strumenti
+            informatici dotati di misure di sicurezza adeguate (crittografia e controllo accessi) e conservati
+            secondo i tempi previsti dai massimari di scarto della documentazione sanitaria pubblica. Il personale
+            medico e amministrativo dell’AULSS 2, debitamente autorizzato, potrà accedere ai dati, mentre i fornitori
+            tecnologici opereranno in qualità di Responsabili del Trattamento. Non è prevista la diffusione dei dati
+            a terzi per scopi commerciali. L’utente può esercitare in ogni momento i diritti di accesso, rettifica,
+            integrazione e limitazione del trattamento (Artt. 15-22 GDPR) e ha il diritto di proporre reclamo al
+            Garante per la Protezione dei Dati Personali. Il conferimento dei dati è necessario per l’erogazione dei
+            servizi digitali offerti dall'app; il mancato conferimento comporterà l'impossibilità di usufruire delle
+            funzionalità di gestione del percorso di cura.
+          </p>
+          <p style="margin-top: 10px; font-size: 0.85rem; opacity: 0.9;">
+            I dati relativi al tuo diario emozionale salvati nell'app CSM vengono cancellati automaticamente se il tuo account
+            risulta inattivo per oltre <strong>3 mesi</strong> consecutivi. Puoi anche richiederne la cancellazione immediata
+            dalla sezione profilo in qualsiasi momento.
+          </p>
+          <div style="display:flex; gap:8px; margin-top: 16px; justify-content: flex-end;">
+            <button class="btn-secondary" (click)="declineConsent()">Non acconsento</button>
+            <button class="btn-primary" (click)="acceptConsent()">Accetto e continuo</button>
+          </div>
+        </div>
+      </div>
+    </ng-template>
+  </ion-modal>
+
 </ion-content>

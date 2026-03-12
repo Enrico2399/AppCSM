@@ -33,4 +33,8 @@ export const routes: Routes = [
     path: 'history',
     loadComponent: () => import('./pages/history/history.page').then( m => m.HistoryPage)
   },
+  {
+    path: 'privacy',
+    loadComponent: () => import('./pages/privacy/privacy.page').then( m => m.PrivacyPage)
+  },
 ];
