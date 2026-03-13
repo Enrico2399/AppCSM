@@ -10,7 +10,8 @@ import {
   query, 
   limitToLast,
   get,
-  remove
+  remove,
+  Unsubscribe
 } from 'firebase/database';
 import { getAuth, Auth, User } from 'firebase/auth';
 
@@ -128,8 +129,8 @@ export class FirebaseService {
     });
   }
 
-  listenToMoodHistory(userId: string, callback: (history: any) => void) {
-    onValue(ref(this.db, 'moodHistory/' + userId), (snapshot) => {
+  listenToMoodHistory(userId: string, callback: (history: any) => void): Unsubscribe {
+    return onValue(ref(this.db, 'moodHistory/' + userId), (snapshot) => {
       callback(snapshot.val());
     });
   }

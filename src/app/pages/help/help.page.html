@@ -61,7 +61,16 @@
     <div id="crisis-container">
       
       <!-- Generated Cards via Execute -->
-      <div class="crisis-section" *ngFor="let card of generatedCards" [innerHTML]="card.html">
+      <div class="crisis-card card-whatsapp" *ngIf="generatedPlan() && generatedPlan()!.mode === 'wa'">
+        <h2>📱 Contatto di Fiducia Pronto</h2>
+        <div class="message-preview">"{{ generatedPlan()!.sosText }}"</div>
+        <a [href]="'https://wa.me/' + generatedPlan()!.phone + '?text=' + encodeURI(generatedPlan()!.sosText)" target="_blank">WhatsApp</a>
+        <a [href]="'tel:' + generatedPlan()!.phone">Telefono</a>
+      </div>
+      <div class="crisis-card card-self" *ngIf="generatedPlan() && generatedPlan()!.mode === 'self'">
+        <h2>✨ Kit di Auto-Aiuto</h2>
+        <p>{{ generatedPlan()!.issueText }}</p>
+        <div class="resource-box">{{ generatedPlan()!.resource }}</div>
       </div>
 
       <!-- Static Crisis Info -->

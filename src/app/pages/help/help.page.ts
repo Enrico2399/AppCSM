@@ -1,8 +1,7 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { IonicModule } from '@ionic/angular';
-import { DomSanitizer, SafeHtml } from '@angular/platform-browser';
 import { addIcons } from 'ionicons';
 import { logoWhatsapp, call } from 'ionicons/icons';
 
@@ -17,10 +16,6 @@ interface Crisis {
   action: string;
   comments: Comment[];
   newComment?: string;
-}
-
-interface GeneratedCard {
-  html: SafeHtml;
 }
 
 @Component({
@@ -39,7 +34,9 @@ export class HelpPage {
   sosText: string = 'Ho bisogno di aiuto, per favore contattami.';
   comfortResource: string = '';
 
-  generatedCards: GeneratedCard[] = [];
+  // In help.page.ts — sostituisce generatedCards
+  generatedPlan = signal<{mode: 'wa' | 'self', phone: string, sosText: string, resource: string, issueText: string} | null>(null);
+
 
   crisisData: Crisis[] = [
     {
@@ -63,9 +60,6 @@ export class HelpPage {
     }
   ];
 
-  constructor(private sanitizer: DomSanitizer) {
-    addIcons({ logoWhatsapp, call });
-  }
 
   ionViewWillEnter() {
     const savedPhone = localStorage.getItem('sos_phone');
@@ -89,6 +83,10 @@ export class HelpPage {
     }
   }
 
+  encodeURI(text: string): string {
+    return encodeURIComponent(text);
+  }
+
   executePlan() {
     localStorage.setItem('sos_phone', this.trustPhone);
     let issueText = "Te stesso";
@@ -103,49 +101,12 @@ export class HelpPage {
       issueText = issueMap[this.selectedIssue] || this.selectedIssue;
     }
 
-    let rawHtml = '';
-
-    if (this.helpMode === 'wa') {
-      if (!this.trustPhone) {
-        alert("Inserisci un numero di telefono!");
-        return;
-      }
-      const text = encodeURIComponent(this.sosText);
-
-      rawHtml = `
-        <div class="crisis-card card-whatsapp">
-            <h2 class="title-whatsapp">📱 Contatto di Fiducia Pronto</h2>
-            <p>Ho preparato i canali di comunicazione per te.</p>
-            <div class="message-preview">
-                <small>Messaggio pronto:</small><br>
-                "${this.sosText}"
-            </div>
-            <div class="contact-actions">
-                <ion-button href="https://wa.me/${this.trustPhone}?text=${text}" target="_blank" expand="block" class="wa-btn" color="success">
-                    <ion-icon name="logo-whatsapp" slot="start"></ion-icon> WhatsApp
-                </ion-button>
-                <ion-button href="tel:${this.trustPhone}" expand="block" class="tel-btn" color="light">
-                    <ion-icon name="call" slot="start"></ion-icon> Telefono
-                </ion-button>
-            </div>
-        </div>
-      `;
-    } else {
-      const resource = this.comfortResource || "Respira profondamente. Tutto passerà.";
-      rawHtml = `
-        <div class="crisis-card card-self">
-            <h2 class="title-self">✨ Kit di Auto-Aiuto</h2>
-            <p><strong>Per:</strong> ${issueText}</p>
-            <div class="resource-box">
-                ${resource}
-            </div>
-        </div>
-      `;
+    if (this.helpMode === 'wa' && !this.trustPhone) {
+      alert("Inserisci un numero di telefono!");
+      return;
     }
 
-    this.generatedCards.unshift({
-      html: this.sanitizer.bypassSecurityTrustHtml(rawHtml)
-    });
+    this.generatedPlan.set({ mode: this.helpMode, phone: this.trustPhone, sosText: this.sosText, resource: this.comfortResource || "Respira profondamente. Tutto passerà.", issueText });
   }
 
 }

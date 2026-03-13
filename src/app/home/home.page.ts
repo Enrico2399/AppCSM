@@ -222,8 +222,7 @@ export class HomePage implements OnInit {
   isSeededTip(tip: string): boolean {
     const color = this.activeMood()?.key;
     if (!color) return false;
-    const defaults = (this.storageService as any).getDefaultTips?.(color) || [];
-    return defaults.includes(tip);
+    return this.storageService.getDefaultTips(color).includes(tip);
   }
 
   addTip() {

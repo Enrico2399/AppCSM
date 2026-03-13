@@ -1,8 +1,8 @@
 import { CommonModule } from '@angular/common';
-import { Component, OnInit, OnDestroy, inject, signal, effect } from '@angular/core';
+import { Component, OnDestroy, inject, signal, effect } from '@angular/core';
 import { AuthService } from '../../services/auth';
 import { Router } from '@angular/router';
-import { IonHeader, IonToolbar, IonTitle, IonButtons, IonButton, IonContent, IonFab, IonFabButton, IonIcon } from '@ionic/angular/standalone';
+import { AlertController, IonHeader, IonToolbar, IonTitle, IonButtons, IonButton, IonContent, IonFab, IonFabButton, IonIcon } from '@ionic/angular/standalone';
 import { addIcons } from 'ionicons';
 import { add } from 'ionicons/icons';
 import * as L from 'leaflet';
@@ -26,10 +26,11 @@ interface MapReport {
     IonButton, IonContent, IonFab, IonFabButton, IonIcon
   ]
 })
-export class MapPage implements OnInit, OnDestroy {
+export class MapPage implements OnDestroy {
   map!: L.Map;
   markerGroup = L.layerGroup();
   
+  private alertCtrl = inject(AlertController);
   public auth = inject(AuthService);
   private router = inject(Router);
 
@@ -52,8 +53,6 @@ export class MapPage implements OnInit, OnDestroy {
       }
     });
   }
-
-  ngOnInit() {}
 
   ionViewDidEnter() {
     this.initMap();
@@ -138,8 +137,43 @@ export class MapPage implements OnInit, OnDestroy {
     this.router.navigate(['/home']);
   }
 
-  aggiungiSegnalazione() {
-    console.log("Funzione per aggiungere segnalazione attivata");
+  // sostituire aggiungiSegnalazione():
+  async aggiungiSegnalazione() {
+    const alert = await this.alertCtrl.create({
+      header: 'Nuova Segnalazione',
+      inputs: [
+        { name: 'title', type: 'text', placeholder: 'Titolo' },
+        { name: 'description', type: 'text', placeholder: 'Descrizione' },
+        { name: 'category', type: 'radio', label: '🆘 Urgente', value: 'urgent' },
+        { name: 'category', type: 'radio', label: 'ℹ️ Info', value: 'info', checked: true },
+        { name: 'category', type: 'radio', label: '✅ Successo', value: 'success' }
+      ],
+      buttons: [
+        { text: 'Annulla', role: 'cancel' },
+        { text: 'Aggiungi', handler: (data) => {
+            const hint = document.createElement('div');
+            hint.id = 'map-hint';
+            hint.style.cssText = 'position:fixed;bottom:80px;left:50%;transform:translateX(-50%);background:rgba(0,0,0,0.75);color:white;padding:10px 20px;border-radius:20px;z-index:9999;font-size:0.9rem;';
+            hint.textContent = '📍 Tocca la mappa per posizionare la segnalazione';
+            document.body.appendChild(hint);
+
+            this.map.once('click', (e: L.LeafletMouseEvent) => {
+              document.getElementById('map-hint')?.remove();
+              const newReport: MapReport = {
+                id: Date.now().toString(),
+                lat: e.latlng.lat,
+                lng: e.latlng.lng,
+                title: data.title || 'Nuova segnalazione',
+                category: data.category || 'info',
+                description: data.description || ''
+              };
+              this.reports.update(r => [...r, newReport]);
+            });
+          }
+        }
+      ]
+    });
+    await alert.present();
   }
 
   ngOnDestroy() {
@@ -147,4 +181,4 @@ export class MapPage implements OnInit, OnDestroy {
       this.map.remove();
     }
   }
-}
+}

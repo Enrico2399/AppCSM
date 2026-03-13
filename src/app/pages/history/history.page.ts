@@ -1,4 +1,4 @@
-import { Component, OnInit, AfterViewInit, signal, computed, inject } from '@angular/core';
+import { Component, OnInit, AfterViewInit, OnDestroy, signal, computed, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { IonicModule } from '@ionic/angular';
 import { RouterModule } from '@angular/router';
@@ -31,7 +31,7 @@ interface MoodInfo {
   standalone: true,
   imports: [IonicModule, CommonModule, RouterModule]
 })
-export class HistoryPage implements OnInit, AfterViewInit {
+export class HistoryPage implements OnInit, AfterViewInit, OnDestroy {
   private firebaseService = inject(FirebaseService);
   private authService = inject(AuthService);
 
@@ -112,12 +112,19 @@ export class HistoryPage implements OnInit, AfterViewInit {
     return html;
   });
 
+  private unsubscribeMoodHistory: (() => void) | null = null;
+
   // Change to a method we can call on entry
   loadData() {
+    // Cancella listener precedente se esiste
+    if (this.unsubscribeMoodHistory) {
+      this.unsubscribeMoodHistory();
+      this.unsubscribeMoodHistory = null;
+    }
     this.isLoading.set(true);
     this.authService.user$.pipe(take(1)).subscribe(user => {
       if (user) {
-        this.firebaseService.listenToMoodHistory(user.uid, (data) => {
+        this.unsubscribeMoodHistory = this.firebaseService.listenToMoodHistory(user.uid, (data) => {
           if (data) {
             const logs: MoodLog[] = Object.values(data);
             logs.sort((a, b) => new Date(b.timestamp).getTime() - new Date(a.timestamp).getTime());
@@ -134,11 +141,7 @@ export class HistoryPage implements OnInit, AfterViewInit {
   }
 
   ngOnInit() {
-    this.loadData();
-
-    window.addEventListener('themeChanged', () => {
-      this.initChart();
-    });
+    window.addEventListener('themeChanged', () => this.initChart());
   }
 
   // Ionic lifecycle hook for refresh on entry
@@ -311,4 +314,10 @@ export class HistoryPage implements OnInit, AfterViewInit {
       }
     });
   }
+
+  ngOnDestroy() {
+  if (this.unsubscribeMoodHistory) {
+    this.unsubscribeMoodHistory();
+  }
+}
 }

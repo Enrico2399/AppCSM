@@ -37,7 +37,7 @@ export class StorageService {
     return saved ? JSON.parse(saved) : [];
   }
 
-  private getDefaultTips(color: string): string[] {
+  getDefaultTips(color: string): string[] {
     const defaultTips: Record<string, string[]> = {
       'rosso': [
         "Corri sul posto per 30 secondi per trasformare la rabbia in energia fisica.",
