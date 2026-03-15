@@ -1,13 +1,20 @@
-import { Component, signal, inject } from '@angular/core';
+import { Component, inject, signal } from '@angular/core';
+import { CommonModule } from '@angular/common';
+import { FormsModule } from '@angular/forms';
+import { IonicModule, NavController } from '@ionic/angular';
+import { Router } from '@angular/router';
 import { StorageService } from '../../services/storage/storage';
 import { PopupService } from '../../services/popup/popup.service';
 import { ProfileService } from '../../services/profile/profile.service';
 import { AnonymousSessionService } from '../../services/anonymous-session/anonymous-session.service';
-import { CommonModule } from '@angular/common';
-import { FormsModule } from '@angular/forms';
-import { IonicModule } from '@ionic/angular';
+import { FirebaseService } from '../../services/firebase/firebase';
+import { signOut } from 'firebase/auth';
+import { doc, setDoc, deleteDoc, collection, getDocs, query, orderBy, serverTimestamp } from 'firebase/firestore';
+import { ref, get, set, remove } from 'firebase/database';
 import { addIcons } from 'ionicons';
-import { logoWhatsapp, call } from 'ionicons/icons';
+import { logoWhatsapp, call, exit } from 'ionicons/icons';
+
+addIcons({ logoWhatsapp, call, exit });
 
 interface Comment {
   text: string;
@@ -72,6 +79,8 @@ export class HelpPage {
   public popupService = inject(PopupService);
   private profileService = inject(ProfileService);
   private anonymousSessionService = inject(AnonymousSessionService);
+  private navCtrl = inject(NavController);
+  private firebaseService = inject(FirebaseService);
 
   ionViewWillEnter() {
     // Load from localStorage (old method)
@@ -111,11 +120,34 @@ export class HelpPage {
     if (session && session.data.helpComponents) {
       this.addedComponents.set(session.data.helpComponents);
     }
+    // Also load from Firebase for logged-in users
+    this.loadComponentsFromFirebase();
+  }
+
+  private async loadComponentsFromFirebase() {
+    try {
+      const user = this.firebaseService.auth.currentUser;
+      if (!user || user.isAnonymous) return;
+      
+      const componentsRef = ref(this.firebaseService.getDatabase(), `users/${user.uid}/helpComponents`);
+      const snapshot = await get(componentsRef);
+      
+      if (snapshot.exists()) {
+        const data = snapshot.val();
+        const components = Object.values(data).sort((a: any, b: any) => 
+          new Date(b.timestamp).getTime() - new Date(a.timestamp).getTime()
+        );
+        this.addedComponents.set(components);
+      }
+    } catch (error) {
+      console.error('Error loading components from Firebase:', error);
+    }
   }
 
   addComponent(component: any) {
     const current = this.addedComponents();
-    const newComponents = [...current, { ...component, id: Date.now(), timestamp: new Date().toISOString() }];
+    const newComponent = { ...component, id: Date.now(), timestamp: new Date().toISOString() };
+    const newComponents = [...current, newComponent];
     this.addedComponents.set(newComponents);
     
     // Save to anonymous session
@@ -125,6 +157,9 @@ export class HelpPage {
         helpComponents: newComponents
       });
     }
+    
+    // Save to Firebase for logged-in users
+    this.saveComponentToFirebase(newComponent);
   }
 
   deleteComponent(componentId: number) {
@@ -139,6 +174,33 @@ export class HelpPage {
         helpComponents: newComponents
       });
     }
+    
+    // Delete from Firebase for logged-in users
+    this.deleteComponentFromFirebase(componentId);
+  }
+
+  private async saveComponentToFirebase(component: any) {
+    try {
+      const user = this.firebaseService.auth.currentUser;
+      if (!user || user.isAnonymous) return;
+      
+      const componentRef = ref(this.firebaseService.getDatabase(), `users/${user.uid}/helpComponents/${component.id}`);
+      await set(componentRef, component);
+    } catch (error) {
+      console.error('Error saving component to Firebase:', error);
+    }
+  }
+
+  private async deleteComponentFromFirebase(componentId: number) {
+    try {
+      const user = this.firebaseService.auth.currentUser;
+      if (!user || user.isAnonymous) return;
+      
+      const componentRef = ref(this.firebaseService.getDatabase(), `users/${user.uid}/helpComponents/${componentId}`);
+      await remove(componentRef);
+    } catch (error) {
+      console.error('Error deleting component from Firebase:', error);
+    }
   }
 
   callNumber(num: string) {
@@ -149,6 +211,15 @@ export class HelpPage {
     const formattedPhone = phone.replace(/\D/g, '');
     const encodedMessage = encodeURIComponent(message);
     window.open(`https://wa.me/${formattedPhone}?text=${encodedMessage}`, '_blank');
+  }
+
+  async logout() {
+    try {
+      await signOut(this.firebaseService.auth);
+      this.navCtrl.navigateRoot('/home');
+    } catch (error) {
+      console.error('Logout error:', error);
+    }
   }
 
   addLike(crisis: Crisis, comment: Comment) {

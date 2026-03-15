@@ -16,13 +16,12 @@ ion-content {
   text-align: center;
   margin-bottom: 40px;
   box-shadow: 0 10px 30px rgba(255, 77, 77, 0.2);
-  
   h1 { margin: 0 0 10px 0; font-size: 2rem; }
 }
 
 .delete-btn {
-  background: rgba(255, 255, 255, 0.1);
-  border: 1px solid rgba(255, 255, 255, 0.2);
+  background: rgba(255, 0, 0, 0.15);
+  border: 1px solid rgba(255, 0, 0, 0.3);
   border-radius: 50%;
   width: 30px;
   height: 30px;
@@ -31,38 +30,46 @@ ion-content {
   justify-content: center;
   cursor: pointer;
   transition: all 0.3s ease;
-  
+  position: absolute;
+  top: 10px;
+  right: 10px;
   &:hover {
-    background: rgba(255, 0, 0, 0.2);
-    border-color: rgba(255, 0, 0, 0.5);
+    background: rgba(255, 0, 0, 0.3);
+    border-color: rgba(255, 0, 0, 0.6);
   }
-  
   ion-icon {
-    color: white;
+    color: #dc3545;
     font-size: 16px;
   }
 }
 
-// Light mode styles for delete button
 .light-theme .delete-btn {
   background: rgba(255, 0, 0, 0.1);
-  border: 1px solid rgba(255, 0, 0, 0.3);
-  
-  &:hover {
-    background: rgba(255, 0, 0, 0.2);
-    border-color: rgba(255, 0, 0, 0.5);
+  border-color: rgba(255, 0, 0, 0.4);
+}
+
+@media (max-width: 768px) {
+  .delete-btn {
+    top: 8px;
+    right: 8px;
+    width: 28px;
+    height: 28px;
+    ion-icon { font-size: 14px; }
   }
-  
-  ion-icon {
-    color: #dc3545;
+  .action-buttons button {
+    padding: 10px;
+    ion-icon { font-size: 18px; }
   }
+}
+
+.plan-item {
+  position: relative;
 }
 
 .action-buttons {
   display: flex;
   gap: 10px;
   margin-top: 15px;
-  
   button {
     flex: 1;
     padding: 8px 12px;
@@ -72,12 +79,9 @@ ion-content {
     display: flex;
     align-items: center;
     justify-content: center;
-    gap: 6px;
-    font-size: 0.9rem;
     transition: all 0.3s ease;
-    
     ion-icon {
-      font-size: 16px;
+      font-size: 20px;
     }
   }
 }
@@ -85,19 +89,13 @@ ion-content {
 .btn-whatsapp {
   background: #25D366;
   color: white;
-  
-  &:hover {
-    background: #128C7E;
-  }
+  &:hover { background: #128C7E; }
 }
 
 .btn-phone {
   background: #007bff;
   color: white;
-  
-  &:hover {
-    background: #0056b3;
-  }
+  &:hover { background: #0056b3; }
 }
 
 .num-list { 

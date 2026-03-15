@@ -62,7 +62,7 @@
       
       <!-- Generated Cards via Execute -->
       <div class="crisis-card card-whatsapp" *ngIf="generatedPlan() && generatedPlan()!.mode === 'wa'">
-        <h2>📱 Contatto di Fiducia Pronto</h2>
+        <h2> Contatto di Fiducia Pronto</h2>
         <div class="message-preview">"{{ generatedPlan()!.sosText }}"</div>
         
         <div class="contact-buttons">
@@ -105,12 +105,23 @@
                   {{ plan.mode === 'wa' ? '📱 Contatto Diretto' : '📖 Auto-Aiuto' }}
                 </span>
                 <span class="plan-date">{{ formatDate(plan.createdAt) }}</span>
+                <button class="delete-btn" (click)="deletePlan(plan.id)" aria-label="Elimina piano">
+                  <ion-icon name="close-outline"></ion-icon>
+                </button>
               </div>
               <div class="plan-content">
                 <p><strong>Condizione:</strong> {{ plan.issueText }}</p>
                 <div *ngIf="plan.mode === 'wa' && plan.phone">
                   <p><strong>Contatto:</strong> {{ plan.phone }}</p>
                   <p><strong>Messaggio:</strong> "{{ plan.sosText }}"</p>
+                  <div class="action-buttons">
+                    <button class="btn-whatsapp" (click)="openWhatsApp(plan.phone || '', plan.sosText || '')">
+                      <ion-icon name="logo-whatsapp"></ion-icon>
+                    </button>
+                    <button class="btn-phone" (click)="callNumber(plan.phone || '')">
+                      <ion-icon name="call"></ion-icon>
+                    </button>
+                  </div>
                 </div>
                 <div *ngIf="plan.mode === 'self' && plan.resource">
                   <p><strong>Risorsa:</strong> {{ plan.resource }}</p>
@@ -152,11 +163,9 @@
                     <div class="action-buttons">
                       <button class="btn-whatsapp" (click)="openWhatsApp(component.data.phone, component.data.sosText)">
                         <ion-icon name="logo-whatsapp"></ion-icon>
-                        WhatsApp
                       </button>
                       <button class="btn-phone" (click)="callNumber(component.data.phone)">
                         <ion-icon name="call"></ion-icon>
-                        Telefono
                       </button>
                     </div>
                   </div>
@@ -201,3 +210,10 @@
 
   </div>
 </ion-content>
+
+<!-- Logout FAB Button -->
+<ion-fab vertical="bottom" horizontal="end" slot="fixed">
+  <ion-fab-button color="danger" (click)="logout()" aria-label="Logout">
+    <ion-icon name="exit"></ion-icon>
+  </ion-fab-button>
+</ion-fab>

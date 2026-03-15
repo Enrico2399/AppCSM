@@ -23,6 +23,10 @@ export class FirebaseService {
   private db: Database;
   public auth: Auth;
 
+  getDatabase(): Database {
+    return this.db;
+  }
+
   constructor() {
     const firebaseConfig = {
       apiKey: "AIzaSyBiL7kyKVAmujIm3lJ_BZ646YVLVm1QQXY",
