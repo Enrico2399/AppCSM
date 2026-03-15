@@ -15,9 +15,10 @@ import { logoGoogle, logOutOutline, closeOutline } from 'ionicons/icons';
 import { StorageService } from '../services/storage/storage';
 import { AuthService } from '../services/auth';
 import { FirebaseService } from '../services/firebase/firebase';
-import { ConfirmationResult } from 'firebase/auth';
+import { ConfirmationResult, User } from 'firebase/auth';
 import { take, firstValueFrom } from 'rxjs';
 import { PopupService } from '../services/popup/popup.service';
+import { AnonymousSessionService } from '../services/anonymous-session/anonymous-session.service';
 
 @Component({
   selector: 'app-home',
@@ -73,7 +74,8 @@ export class HomePage implements OnInit {
     private storageService: StorageService,
     public authService: AuthService,
     private firebaseService: FirebaseService,
-    public popupService: PopupService
+    public popupService: PopupService,
+    private anonymousSessionService: AnonymousSessionService
   ) {
     this.moods.set(this.moodService.getMoods());
     addIcons({ logoGoogle, logOutOutline, closeOutline });
@@ -91,12 +93,13 @@ export class HomePage implements OnInit {
       this.isLightMode.set(document.body.classList.contains('light-theme'));
     });
 
-    this.authService.user$.pipe(take(1)).subscribe(user => {
+    this.authService.user$.pipe(take(1)).subscribe((user: User | null) => {
       if (!user) {
         this.hasConsent.set(null);
+        // Don't show welcome popup here - only after actual anonymous login
         return;
       }
-      this.firebaseService.getUserConsent(user.uid).then(consent => {
+      this.firebaseService.getUserConsent(user.uid).then((consent: boolean) => {
         this.hasConsent.set(consent);
         if (!consent) {
           this.showConsentModal.set(true);
@@ -135,7 +138,7 @@ export class HomePage implements OnInit {
       return;
     }
 
-    this.authService.user$.pipe(take(1)).subscribe(user => {
+    this.authService.user$.pipe(take(1)).subscribe((user: User | null) => {
       if (user) {
         this.firebaseService.logMood(user.uid, mood.key, mood.title, mood.icon, note);
         this.showStatus("Registrato", "Stato d'animo registrato nella tua cronologia!");
@@ -154,7 +157,7 @@ export class HomePage implements OnInit {
     const mood = this.activeMood();
     if (!mood) return;
 
-    this.authService.user$.pipe(take(1)).subscribe(user => {
+    this.authService.user$.pipe(take(1)).subscribe((user: User | null) => {
       if (user) {
         this.firebaseService.logMood(user.uid, mood.key, mood.title, mood.icon, "");
         this.showStatus("Registrato", "Emozione registrata istantaneamente!");
@@ -235,7 +238,7 @@ export class HomePage implements OnInit {
       if (!user) {
         return;
       }
-      await this.firebaseService.setUserConsent(user.uid, true);
+      await this.firebaseService.setUserConsent((user as any).uid, true);
       this.hasConsent.set(true);
       this.showConsentModal.set(false);
     } catch (err) {
@@ -287,9 +290,37 @@ export class HomePage implements OnInit {
   async handleAnonymousLogin() {
     try {
       await this.authService.loginAnonymously();
+      // Create or load anonymous session
+      const session = this.anonymousSessionService.loadSession();
+      if (!session) {
+        this.anonymousSessionService.createSession();
+      }
+      // Check if should show welcome popup
+      if (this.anonymousSessionService.shouldShowWelcome()) {
+        this.showAnonymousWelcome();
+      }
     } catch (err: any) {
       this.showStatus("Errore Accesso", err.message);
     }
+  }
+
+  handleAnonymousSession() {
+    const session = this.anonymousSessionService.loadSession();
+    if (!session) {
+      this.anonymousSessionService.createSession();
+    }
+    // Check if should show welcome popup
+    if (this.anonymousSessionService.shouldShowWelcome()) {
+      this.showAnonymousWelcome();
+    }
+  }
+
+  showAnonymousWelcome() {
+    this.popupService.showStatus(
+      "Sessione Anonima", 
+      "I tuoi dati saranno cancellati dopo 24 ore, poiché sei in anonimo."
+    );
+    this.anonymousSessionService.markWelcomeSeen();
   }
 
   async handlePhoneLogin() {

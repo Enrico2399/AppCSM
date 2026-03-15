@@ -61,6 +61,9 @@ export class FirebaseService {
     // Consenso privacy dell'utente
     tasks.push(remove(ref(this.db, `consents/${userId}`)));
 
+    // Profilo archetipo
+    tasks.push(remove(ref(this.db, `archetypeProfiles/${userId}`)));
+
     await Promise.all(tasks);
   }
 
@@ -171,6 +174,89 @@ export class FirebaseService {
     const reportsRef = ref(this.db, 'mapReports');
     return onValue(reportsRef, (snapshot) => {
       callback(snapshot.val());
+    });
+  }
+
+  // Archetype Quiz Methods
+  async saveArchetypeProfile(userId: string, profile: any): Promise<void> {
+    await set(ref(this.db, `archetypeProfiles/${userId}`), {
+      ...profile,
+      updatedAt: new Date().toISOString()
+    });
+  }
+
+  async getArchetypeProfile(userId: string): Promise<any> {
+    const snapshot = await get(ref(this.db, `archetypeProfiles/${userId}`));
+    return snapshot.val();
+  }
+
+  async updateUserProfile(userId: string, profileData: any): Promise<void> {
+    const userRef = ref(this.db, `users/${userId}`);
+    const snapshot = await get(userRef);
+    const existing = snapshot.val() || {};
+
+    const updatePayload = {
+      ...existing,
+      ...profileData,
+      updatedAt: new Date().toISOString()
+    };
+
+    await set(userRef, updatePayload);
+  }
+
+  async saveGroundingSession(session: any): Promise<void> {
+    const sessionRef = ref(this.db, `groundingSessions/${session.id}`);
+    await set(sessionRef, session);
+  }
+
+  // Privacy Service Methods
+  async setPrivacyConsent(userId: string, consent: any): Promise<void> {
+    await set(ref(this.db, `privacyConsents/${userId}`), {
+      ...consent,
+      updatedAt: new Date().toISOString()
+    });
+  }
+
+  async getPrivacyConsent(userId: string): Promise<any> {
+    const snapshot = await get(ref(this.db, `privacyConsents/${userId}`));
+    return snapshot.val();
+  }
+
+  async getUserProfile(userId: string): Promise<any> {
+    const snapshot = await get(ref(this.db, `users/${userId}`));
+    return snapshot.val();
+  }
+
+  async saveUserProfile(userId: string, profileData: any): Promise<void> {
+    const userRef = ref(this.db, `users/${userId}`);
+    const updatePayload = {
+      ...profileData,
+      updatedAt: new Date().toISOString()
+    };
+
+    await set(userRef, updatePayload);
+  }
+
+  // Error Logging Methods
+  async logError(errorLog: any): Promise<void> {
+    const errorRef = push(ref(this.db, 'errorLogs'));
+    await set(errorRef, errorLog);
+  }
+
+  async logUserAction(actionLog: any): Promise<void> {
+    const actionRef = push(ref(this.db, 'userActions'));
+    await set(actionRef, actionLog);
+  }
+
+  // Performance Monitoring
+  async logPerformance(metric: string, value: number, context: any = {}) {
+    const perfRef = push(ref(this.db, 'performanceMetrics'));
+    await set(perfRef, {
+      metric,
+      value,
+      context,
+      timestamp: new Date().toISOString(),
+      userId: this.auth.currentUser?.uid || 'anonymous'
     });
   }
 }

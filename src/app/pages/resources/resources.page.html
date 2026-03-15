@@ -1,0 +1,209 @@
+<ion-header [translucent]="true">
+  <ion-toolbar>
+    <ion-buttons slot="start">
+      <ion-back-button defaultHref="/home"></ion-back-button>
+    </ion-buttons>
+    <ion-title>Risorse e Aiuto</ion-title>
+    <ion-buttons slot="end">
+      <ion-button (click)="refreshLocation()" fill="clear">
+        <ion-icon name="refresh-outline"></ion-icon>
+      </ion-button>
+    </ion-buttons>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content [fullscreen]="true" class="ion-padding">
+  <!-- Search and Filters -->
+  <div class="search-filters">
+    <ion-searchbar
+      [(ngModel)]="searchTerm"
+      (ionInput)="onSearchChange($event)"
+      placeholder="Cerca risorse..."
+      animated="true">
+    </ion-searchbar>
+
+    <div class="filter-row">
+      <ion-select 
+        [(ngModel)]="selectedType" 
+        (ionChange)="onTypeChange($event)"
+        placeholder="Tipo"
+        class="filter-select">
+        <ion-select-option value="all">Tutti i tipi</ion-select-option>
+        <ion-select-option value="hotline">Numero Verde</ion-select-option>
+        <ion-select-option value="center">Centro</ion-select-option>
+        <ion-select-option value="website">Sito Web</ion-select-option>
+        <ion-select-option value="app">App</ion-select-option>
+      </ion-select>
+
+      <ion-select 
+        [(ngModel)]="selectedRegion" 
+        (ionChange)="onRegionChange($event)"
+        placeholder="Regione"
+        class="filter-select">
+        <ion-select-option value="all">Tutte le regioni</ion-select-option>
+        <ion-select-option *ngFor="let region of getUniqueRegions()" [value]="region">
+          {{region === 'all' ? 'Tutte le regioni' : region}}
+        </ion-select-option>
+      </ion-select>
+    </div>
+  </div>
+
+  <!-- Location Status -->
+  <div *ngIf="userPosition()" class="location-status">
+    <ion-icon name="location-outline"></ion-icon>
+    <span>Risorse ordinate per distanza</span>
+  </div>
+
+  <!-- Loading State -->
+  <div *ngIf="loading()" class="loading-container">
+    <ion-spinner name="crescent"></ion-spinner>
+    <p>Caricamento risorse...</p>
+  </div>
+
+  <!-- Resources List -->
+  <div *ngIf="!loading()" class="resources-list">
+    <ion-card 
+      *ngFor="let resource of filteredResources()" 
+      class="resource-card">
+      
+      <ion-card-header>
+        <div class="resource-header">
+          <div class="resource-info">
+            <ion-icon 
+              [name]="getTypeIcon(resource.type)"
+              [color]="getTypeColor(resource.type)"
+              class="resource-type-icon">
+            </ion-icon>
+            <div class="resource-title-section">
+              <ion-card-title>{{resource.name}}</ion-card-title>
+              <ion-card-subtitle>{{resource.region}}</ion-card-subtitle>
+            </div>
+          </div>
+          
+          <div class="resource-meta">
+            <ion-chip 
+              [color]="getTypeColor(resource.type)"
+              outline="true">
+              {{resource.type === 'hotline' ? 'Numero Verde' : 
+                 resource.type === 'center' ? 'Centro' :
+                 resource.type === 'website' ? 'Sito Web' : 'App'}}
+            </ion-chip>
+            
+            <span *ngIf="resource.distance !== undefined" class="distance">
+              {{formatDistance(resource.distance)}}
+            </span>
+          </div>
+        </div>
+      </ion-card-header>
+
+      <ion-card-content>
+        <p *ngIf="resource.description" class="resource-description">
+          {{resource.description}}
+        </p>
+
+        <div class="resource-details">
+          <div class="detail-row" *ngIf="resource.hours">
+            <ion-icon name="time-outline"></ion-icon>
+            <span>{{resource.hours}}</span>
+          </div>
+
+          <div class="detail-row" *ngIf="resource.address">
+            <ion-icon name="location-outline"></ion-icon>
+            <span>{{resource.address}}</span>
+          </div>
+        </div>
+
+        <div class="services-tags">
+          <ion-chip 
+            *ngFor="let service of resource.services" 
+            color="light" 
+            class="service-chip">
+            {{service}}
+          </ion-chip>
+        </div>
+
+        <div class="action-buttons">
+          <ion-button 
+            *ngIf="resource.phone"
+            fill="outline"
+            size="small"
+            (click)="callPhone(resource.phone)"
+            color="danger">
+            <ion-icon name="call-outline" slot="start"></ion-icon>
+            Chiama
+          </ion-button>
+
+          <ion-button 
+            *ngIf="resource.website"
+            fill="outline"
+            size="small"
+            (click)="openWebsite(resource.website)"
+            color="secondary">
+            <ion-icon name="globe-outline" slot="start"></ion-icon>
+            Sito Web
+          </ion-button>
+
+          <ion-button 
+            *ngIf="resource.email"
+            fill="outline"
+            size="small"
+            (click)="openEmail(resource.email)"
+            color="tertiary">
+            <ion-icon name="mail-outline" slot="start"></ion-icon>
+            Email
+          </ion-button>
+
+          <ion-button 
+            *ngIf="resource.coordinates || resource.address"
+            fill="outline"
+            size="small"
+            (click)="openMaps(resource)"
+            color="primary">
+            <ion-icon name="map-outline" slot="start"></ion-icon>
+            Mappa
+          </ion-button>
+        </div>
+      </ion-card-content>
+    </ion-card>
+
+    <!-- Empty State -->
+    <div *ngIf="filteredResources().length === 0" class="empty-state">
+      <ion-icon name="search-outline" class="empty-icon"></ion-icon>
+      <h3>Nessuna risorsa trovata</h3>
+      <p>Prova a modificare i filtri o i termini di ricerca</p>
+    </div>
+  </div>
+
+  <!-- Emergency Section -->
+  <ion-card class="emergency-card">
+    <ion-card-header>
+      <ion-card-title color="danger">
+        <ion-icon name="warning-outline" slot="start"></ion-icon>
+        Emergenze
+      </ion-card-title>
+    </ion-card-header>
+    <ion-card-content>
+      <p>In caso di emergenza psicologica immediata:</p>
+      <div class="emergency-actions">
+        <ion-button 
+          expand="block" 
+          color="danger"
+          (click)="callPhone('112')"
+          class="emergency-btn">
+          <ion-icon name="call-outline" slot="start"></ion-icon>
+          Chiama 112 - Emergenze
+        </ion-button>
+        
+        <ion-button 
+          expand="block" 
+          fill="outline"
+          color="danger"
+          (click)="callPhone('199 284 284')"
+          class="emergency-btn">
+          <ion-icon name="heart-outline" slot="start"></ion-icon>
+          Telefono Amico Italia
+        </ion-button>
+      </div>
+    </ion-card-content>
+  </ion-card>
+</ion-content>

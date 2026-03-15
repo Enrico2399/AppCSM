@@ -1,0 +1,126 @@
+ion-content {
+  --background: var(--bg-dark);
+  --color: var(--text-light);
+}
+
+.container {
+  max-width: 800px;
+  margin: 100px auto 40px auto;
+  padding: 20px;
+}
+
+.emergency-banner {
+  background: linear-gradient(45deg, #8b0000, #ff4d4d);
+  padding: 30px;
+  border-radius: 20px;
+  text-align: center;
+  margin-bottom: 40px;
+  box-shadow: 0 10px 30px rgba(255, 77, 77, 0.2);
+  
+  h1 { margin: 0 0 10px 0; font-size: 2rem; }
+}
+
+.delete-btn {
+  background: rgba(255, 255, 255, 0.1);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  border-radius: 50%;
+  width: 30px;
+  height: 30px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  
+  &:hover {
+    background: rgba(255, 0, 0, 0.2);
+    border-color: rgba(255, 0, 0, 0.5);
+  }
+  
+  ion-icon {
+    color: white;
+    font-size: 16px;
+  }
+}
+
+// Light mode styles for delete button
+.light-theme .delete-btn {
+  background: rgba(255, 0, 0, 0.1);
+  border: 1px solid rgba(255, 0, 0, 0.3);
+  
+  &:hover {
+    background: rgba(255, 0, 0, 0.2);
+    border-color: rgba(255, 0, 0, 0.5);
+  }
+  
+  ion-icon {
+    color: #dc3545;
+  }
+}
+
+.action-buttons {
+  display: flex;
+  gap: 10px;
+  margin-top: 15px;
+  
+  button {
+    flex: 1;
+    padding: 8px 12px;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    font-size: 0.9rem;
+    transition: all 0.3s ease;
+    
+    ion-icon {
+      font-size: 16px;
+    }
+  }
+}
+
+.btn-whatsapp {
+  background: #25D366;
+  color: white;
+  
+  &:hover {
+    background: #128C7E;
+  }
+}
+
+.btn-phone {
+  background: #007bff;
+  color: white;
+  
+  &:hover {
+    background: #0056b3;
+  }
+}
+
+.num-list { 
+  display: flex; 
+  justify-content: center; 
+  gap: 20px; 
+  flex-wrap: wrap; 
+}
+
+.num-item { 
+  background: white; 
+  color: black; 
+  padding: 10px 20px; 
+  border-radius: 50px; 
+  font-weight: bold; 
+  font-size: 1.2rem; 
+  cursor: pointer;
+}
+
+#wa-section, #self-section { animation: fadeIn 0.4s; }
+
+@keyframes fadeIn { from {opacity: 0;} to {opacity: 1;} }
+@keyframes slideIn {
+  from { opacity: 0; transform: translateY(20px); }
+  to { opacity: 1; transform: translateY(0); }
+}

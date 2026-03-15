@@ -1,0 +1,321 @@
+.search-filters {
+  margin-bottom: 20px;
+}
+
+.filter-row {
+  display: flex;
+  gap: 12px;
+  margin-top: 16px;
+}
+
+.filter-select {
+  flex: 1;
+}
+
+.location-status {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background: var(--ion-color-light);
+  border-radius: 8px;
+  padding: 12px;
+  margin-bottom: 16px;
+  color: var(--ion-color-medium);
+  font-size: 0.9rem;
+}
+
+.location-status ion-icon {
+  color: var(--ion-color-success);
+}
+
+.loading-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  height: 200px;
+  gap: 16px;
+}
+
+.resources-list {
+  margin-bottom: 20px;
+}
+
+.resource-card {
+  margin-bottom: 16px;
+  border-radius: 12px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  transition: all 0.3s ease;
+}
+
+.resource-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.15);
+}
+
+.resource-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 16px;
+}
+
+.resource-info {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  flex: 1;
+}
+
+.resource-type-icon {
+  font-size: 1.5rem;
+  margin-top: 4px;
+}
+
+.resource-title-section {
+  flex: 1;
+}
+
+.resource-title-section ion-card-title {
+  font-size: 1.1rem;
+  line-height: 1.3;
+  margin-bottom: 4px;
+}
+
+.resource-title-section ion-card-subtitle {
+  font-size: 0.9rem;
+  color: var(--ion-color-medium);
+}
+
+.resource-meta {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 8px;
+}
+
+.distance {
+  font-size: 0.8rem;
+  color: var(--ion-color-primary);
+  font-weight: 600;
+  background: var(--ion-color-light);
+  padding: 4px 8px;
+  border-radius: 12px;
+}
+
+.resource-description {
+  margin-bottom: 16px;
+  line-height: 1.5;
+  color: var(--ion-color-medium);
+}
+
+.resource-details {
+  margin-bottom: 16px;
+}
+
+.detail-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 8px;
+  font-size: 0.9rem;
+  color: var(--ion-color-medium);
+}
+
+.detail-row ion-icon {
+  color: var(--ion-color-primary);
+  font-size: 1rem;
+}
+
+.services-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin-bottom: 16px;
+}
+
+.service-chip {
+  --background: var(--ion-color-light-tint);
+  --color: var(--ion-color-dark);
+  font-size: 0.8rem;
+  height: 28px;
+}
+
+.action-buttons {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.action-buttons ion-button {
+  flex: 1;
+  min-width: 100px;
+}
+
+.empty-state {
+  text-align: center;
+  padding: 60px 20px;
+  color: var(--ion-color-medium);
+}
+
+.empty-icon {
+  font-size: 4rem;
+  margin-bottom: 16px;
+  opacity: 0.5;
+}
+
+.empty-state h3 {
+  margin-bottom: 8px;
+  color: var(--ion-color-dark);
+}
+
+.emergency-card {
+  background: linear-gradient(135deg, #fff5f5 0%, #ffe0e0 100%);
+  border: 2px solid var(--ion-color-danger);
+  border-radius: 12px;
+  margin-top: 24px;
+}
+
+.emergency-card ion-card-title {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-weight: 600;
+}
+
+.emergency-actions {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.emergency-btn {
+  height: 50px;
+  font-weight: 600;
+}
+
+.emergency-btn ion-icon {
+  font-size: 1.2rem;
+}
+
+// Dark mode adjustments
+@media (prefers-color-scheme: dark) {
+  .location-status {
+    background: var(--ion-color-dark-tint);
+  }
+  
+  .distance {
+    background: var(--ion-color-dark-tint);
+  }
+  
+  .service-chip {
+    --background: var(--ion-color-dark-tint);
+    --color: var(--ion-color-light);
+  }
+  
+  .emergency-card {
+    background: linear-gradient(135deg, #2a1a1a 0%, #3d1a1a 100%);
+  }
+}
+
+// Responsive design
+@media (max-width: 768px) {
+  .filter-row {
+    flex-direction: column;
+    gap: 8px;
+  }
+  
+  .resource-header {
+    flex-direction: column;
+    gap: 12px;
+  }
+  
+  .resource-info {
+    width: 100%;
+  }
+  
+  .resource-meta {
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+    width: 100%;
+  }
+  
+  .action-buttons {
+    flex-direction: column;
+  }
+  
+  .action-buttons ion-button {
+    width: 100%;
+  }
+  
+  .emergency-actions {
+    gap: 8px;
+  }
+}
+
+// Animation for cards
+.resource-card {
+  animation: slideInUp 0.4s ease-out;
+}
+
+@keyframes slideInUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+// Focus states for accessibility
+.filter-select:focus,
+ion-searchbar:focus-within {
+  outline: 2px solid var(--ion-color-primary);
+  outline-offset: 2px;
+}
+
+.action-buttons ion-button:focus {
+  outline: 2px solid var(--ion-color-primary);
+  outline-offset: 2px;
+}
+
+// High contrast mode support
+@media (prefers-contrast: high) {
+  .resource-card {
+    border: 2px solid var(--ion-color-dark);
+  }
+  
+  .emergency-card {
+    background: #fff;
+    border-width: 3px;
+  }
+}
+
+// Reduced motion support
+@media (prefers-reduced-motion: reduce) {
+  .resource-card {
+    animation: none;
+  }
+  
+  .resource-card:hover {
+    transform: none;
+  }
+}
+
+// Print styles
+@media print {
+  .search-filters,
+  .location-status,
+  .action-buttons {
+    display: none !important;
+  }
+  
+  .resource-card {
+    break-inside: avoid;
+    box-shadow: none;
+    border: 1px solid #ccc;
+  }
+}

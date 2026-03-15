@@ -1,0 +1,110 @@
+.crisis-section { margin-bottom: 30px; }
+
+.crisis-card {
+  background: var(--card-bg);
+  border-radius: 20px;
+  padding: 25px;
+  border-left: 5px solid var(--danger);
+  animation: slideIn 0.5s ease-out;
+
+  h2 { margin-top: 0; color: var(--danger); }
+  p { margin-bottom: 10px; }
+
+  .title-whatsapp { color: #25D366 !important; margin-top: 0; }
+  .title-self { color: #fff !important; margin-top: 0; }
+
+  &.card-whatsapp { border-left-color: #25D366; }
+  &.card-self { border-left-color: #fff; }
+
+  .message-preview {
+    background: rgba(255, 255, 255, 0.05);
+    padding: 15px;
+    border-radius: 10px;
+    margin-bottom: 20px;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    text-align: left;
+    small { opacity: 0.6; display: block; margin-bottom: 5px; }
+  }
+
+  .contact-actions { display: flex; gap: 10px; margin-top: 15px; }
+
+  .btn-whatsapp {
+    flex: 1;
+    background: linear-gradient(135deg, #25D366, #128C7E) !important;
+    color: white !important;
+    border: none !important;
+  }
+
+  .btn-phone {
+    flex: 1;
+    background: linear-gradient(135deg, #f4f4f4, #dcdcdc) !important;
+    color: black !important;
+    border: none !important;
+  }
+
+  .resource-box {
+    background: rgba(255, 255, 255, 0.1);
+    padding: 25px;
+    border-radius: 15px;
+    font-style: italic;
+    border: 1px dashed rgba(255, 255, 255, 0.3);
+    color: #fff;
+    font-size: 1.3rem;
+    text-align: center;
+  }
+
+  /* White Mode fixes */
+  :host-context(.light-theme) & {
+    .title-self { color: #555 !important; }
+    .resource-box { color: #555 !important; border-color: #555 !important; background: rgba(0,0,0,0.05); }
+    &.card-self { border-left-color: #555; }
+  }
+}
+
+.community-suggestions {
+  margin-top: 20px;
+  background: rgba(0,0,0,0.3);
+  border-radius: 15px;
+  padding: 15px;
+}
+
+.suggestion-item {
+  display: flex; 
+  justify-content: space-between; 
+  align-items: center;
+  padding: 10px; 
+  border-bottom: 1px solid rgba(255,255,255,0.05);
+}
+
+.vote-section { 
+  display: flex; 
+  align-items: center; 
+  gap: 10px; 
+}
+
+.vote-btn {
+  background: rgba(255,255,255,0.1); 
+  border: none; 
+  color: white;
+  padding: 5px 10px; 
+  border-radius: 5px; 
+  cursor: pointer;
+}
+
+.add-comment { 
+  display: flex; 
+  gap: 10px; 
+  margin-top: 15px; 
+  
+  input { margin: 0; flex-grow: 1; text-align: left; }
+}
+
+.btn-send { 
+  background: white; 
+  color: black; 
+  border: none; 
+  padding: 10px 20px; 
+  border-radius: 10px; 
+  cursor: pointer; 
+  font-weight: bold; 
+}

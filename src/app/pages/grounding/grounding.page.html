@@ -1,0 +1,150 @@
+<ion-header [translucent]="true">
+  <ion-toolbar>
+    <ion-buttons slot="start">
+      <ion-back-button defaultHref="/home"></ion-back-button>
+    </ion-buttons>
+    <ion-title>Esercizi di Grounding</ion-title>
+    <ion-buttons slot="end">
+      <ion-button (click)="restartSession()" fill="clear">
+        <ion-icon name="refresh-outline"></ion-icon>
+      </ion-button>
+    </ion-buttons>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content [fullscreen]="true" class="ion-padding">
+  <!-- Session not started -->
+  <div *ngIf="!session()" class="welcome-container">
+    <div class="welcome-card">
+      <ion-icon name="leaf-outline" class="welcome-icon"></ion-icon>
+      <h2>Esercizio di Grounding 5-4-3-2-1</h2>
+      <p>Una tecnica efficace per ritornare al momento presente e ridurre l'ansia.</p>
+      
+      <div class="instructions">
+        <h3>Come funziona:</h3>
+        <ul>
+          <li><strong>5</strong> cose che puoi vedere</li>
+          <li><strong>4</strong> cose che puoi toccare</li>
+          <li><strong>3</strong> cose che puoi sentire</li>
+          <li><strong>2</strong> cose che puoi odorare</li>
+          <li><strong>1</strong> cosa che puoi gustare</li>
+        </ul>
+      </div>
+
+      <ion-button expand="block" (click)="initializeSession()" class="start-btn">
+        Inizia Esercizio
+      </ion-button>
+    </div>
+  </div>
+
+  <!-- Active session -->
+  <div *ngIf="session() && !isCompleted()" class="session-container">
+    <!-- Progress bar -->
+    <div class="progress-container">
+      <div class="progress-info">
+        <span>Passaggio {{getStepNumber()}} di {{getTotalSteps()}}</span>
+        <span>{{getProgressPercentage() | number:'1.0-0'}}%</span>
+      </div>
+      <ion-progress-bar 
+        [value]="getProgressPercentage()" 
+        color="primary">
+      </ion-progress-bar>
+    </div>
+
+    <!-- Current step -->
+    <div class="step-container">
+      <div class="step-header">
+        <ion-icon 
+          [name]="getStepIcon()" 
+          [color]="getStepColor()"
+          class="step-icon">
+        </ion-icon>
+        <h3>{{getCurrentStep().prompt}}</h3>
+        <p class="step-hint">
+          Inserisci {{getExpectedCount()}} elementi separati da virgola
+        </p>
+      </div>
+
+      <div class="input-container">
+        <ion-textarea
+          [(ngModel)]="userInputText"
+          (ionInput)="onInputChange($event)"
+          placeholder="Esempio: sedia, finestra, lampada, computer, pianta"
+          rows="4"
+          class="step-input">
+        </ion-textarea>
+
+        <div class="input-counter">
+          <span [class.valid]="userInput().length >= getExpectedCount()">
+            {{userInput().length}} / {{getExpectedCount()}}
+          </span>
+        </div>
+      </div>
+
+      <!-- Quick suggestions -->
+      <div class="suggestions" *ngIf="userInput().length < getExpectedCount()">
+        <p class="suggestions-title">Suggerimenti:</p>
+        <div class="suggestion-chips">
+          <ion-chip 
+            *ngFor="let suggestion of getSuggestions()" 
+            (click)="addSuggestion(suggestion)"
+            color="light">
+            {{suggestion}}
+          </ion-chip>
+        </div>
+      </div>
+    </div>
+
+    <!-- Action buttons -->
+    <div class="action-buttons">
+      <ion-button 
+        expand="block" 
+        fill="outline"
+        (click)="skipStep()"
+        class="skip-btn">
+        Salta Passaggio
+      </ion-button>
+
+      <ion-button 
+        expand="block" 
+        (click)="nextStep()"
+        [disabled]="userInput().length < getExpectedCount()"
+        class="next-btn">
+        {{isLastStep() ? 'Completa Esercizio' : 'Prossimo Passaggio'}}
+        <ion-icon name="arrow-forward-outline" slot="end"></ion-icon>
+      </ion-button>
+    </div>
+  </div>
+
+  <!-- Completed session -->
+  <div *ngIf="isCompleted()" class="completed-container">
+    <div class="completion-card">
+      <ion-icon name="checkmark-circle-outline" class="completion-icon"></ion-icon>
+      <h2>Esercizio Completato!</h2>
+      <p>Ottimo lavoro! Hai completato l'esercizio di grounding.</p>
+      
+      <div class="completion-stats" *ngIf="session()?.duration">
+        <p>Durata: {{session()?.duration}} secondi</p>
+      </div>
+
+      <div class="completion-actions">
+        <ion-button 
+          expand="block" 
+          fill="outline"
+          (click)="initializeSession()"
+          class="restart-btn">
+          <ion-icon name="refresh-outline" slot="start"></ion-icon>
+          Nuovo Esercizio
+        </ion-button>
+
+        <ion-button 
+          expand="block" 
+          (click)="goBack()"
+          class="home-btn">
+          <ion-icon name="home-outline" slot="start"></ion-icon>
+          Torna alla Home
+        </ion-button>
+      </div>
+    </div>
+  </div>
+</ion-content>

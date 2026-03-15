@@ -1,0 +1,96 @@
+.contact-buttons {
+  display: flex;
+  gap: 15px;
+  margin-top: 20px;
+  flex-wrap: wrap; // Mobile responsiveness
+  
+  .whatsapp-btn {
+    flex: 1;
+    min-width: 120px; // Mobile minimum
+    --background: #25D366;
+    --background-hover: #128C7E;
+    --color: white;
+    font-weight: 600;
+    font-size: 1rem; // Smaller on mobile
+    padding: 12px 16px; // Adjusted for mobile
+    border-radius: 12px;
+    box-shadow: 0 4px 15px rgba(37, 211, 102, 0.3);
+    transition: all 0.3s ease;
+    
+    &:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 6px 20px rgba(37, 211, 102, 0.4);
+    }
+    
+    &:active {
+      transform: translateY(0);
+    }
+    
+    ion-icon {
+      font-size: 1.2rem; // Adjusted for mobile
+      margin-right: 6px;
+    }
+    
+    // Mobile specific
+    @media (max-width: 480px) {
+      font-size: 0.9rem;
+      padding: 10px 12px;
+      
+      ion-icon {
+        font-size: 1rem;
+        margin-right: 4px;
+      }
+    }
+  }
+  
+  .phone-btn {
+    flex: 1;
+    min-width: 120px; // Mobile minimum
+    --border-color: var(--ion-color-primary);
+    --color: var(--ion-color-primary);
+    font-weight: 600;
+    font-size: 1rem; // Smaller on mobile
+    padding: 12px 16px; // Adjusted for mobile
+    border-radius: 12px;
+    box-shadow: 0 4px 15px rgba(0, 123, 255, 0.2);
+    transition: all 0.3s ease;
+    
+    &:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 6px 20px rgba(0, 123, 255, 0.3);
+    }
+    
+    &:active {
+      transform: translateY(0);
+    }
+    
+    ion-icon {
+      font-size: 1.2rem; // Adjusted for mobile
+      margin-right: 6px;
+    }
+    
+    // Mobile specific
+    @media (max-width: 480px) {
+      font-size: 0.9rem;
+      padding: 10px 12px;
+      
+      ion-icon {
+        font-size: 1rem;
+        margin-right: 4px;
+      }
+    }
+  }
+}
+
+// Stack buttons on very small screens
+@media (max-width: 360px) {
+  .contact-buttons {
+    flex-direction: column;
+    
+    .whatsapp-btn,
+    .phone-btn {
+      width: 100%;
+      min-width: unset;
+    }
+  }
+}

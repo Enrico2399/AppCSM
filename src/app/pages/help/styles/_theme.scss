@@ -1,0 +1,16 @@
+:host-context(.light-theme) {
+  .builder-box h2, .builder-box label, .mode-btn strong {
+    color: #333 !important;
+  }
+  input[type="text"], textarea, select#issue-type {
+    background: white !important;
+    border: 1px solid #ccc !important;
+    color: #444 !important;
+  }
+  .mode-btn {
+    background: white;
+    &.active { background: #f0f0f0; }
+  }
+}
+
+/* Angular BypassSecurityTrustHtml - crisis card styles moved to _crisis.scss to avoid duplication */

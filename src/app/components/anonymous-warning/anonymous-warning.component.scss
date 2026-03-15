@@ -1,0 +1,22 @@
+ion-toast {
+  --background: var(--ion-color-warning);
+  --color: #000;
+  
+  .toast-message {
+    font-weight: 600;
+    font-size: 0.9rem;
+  }
+  
+  .toast-button {
+    font-weight: 600;
+    
+    &[role="cancel"] {
+      --color: var(--ion-color-dark);
+    }
+    
+    &:not([role="cancel"]) {
+      --color: var(--ion-color-primary);
+      font-weight: 700;
+    }
+  }
+}

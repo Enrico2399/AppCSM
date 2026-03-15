@@ -1,0 +1,147 @@
+.welcome-container {
+  max-width: 500px;
+  margin: 0 auto;
+  padding: 20px;
+}
+
+.welcome-header {
+  text-align: center;
+  margin-bottom: 30px;
+  
+  .icon-container {
+    display: flex;
+    justify-content: center;
+    margin-bottom: 20px;
+    
+    .welcome-icon {
+      font-size: 4rem;
+      color: var(--ion-color-primary);
+      animation: pulse 2s infinite;
+    }
+  }
+  
+  h1 {
+    color: var(--ion-text-color);
+    margin: 0 0 10px 0;
+    font-size: 1.8rem;
+    font-weight: 700;
+  }
+  
+  .subtitle {
+    color: var(--ion-color-medium);
+    margin: 0;
+    font-size: 1rem;
+  }
+}
+
+.session-info {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+  margin-bottom: 30px;
+}
+
+.info-card {
+  background: var(--card-bg);
+  border: 1px solid var(--border-color);
+  border-radius: 12px;
+  padding: 20px;
+  text-align: center;
+  
+  h3 {
+    color: var(--ion-text-color);
+    margin: 0 0 15px 0;
+    font-size: 1.1rem;
+    font-weight: 600;
+  }
+  
+  p {
+    margin: 8px 0;
+    color: var(--ion-text-color);
+    
+    &.time-remaining {
+      font-size: 1.5rem;
+      font-weight: 700;
+      color: var(--ion-color-primary);
+    }
+    
+    &.description {
+      font-size: 0.9rem;
+      color: var(--ion-color-medium);
+    }
+    
+    &.feature {
+      text-align: left;
+      margin: 5px 0;
+      font-size: 0.95rem;
+    }
+  }
+  
+  &.warning {
+    border-color: var(--ion-color-warning);
+    background: rgba(255, 193, 7, 0.1);
+    
+    h3 {
+      color: var(--ion-color-warning);
+    }
+    
+    p {
+      strong {
+        color: var(--ion-color-warning);
+        font-weight: 700;
+      }
+    }
+  }
+}
+
+.action-buttons {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+  margin-bottom: 20px;
+  
+  .extend-btn {
+    --background: var(--ion-color-primary);
+    --color: white;
+    font-weight: 600;
+    
+    &:hover {
+      --background: var(--ion-color-primary-shade);
+    }
+  }
+  
+  .create-account-btn {
+    --background: var(--ion-color-secondary);
+    --color: white;
+    font-weight: 600;
+    
+    &:hover {
+      --background: var(--ion-color-secondary-shade);
+    }
+  }
+}
+
+.close-section {
+  text-align: center;
+  
+  .close-btn {
+    --color: var(--ion-color-medium);
+    font-size: 0.9rem;
+  }
+}
+
+// Animations
+@keyframes pulse {
+  0% { transform: scale(1); opacity: 1; }
+  50% { transform: scale(1.05); opacity: 0.8; }
+  100% { transform: scale(1); opacity: 1; }
+}
+
+// Light theme adjustments
+:host-context(.light-theme) {
+  .info-card {
+    &.warning {
+      background: rgba(255, 193, 7, 0.05);
+    }
+  }
+}

@@ -124,4 +124,52 @@ export class StorageService {
   clearAllData(): void {
     localStorage.clear();
   }
+
+  // Anonymous Profile Management
+  getAnonymousProfile(): any | null {
+    const profile = localStorage.getItem('anonymous_profile');
+    return profile ? JSON.parse(profile) : null;
+  }
+
+  setAnonymousProfile(profile: any): void {
+    localStorage.setItem('anonymous_profile', JSON.stringify(profile));
+  }
+
+  removeAnonymousProfile(): void {
+    localStorage.removeItem('anonymous_profile');
+  }
+
+  // Check if anonymous profile exists and is not expired
+  isValidAnonymousProfile(): boolean {
+    const profile = this.getAnonymousProfile();
+    if (!profile) return false;
+    
+    if (!profile.expiresAt) return false;
+    
+    return new Date() <= new Date(profile.expiresAt);
+  }
+
+  // Anonymous Session Management
+  getAnonymousSession(): any | null {
+    const session = localStorage.getItem('anonymous_session');
+    return session ? JSON.parse(session) : null;
+  }
+
+  setAnonymousSession(session: any): void {
+    localStorage.setItem('anonymous_session', JSON.stringify(session));
+  }
+
+  removeAnonymousSession(): void {
+    localStorage.removeItem('anonymous_session');
+  }
+
+  // Check if anonymous session exists and is valid
+  isValidAnonymousSession(): boolean {
+    const session = this.getAnonymousSession();
+    if (!session) return false;
+    
+    if (!session.expiresAt) return false;
+    
+    return new Date() <= new Date(session.expiresAt);
+  }
 }

@@ -1,0 +1,140 @@
+.builder-box {
+  background: var(--card-bg);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 20px; 
+  padding: 30px;
+  box-shadow: 0 15px 35px rgba(0,0,0,0.4);
+  text-align: center; 
+  margin-bottom: 40px;
+
+  h2 {
+    color: var(--text-light);
+    border-bottom: 1px solid rgba(255,255,255,0.1);
+    padding-bottom: 15px;
+    margin-bottom: 25px;
+  }
+
+  label {
+    display: block;
+    margin-bottom: 12px;
+    font-size: 1rem;
+    font-weight: bold;
+    opacity: 0.9;
+  }
+}
+
+select#issue-type {
+  background: #1a1a1a;
+  color: white;
+  border: 1px solid rgba(255,255,255,0.2);
+  cursor: pointer;
+  margin: 0 auto 25px auto;
+  display: block;
+  padding: 12px;
+  border-radius: 10px;
+  width: 100%;
+  max-width: 400px;
+  text-align: center;
+}
+
+input[type="text"], textarea {
+  background: rgba(255, 255, 255, 0.08) !important;
+  border: 1px solid rgba(255, 255, 255, 0.2) !important;
+  color: white !important;
+  padding: 15px;
+  border-radius: 12px;
+  width: 100%;
+  max-width: 500px;
+  margin: 0 auto 20px auto;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-size: 1.1rem;
+  box-sizing: border-box;
+}
+
+textarea#comfort-resource {
+  font-size: 1.2rem; 
+}
+
+.btn-action {
+  display: flex;
+  margin: 20px auto;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  background: linear-gradient(135deg, #ffffff, #e0e0e0);
+  color: #121212;
+  border: none;
+  padding: 18px 25px;
+  border-radius: 15px;
+  cursor: pointer;
+  font-weight: 800;
+  font-size: 1.1rem;
+  text-decoration: none;
+  transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+  box-shadow: 0 4px 15px rgba(255, 255, 255, 0.1);
+
+  &:hover { 
+    transform: translateY(-3px) scale(1.02); 
+    box-shadow: 0 8px 25px rgba(255, 255, 255, 0.2); 
+    background: linear-gradient(135deg, #ffffff, #ffffff);
+  }
+  
+  &:active {
+    transform: translateY(1px);
+    box-shadow: 0 2px 10px rgba(255, 255, 255, 0.1);
+  }
+}
+
+.main-action-btn {
+  margin-top: 15px; 
+  width: 100%; 
+  max-width: 400px;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+}
+
+.mode-selector {
+  display: flex;
+  gap: 15px;
+  margin-bottom: 25px;
+  justify-content: center;
+  flex-wrap: wrap;
+  align-items: center;
+
+  label {
+    margin: 0;
+    flex: 0 1 auto;
+    min-width: 140px;
+    display: flex;
+    justify-content: center;
+  }
+
+  input[type="radio"] {
+    display: none;
+  }
+
+  input[name="help-mode"]:checked + .mode-btn {
+    border-color: var(--accent);
+    background: rgba(255, 255, 255, 0.1);
+    color: white;
+  }
+}
+
+.mode-btn {
+  flex: 1;
+  width: 180px;
+  min-width: 150px;
+  max-width: 200px;
+  padding: 15px;
+  border-radius: 15px;
+  background: rgba(255,255,255,0.02);
+  border: 1px solid rgba(255,255,255,0.1);
+  cursor: pointer;
+  text-align: center;
+  transition: all 0.3s;
+  color: #888;
+
+  span { font-size: 1.8rem; display: block; margin-bottom: 5px; }
+}

@@ -1,0 +1,69 @@
+{
+  "rules": {
+    "users": {
+      "$uid": {
+        ".read": "$uid === auth.uid || root.child('users').child(auth.uid).child('role').val() === 'admin'",
+        ".write": "$uid === auth.uid || root.child('users').child(auth.uid).child('role').val() === 'admin'",
+        ".validate": "newData.hasChildren(['displayName', 'email'])"
+      }
+    },
+    "moodHistory": {
+      "$uid": {
+        ".read": "$uid === auth.uid || root.child('users').child(auth.uid).child('role').val() === 'admin'",
+        ".write": "$uid === auth.uid || root.child('users').child(auth.uid).child('role').val() === 'admin'",
+        ".validate": "newData.hasChildren(['moodKey', 'moodTitle', 'timestamp'])"
+      }
+    },
+    "archetypeProfiles": {
+      "$uid": {
+        ".read": "$uid === auth.uid || root.child('users').child(auth.uid).child('role').val() === 'admin'",
+        ".write": "$uid === auth.uid || root.child('users').child(auth.uid).child('role').val() === 'admin'",
+        ".validate": "newData.hasChildren(['primary', 'scores', 'completedAt'])"
+      }
+    },
+    "privacyConsents": {
+      "$uid": {
+        ".read": "$uid === auth.uid || root.child('users').child(auth.uid).child('role').val() === 'admin'",
+        ".write": "$uid === auth.uid || root.child('users').child(auth.uid).child('role').val() === 'admin'",
+        ".validate": "newData.hasChildren(['analytics', 'dataProcessing'])"
+      }
+    },
+    "groundingSessions": {
+      "$sessionId": {
+        ".read": "data.child('userId').val() === auth.uid || root.child('users').child(auth.uid).child('role').val() === 'admin'",
+        ".write": "data.child('userId').val() === auth.uid || root.child('users').child(auth.uid).child('role').val() === 'admin'",
+        ".validate": "newData.hasChildren(['userId', 'type', 'steps'])"
+      }
+    },
+    "communityMessages": {
+      ".read": "auth != null",
+      ".write": "auth != null",
+      ".validate": "newData.hasChildren(['userId', 'userName', 'message', 'timestamp'])"
+    },
+    "votes": {
+      ".read": "auth != null",
+      ".write": "auth != null"
+    },
+    "mapReports": {
+      ".read": "auth != null",
+      ".write": "auth != null",
+      ".validate": "newData.hasChildren(['userId', 'reportType', 'timestamp'])"
+    },
+    "analytics": {
+      ".read": "auth != null",
+      ".write": "auth != null"
+    },
+    "errorLogs": {
+      ".read": "auth != null",
+      ".write": "auth != null"
+    },
+    "userActions": {
+      ".read": "auth != null",
+      ".write": "auth != null"
+    },
+    "performanceMetrics": {
+      ".read": "auth != null",
+      ".write": "auth != null"
+    }
+  }
+}

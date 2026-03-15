@@ -1,0 +1,373 @@
+.welcome-container {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 80vh;
+  padding: 20px;
+}
+
+.welcome-card {
+  text-align: center;
+  max-width: 500px;
+  background: var(--ion-color-light);
+  border-radius: 16px;
+  padding: 32px;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+}
+
+.welcome-icon {
+  font-size: 4rem;
+  color: var(--ion-color-primary);
+  margin-bottom: 24px;
+}
+
+.welcome-card h2 {
+  color: var(--ion-color-dark);
+  margin-bottom: 16px;
+  font-size: 1.5rem;
+}
+
+.welcome-card p {
+  color: var(--ion-color-medium);
+  margin-bottom: 24px;
+  line-height: 1.6;
+}
+
+.instructions {
+  text-align: left;
+  background: var(--ion-color-light-tint);
+  border-radius: 8px;
+  padding: 20px;
+  margin: 24px 0;
+}
+
+.instructions h3 {
+  color: var(--ion-color-primary);
+  margin-bottom: 12px;
+  font-size: 1.1rem;
+}
+
+.instructions ul {
+  list-style: none;
+  padding: 0;
+}
+
+.instructions li {
+  padding: 8px 0;
+  border-bottom: 1px solid var(--ion-color-light-shade);
+  display: flex;
+  align-items: center;
+}
+
+.instructions li:last-child {
+  border-bottom: none;
+}
+
+.instructions li strong {
+  color: var(--ion-color-primary);
+  font-weight: 600;
+  margin-right: 8px;
+  min-width: 30px;
+}
+
+.start-btn {
+  margin-top: 24px;
+  height: 50px;
+  font-weight: 600;
+}
+
+// Session container
+.session-container {
+  max-width: 600px;
+  margin: 0 auto;
+  padding: 20px 0;
+}
+
+.progress-container {
+  margin-bottom: 32px;
+}
+
+.progress-info {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 8px;
+  font-size: 0.9rem;
+  color: var(--ion-color-medium);
+}
+
+.step-container {
+  background: var(--ion-card-background);
+  border-radius: 16px;
+  padding: 24px;
+  margin-bottom: 24px;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.1);
+}
+
+.step-header {
+  text-align: center;
+  margin-bottom: 24px;
+}
+
+.step-icon {
+  font-size: 3rem;
+  margin-bottom: 16px;
+  display: block;
+}
+
+.step-header h3 {
+  color: var(--ion-color-dark);
+  margin-bottom: 8px;
+  font-size: 1.3rem;
+  line-height: 1.4;
+}
+
+.step-hint {
+  color: var(--ion-color-medium);
+  font-size: 0.9rem;
+  margin: 0;
+}
+
+.input-container {
+  position: relative;
+  margin-bottom: 24px;
+}
+
+.step-input {
+  --background: var(--ion-color-light);
+  --border-radius: 12px;
+  --padding-start: 16px;
+  --padding-end: 16px;
+  --padding-top: 16px;
+  --padding-bottom: 16px;
+  font-size: 1rem;
+  line-height: 1.5;
+  border: 2px solid var(--ion-color-light-shade);
+  transition: border-color 0.3s ease;
+}
+
+.step-input:focus {
+  border-color: var(--ion-color-primary);
+}
+
+.input-counter {
+  position: absolute;
+  bottom: 12px;
+  right: 16px;
+  font-size: 0.8rem;
+  color: var(--ion-color-medium);
+}
+
+.input-counter .valid {
+  color: var(--ion-color-success);
+  font-weight: 600;
+}
+
+.suggestions {
+  background: var(--ion-color-light-tint);
+  border-radius: 12px;
+  padding: 16px;
+  margin-top: 16px;
+}
+
+.suggestions-title {
+  font-size: 0.9rem;
+  color: var(--ion-color-medium);
+  margin: 0 0 12px 0;
+  font-weight: 500;
+}
+
+.suggestion-chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+ion-chip {
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+ion-chip:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.action-buttons {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.skip-btn {
+  --border-color: var(--ion-color-medium);
+  --color: var(--ion-color-medium);
+}
+
+.next-btn {
+  height: 50px;
+  font-weight: 600;
+  --background: var(--ion-color-primary);
+  --box-shadow: 0 4px 12px rgba(var(--ion-color-primary-rgb), 0.3);
+}
+
+.next-btn:disabled {
+  --background: var(--ion-color-medium);
+  --box-shadow: none;
+}
+
+// Completed state
+.completed-container {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 80vh;
+  padding: 20px;
+}
+
+.completion-card {
+  text-align: center;
+  max-width: 500px;
+  background: var(--ion-color-light);
+  border-radius: 16px;
+  padding: 32px;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+}
+
+.completion-icon {
+  font-size: 4rem;
+  color: var(--ion-color-success);
+  margin-bottom: 24px;
+}
+
+.completion-card h2 {
+  color: var(--ion-color-dark);
+  margin-bottom: 16px;
+  font-size: 1.5rem;
+}
+
+.completion-card p {
+  color: var(--ion-color-medium);
+  margin-bottom: 16px;
+  line-height: 1.6;
+}
+
+.completion-stats {
+  background: var(--ion-color-light-tint);
+  border-radius: 8px;
+  padding: 16px;
+  margin: 24px 0;
+}
+
+.completion-stats p {
+  margin: 0;
+  font-weight: 500;
+  color: var(--ion-color-primary);
+}
+
+.completion-actions {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.restart-btn {
+  height: 50px;
+  font-weight: 600;
+}
+
+.home-btn {
+  height: 50px;
+  font-weight: 600;
+}
+
+// Dark mode adjustments
+@media (prefers-color-scheme: dark) {
+  .welcome-card,
+  .step-container,
+  .completion-card {
+    background: var(--ion-color-dark);
+    color: var(--ion-color-light);
+  }
+  
+  .welcome-card h2,
+  .step-header h3,
+  .completion-card h2 {
+    color: var(--ion-color-light);
+  }
+  
+  .instructions {
+    background: var(--ion-color-dark-tint);
+  }
+  
+  .suggestions {
+    background: var(--ion-color-dark-tint);
+  }
+  
+  .completion-stats {
+    background: var(--ion-color-dark-tint);
+  }
+}
+
+// Responsive design
+@media (max-width: 768px) {
+  .welcome-container,
+  .completed-container {
+    padding: 16px;
+  }
+  
+  .welcome-card,
+  .completion-card {
+    padding: 24px 20px;
+  }
+  
+  .step-container {
+    padding: 20px 16px;
+  }
+  
+  .session-container {
+    padding: 16px 0;
+  }
+}
+
+// Animations
+.step-container {
+  animation: slideInUp 0.5s ease-out;
+}
+
+@keyframes slideInUp {
+  from {
+    opacity: 0;
+    transform: translateY(30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.completion-card {
+  animation: scaleIn 0.6s ease-out;
+}
+
+@keyframes scaleIn {
+  from {
+    opacity: 0;
+    transform: scale(0.9);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+// Focus states for accessibility
+.step-input:focus {
+  outline: 2px solid var(--ion-color-primary);
+  outline-offset: 2px;
+}
+
+ion-button:focus {
+  outline: 2px solid var(--ion-color-primary);
+  outline-offset: 2px;
+}

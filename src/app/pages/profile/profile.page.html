@@ -1,0 +1,173 @@
+<ion-header [translucent]="true">
+  <ion-toolbar>
+    <ion-buttons slot="start">
+      <ion-back-button defaultHref="/home"></ion-back-button>
+    </ion-buttons>
+    <ion-title>Profilo Utente</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content [fullscreen]="true" class="ion-padding">
+  <div *ngIf="loading()" class="loading-container">
+    <ion-spinner name="crescent"></ion-spinner>
+    <p>Caricamento dati...</p>
+  </div>
+
+  <div *ngIf="!loading()" class="profile-container">
+    <!-- User Info Section -->
+    <ion-card>
+      <ion-card-header>
+        <ion-card-title>Informazioni Personali</ion-card-title>
+      </ion-card-header>
+      <ion-card-content>
+        <ion-item>
+          <ion-label position="stacked">Nome Visualizzato</ion-label>
+          <ion-input 
+            type="text" 
+            [(ngModel)]="displayName"
+            placeholder="Inserisci il tuo nome">
+          </ion-input>
+        </ion-item>
+
+        <ion-item>
+          <ion-label position="stacked">Email</ion-label>
+          <ion-input 
+            type="email" 
+            [(ngModel)]="email"
+            placeholder="tua@email.com"
+            [readonly]="true">
+          </ion-input>
+        </ion-item>
+
+        <ion-item *ngIf="user()?.photoURL">
+          <img [src]="user()?.photoURL" alt="Profile" class="profile-image">
+        </ion-item>
+      </ion-card-content>
+    </ion-card>
+
+    <!-- Preferences Section -->
+    <ion-card>
+      <ion-card-header>
+        <ion-card-title>Preferenze</ion-card-title>
+      </ion-card-header>
+      <ion-card-content>
+        <ion-item>
+          <ion-label>Tema</ion-label>
+          <ion-select 
+            [(ngModel)]="theme" 
+            placeholder="Seleziona tema"
+            class="filter-select">
+            <ion-select-option value="light">Chiaro</ion-select-option>
+            <ion-select-option value="dark">Scuro</ion-select-option>
+            <ion-select-option value="auto">Automatico</ion-select-option>
+          </ion-select>
+        </ion-item>
+
+        <ion-item>
+          <ion-label>Notifiche Promemoria Stati d'Animo</ion-label>
+          <ion-toggle [(ngModel)]="moodReminders"></ion-toggle>
+        </ion-item>
+
+        <ion-item>
+          <ion-label>Aggiornamenti Community</ion-label>
+          <ion-toggle [(ngModel)]="communityUpdates"></ion-toggle>
+        </ion-item>
+
+        <ion-item>
+          <ion-label>Report Settimanali</ion-label>
+          <ion-toggle [(ngModel)]="weeklyReports"></ion-toggle>
+        </ion-item>
+      </ion-card-content>
+    </ion-card>
+
+    <!-- Privacy Section -->
+    <ion-card>
+      <ion-card-header>
+        <ion-card-title>Privacy e Dati</ion-card-title>
+      </ion-card-header>
+      <ion-card-content>
+        <ion-item>
+          <ion-label position="stacked" *ngIf="!user()?.isAnonymous">Periodo di Conservazione Dati (giorni)</ion-label>
+          <ion-label position="stacked" *ngIf="user()?.isAnonymous">Periodo di Conservazione Dati</ion-label>
+          <ion-input 
+            type="number" 
+            [(ngModel)]="dataRetention"
+            min="30"
+            max="1095"
+            *ngIf="!user()?.isAnonymous">
+          </ion-input>
+          <ion-input 
+            type="text" 
+            [(ngModel)]="dataRetention"
+            [readonly]="true"
+            value="24 ore"
+            *ngIf="user()?.isAnonymous">
+          </ion-input>
+        </ion-item>
+        
+        <div *ngIf="user()?.isAnonymous" class="anonymous-warning">
+          <p><strong>Cancellazione automatica dei dati dopo 24 ore.</strong></p>
+          <p>Fai il login non da anonimo se vuoi i tuoi dati mantenuti.</p>
+        </div>
+
+        <ion-item>
+          <ion-label>Condividi dati con terapeuta</ion-label>
+          <ion-toggle [(ngModel)]="shareWithTherapist"></ion-toggle>
+        </ion-item>
+
+        <ion-item>
+          <ion-label>Consenti analisi anonime</ion-label>
+          <ion-toggle [(ngModel)]="analyticsConsent"></ion-toggle>
+        </ion-item>
+      </ion-card-content>
+    </ion-card>
+
+    <!-- Data Management Section -->
+    <ion-card>
+      <ion-card-header>
+        <ion-card-title>Gestione Dati</ion-card-title>
+      </ion-card-header>
+      <ion-card-content>
+        <ion-button 
+          expand="block" 
+          fill="outline" 
+          (click)="exportData()"
+          class="data-action-btn">
+          <ion-icon name="download-outline" slot="start"></ion-icon>
+          Esporta i Tuoi Dati
+        </ion-button>
+
+        <ion-button 
+          expand="block" 
+          fill="outline" 
+          color="warning"
+          (click)="clearMoodHistory()"
+          class="data-action-btn">
+          <ion-icon name="trash-outline" slot="start"></ion-icon>
+          Cancella Cronologia Emozionale
+        </ion-button>
+
+        <ion-button 
+          expand="block" 
+          fill="solid" 
+          color="danger"
+          (click)="deleteAccount()"
+          class="data-action-btn delete-btn">
+          <ion-icon name="warning-outline" slot="start"></ion-icon>
+          Elimina Account
+        </ion-button>
+      </ion-card-content>
+    </ion-card>
+
+    <!-- Save Button -->
+    <ion-button 
+      expand="block" 
+      (click)="saveProfile()"
+      [disabled]="saving()"
+      class="save-btn">
+      <ion-spinner *ngIf="saving()" name="crescent" slot="start"></ion-spinner>
+      <span *ngIf="!saving()">Salva Profilo</span>
+      <span *ngIf="saving()">Salvataggio...</span>
+    </ion-button>
+  </div>
+</ion-content>

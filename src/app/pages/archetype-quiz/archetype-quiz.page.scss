@@ -1,0 +1,157 @@
+.quiz-container {
+  max-width: 800px;
+  margin: 0 auto;
+  padding: 20px;
+}
+
+.progress-section {
+  margin-bottom: 30px;
+  
+  .progress-text {
+    text-align: center;
+    margin-top: 10px;
+    color: var(--ion-color-medium);
+    font-size: 14px;
+  }
+}
+
+.question-card {
+  margin-bottom: 30px;
+  
+  .question-text {
+    margin-bottom: 20px;
+    color: var(--ion-color-dark);
+    line-height: 1.4;
+  }
+  
+  ion-item {
+    margin-bottom: 10px;
+    border-radius: 8px;
+    
+    &.selected {
+      background-color: var(--ion-color-light);
+      border: 1px solid var(--ion-color-primary);
+    }
+  }
+}
+
+.navigation-buttons {
+  display: flex;
+  gap: 15px;
+  
+  ion-button {
+    flex: 1;
+  }
+}
+
+.results-container {
+  max-width: 600px;
+  margin: 0 auto;
+  padding: 20px;
+}
+
+.results-card {
+  margin-bottom: 30px;
+  
+  .results-content {
+    text-align: center;
+    
+    h4 {
+      margin-bottom: 20px;
+      color: var(--ion-color-primary);
+    }
+    
+    .archetype-result {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+      margin-bottom: 30px;
+      
+      .primary-archetype {
+        font-size: 24px;
+        font-weight: bold;
+        color: var(--ion-color-primary);
+      }
+    }
+    
+    .secondary-archetypes {
+      h5 {
+        margin-bottom: 15px;
+        color: var(--ion-color-medium);
+      }
+      
+      ion-chip {
+        margin: 5px;
+      }
+    }
+  }
+}
+
+.action-buttons {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+  
+  ion-button {
+    margin: 0;
+  }
+}
+
+.loading-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(255, 255, 255, 0.9);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+  
+  ion-spinner {
+    margin-bottom: 20px;
+  }
+  
+  p {
+    color: var(--ion-color-medium);
+    text-align: center;
+  }
+}
+
+// Responsive design
+@media (max-width: 768px) {
+  .quiz-container,
+  .results-container {
+    padding: 10px;
+  }
+  
+  .navigation-buttons {
+    flex-direction: column;
+    
+    ion-button {
+      margin-bottom: 10px;
+    }
+  }
+  
+  .question-text {
+    font-size: 16px;
+  }
+}
+
+// Dark mode support
+@media (prefers-color-scheme: dark) {
+  .question-card {
+    background: var(--ion-color-dark);
+  }
+  
+  .results-card {
+    background: var(--ion-color-dark);
+  }
+  
+  .loading-overlay {
+    background: rgba(0, 0, 0, 0.9);
+  }
+}

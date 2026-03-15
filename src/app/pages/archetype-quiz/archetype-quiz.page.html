@@ -1,0 +1,116 @@
+<ion-header [translucent]="true">
+  <ion-toolbar>
+    <ion-buttons slot="start">
+      <ion-back-button defaultHref="/archetipi"></ion-back-button>
+    </ion-buttons>
+    <ion-title>Archetype Quiz</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content [fullscreen]="true" class="ion-padding">
+  <!-- Quiz Content -->
+  <div *ngIf="!quizCompleted()" class="quiz-container">
+    <!-- Progress Bar -->
+    <div class="progress-section">
+      <ion-progress-bar 
+        value="{{getProgressPercentage()}}" 
+        color="primary">
+      </ion-progress-bar>
+      <p class="progress-text">
+        Domanda {{getCurrentQuestionIndex() + 1}} di {{getAllQuestions().length}}
+      </p>
+    </div>
+
+    <!-- Question Card -->
+    <ion-card class="question-card">
+      <ion-card-header>
+        <ion-card-title>Domanda {{getCurrentQuestionIndex() + 1}}</ion-card-title>
+      </ion-card-header>
+      <ion-card-content>
+        <h3 class="question-text">{{getCurrentQuestion().text}}</h3>
+        
+        <!-- Answer Options -->
+        <ion-list>
+          <ion-item *ngFor="let option of getCurrentQuestion().options" 
+                    [class.selected]="isOptionSelected(getCurrentQuestion().id, option.id)"
+                    (click)="onAnswerChange(getCurrentQuestion().id, option.id)"
+                    button>
+            <ion-label>{{option.text}}</ion-label>
+            <ion-checkbox 
+              slot="end"
+              [checked]="isOptionSelected(getCurrentQuestion().id, option.id)">
+            </ion-checkbox>
+          </ion-item>
+        </ion-list>
+      </ion-card-content>
+    </ion-card>
+
+    <!-- Navigation Buttons -->
+    <div class="navigation-buttons">
+      <ion-button 
+        fill="outline"
+        (click)="previousQuestion()"
+        [disabled]="getCurrentQuestionIndex() === 0">
+        <ion-icon name="chevron-back-outline" slot="start"></ion-icon>
+        Precedente
+      </ion-button>
+
+      <ion-button 
+        expand="block"
+        (click)="nextQuestion()"
+        [disabled]="!canGoNext()"
+        color="primary">
+        {{getCurrentQuestionIndex() === getAllQuestions().length - 1 ? 'Completa Quiz' : 'Prossima'}}
+        <ion-icon name="chevron-forward-outline" slot="end"></ion-icon>
+      </ion-button>
+    </div>
+  </div>
+
+  <!-- Results Section -->
+  <div *ngIf="quizCompleted()" class="results-container">
+    <ion-card class="results-card">
+      <ion-card-header>
+        <ion-card-title>Quiz Completato!</ion-card-title>
+      </ion-card-header>
+      <ion-card-content>
+        <div class="results-content">
+          <h4>Il tuo profilo archetipale:</h4>
+          <div class="archetype-result">
+            <ion-icon name="star-outline" color="primary"></ion-icon>
+            <span class="primary-archetype">{{archetypeProfile()?.primary?.toUpperCase()}}</span>
+          </div>
+          
+          <div class="secondary-archetypes">
+            <h5>Archetipi secondari:</h5>
+            <ion-chip *ngFor="let arch of archetypeProfile()?.secondary" color="secondary">
+              {{arch}}
+            </ion-chip>
+          </div>
+        </div>
+      </ion-card-content>
+    </ion-card>
+
+    <div class="action-buttons">
+      <ion-button 
+        expand="block"
+        fill="outline"
+        (click)="resetQuiz()">
+        <ion-icon name="refresh-outline" slot="start"></ion-icon>
+        Rifai il Test
+      </ion-button>
+      
+      <ion-button 
+        expand="block"
+        (click)="goBack()">
+        <ion-icon name="home-outline" slot="start"></ion-icon>
+        Torna Indietro
+      </ion-button>
+    </div>
+  </div>
+
+  <!-- Loading Overlay -->
+  <div *ngIf="loading()" class="loading-overlay">
+    <ion-spinner></ion-spinner>
+    <p>Calcolo del tuo profilo...</p>
+  </div>
+</ion-content>

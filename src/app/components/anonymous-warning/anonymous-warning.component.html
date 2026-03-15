@@ -1,0 +1,8 @@
+<ion-toast
+  *ngIf="shouldShow"
+  [isOpen]="showToast"
+  message="⚠️ I tuoi dati anonimi scadranno tra {{ timeRemaining }}. Crea un account per salvarli permanentemente!"
+  [duration]="0"
+  [buttons]="toastButtons"
+  color="warning"
+></ion-toast>

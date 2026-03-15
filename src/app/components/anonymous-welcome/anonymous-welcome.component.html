@@ -1,0 +1,69 @@
+<ion-header>
+  <ion-toolbar>
+    <ion-title>Sessione Anonima</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content class="ion-padding">
+  <div class="welcome-container">
+    <div class="welcome-header">
+      <div class="icon-container">
+        <ion-icon name="shield-checkmark-outline" class="welcome-icon"></ion-icon>
+      </div>
+      <h1>Benvenuto nella Sessione Anonima</h1>
+      <p class="subtitle">I tuoi dati sono al sicuri e temporanei</p>
+    </div>
+
+    <div class="session-info">
+      <div class="info-card">
+        <h3>📅 Durata Sessione</h3>
+        <p class="time-remaining">{{ timeRemaining() }}</p>
+        <p class="description">La tua sessione scadrà tra 24 ore dalla creazione</p>
+      </div>
+
+      <div class="info-card">
+        <h3>💾 Salvataggio Dati</h3>
+        <p class="feature">✅ Piani di aiuto salvati</p>
+        <p class="feature">✅ Preferenze memorizzate</p>
+        <p class="feature">✅ Cronologia temporanea</p>
+      </div>
+
+      <div class="info-card warning">
+        <h3>⚠️ Importante</h3>
+        <p>Tutti i dati verranno <strong>eliminati automaticamente</strong> alla scadenza della sessione</p>
+      </div>
+    </div>
+
+    <div class="action-buttons">
+      <ion-button 
+        expand="block" 
+        fill="outline" 
+        color="primary"
+        (click)="extendSession()"
+        class="extend-btn">
+        <ion-icon name="time-outline" slot="start"></ion-icon>
+        Estendi Sessione (+24h)
+      </ion-button>
+
+      <ion-button 
+        expand="block" 
+        fill="solid" 
+        color="secondary"
+        (click)="createAccount()"
+        class="create-account-btn">
+        <ion-icon name="person-add-outline" slot="start"></ion-icon>
+        Crea Account Permanente
+      </ion-button>
+    </div>
+
+    <div class="close-section">
+      <ion-button 
+        fill="clear" 
+        color="medium"
+        (click)="closeWelcome()"
+        class="close-btn">
+        Ho capito, continua
+      </ion-button>
+    </div>
+  </div>
+</ion-content>

@@ -1,0 +1,66 @@
+<!-- Floating Panic Button -->
+<div 
+  *ngIf="isVisible && shouldShowButton()" 
+  class="panic-button-container"
+  (touchstart)="onTouchStart()"
+  (touchend)="onTouchEnd()"
+  (mousedown)="onMouseDown()"
+  (mouseup)="onMouseUp()"
+  (click)="onClick()"
+  [class.pressed]="isPressed"
+  role="button"
+  tabindex="0"
+  aria-label="Pulsante di sicurezza - Tieni premuto per nascondere contenuti"
+  [attr.aria-pressed]="isPressed">
+  
+  <div class="panic-button">
+    <ion-icon 
+      name="eye-off-outline" 
+      class="panic-icon"
+      [class.active]="isPressed">
+    </ion-icon>
+    
+    <div class="panic-text" *ngIf="isPressed">
+      <span class="hold-text">Tieni premuto</span>
+      <div class="progress-ring">
+        <svg width="40" height="40">
+          <circle 
+            cx="20" 
+            cy="20" 
+            r="18" 
+            fill="none" 
+            stroke="rgba(255,255,255,0.3)" 
+            stroke-width="2">
+          </circle>
+          <circle 
+            cx="20" 
+            cy="20" 
+            r="18" 
+            fill="none" 
+            stroke="white" 
+            stroke-width="2"
+            stroke-dasharray="113"
+            stroke-dashoffset="113"
+            class="progress-circle">
+          </circle>
+        </svg>
+      </div>
+    </div>
+  </div>
+  
+  <!-- Tooltip -->
+  <div class="panic-tooltip" *ngIf="!isPressed">
+    <span>Premi per nascondere</span>
+    <span class="shortcut-hint">ESC</span>
+  </div>
+</div>
+
+<!-- Instructions overlay (shown briefly on first load) -->
+<div class="instructions-overlay" *ngIf="false">
+  <div class="instructions-content">
+    <ion-icon name="shield-checkmark-outline" class="instructions-icon"></ion-icon>
+    <h3>Funzione di Privacy</h3>
+    <p>Premi il pulsante 🔒 o usa ESC per nascondere rapidamente i contenuti</p>
+    <ion-button fill="clear" (click)="hideInstructions()">Ho capito</ion-button>
+  </div>
+</div>

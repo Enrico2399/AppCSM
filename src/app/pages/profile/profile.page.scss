@@ -1,0 +1,150 @@
+.profile-container {
+  max-width: 600px;
+  margin: 0 auto;
+}
+
+.loading-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  height: 200px;
+  gap: 16px;
+}
+
+.loading-container ion-spinner {
+  width: 50px;
+  height: 50px;
+}
+
+.anonymous-warning {
+  background: rgba(255, 193, 7, 0.1);
+  border: 1px solid rgba(255, 193, 7, 0.3);
+  border-radius: 10px;
+  padding: 15px;
+  margin: 10px 0;
+  
+  p {
+    margin: 5px 0;
+    color: var(--ion-color-warning);
+    font-size: 0.9rem;
+    
+    &:first-child {
+      font-weight: bold;
+    }
+  }
+}
+
+.profile-image {
+  width: 80px;
+  height: 80px;
+  border-radius: 50%;
+  object-fit: cover;
+  margin: 16px auto;
+  display: block;
+}
+
+ion-card {
+  margin: 16px 0;
+  border-radius: 12px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+ion-card-header {
+  padding-bottom: 8px;
+}
+
+ion-card-title {
+  font-size: 1.2rem;
+  font-weight: 600;
+  color: var(--ion-color-primary);
+}
+
+.data-action-btn {
+  margin: 8px 0;
+}
+
+.delete-btn {
+  margin-top: 16px;
+  border: 2px solid var(--ion-color-danger);
+}
+
+.save-btn {
+  margin-top: 24px;
+  height: 50px;
+  font-weight: 600;
+}
+
+ion-item {
+  --padding-start: 16px;
+  --padding-end: 16px;
+}
+
+ion-label {
+  font-size: 0.9rem;
+}
+
+ion-input {
+  --padding-start: 0;
+}
+
+ion-toggle {
+  --handle-background: var(--ion-color-primary);
+}
+
+ion-select {
+  --padding-start: 0;
+}
+
+// Dark mode adjustments
+@media (prefers-color-scheme: dark) {
+  ion-card {
+    background: var(--ion-color-dark);
+    color: var(--ion-color-light);
+  }
+  
+  ion-card-title {
+    color: var(--ion-color-light);
+  }
+}
+
+// Responsive design
+@media (max-width: 768px) {
+  .profile-container {
+    padding: 0 8px;
+  }
+  
+  ion-card {
+    margin: 12px 0;
+  }
+}
+
+// Animation for buttons
+.data-action-btn {
+  transition: all 0.3s ease;
+}
+
+.data-action-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+}
+
+.delete-btn:hover {
+  box-shadow: 0 4px 12px rgba(255, 0, 0, 0.2);
+}
+
+// Loading state
+.save-btn:disabled {
+  opacity: 0.7;
+}
+
+// Focus states for accessibility
+ion-item:focus-within {
+  --background: var(--ion-color-light-tint);
+}
+
+@media (prefers-color-scheme: dark) {
+  ion-item:focus-within {
+    --background: var(--ion-color-dark-tint);
+  }
+}
