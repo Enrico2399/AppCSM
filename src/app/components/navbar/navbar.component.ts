@@ -3,14 +3,9 @@ import { CommonModule, AsyncPipe } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { RouterModule, Router } from '@angular/router';
 import { 
-  IonHeader, 
-  IonToolbar, 
-  IonButtons, 
-  IonButton, 
   IonIcon, 
   IonAvatar, 
-  IonModal,
-  IonTitle
+  IonModal
 } from '@ionic/angular/standalone';
 import { StorageService } from '../../services/storage/storage';
 import { AuthService } from '../../services/auth';
@@ -29,14 +24,9 @@ import { take, firstValueFrom } from 'rxjs';
     FormsModule, 
     RouterModule, 
     AsyncPipe,
-    IonHeader, 
-    IonToolbar, 
-    IonButtons, 
-    IonButton, 
     IonIcon, 
     IonAvatar, 
-    IonModal,
-    IonTitle
+    IonModal
   ]
 })
 export class NavbarComponent implements OnInit {

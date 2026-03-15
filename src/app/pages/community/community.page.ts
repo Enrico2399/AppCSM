@@ -1,4 +1,5 @@
-import { Component, OnInit, inject, signal } from '@angular/core';
+import { MoodService, Mood } from '../../services/mood/mood.service';
+import { Component, OnInit, OnDestroy, inject, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { IonicModule } from '@ionic/angular';
@@ -7,6 +8,7 @@ import { AuthService } from '../../services/auth';
 import { take } from 'rxjs';
 import { addIcons } from 'ionicons';
 import { closeOutline } from 'ionicons/icons';
+import { PopupService } from '../../services/popup/popup.service';
 
 interface CommunityMessage {
   userId: string;
@@ -16,13 +18,6 @@ interface CommunityMessage {
   timestamp: string;
 }
 
-interface MoodOption {
-  key: string;
-  title: string;
-  icon: string;
-  color: string;
-}
-
 @Component({
   selector: 'app-community',
   templateUrl: './community.page.html',
@@ -30,9 +25,10 @@ interface MoodOption {
   standalone: true,
   imports: [IonicModule, CommonModule, FormsModule]
 })
-export class CommunityPage implements OnInit {
+export class CommunityPage implements OnInit, OnDestroy {
   private firebaseService = inject(FirebaseService);
   private authService = inject(AuthService);
+  public popupService = inject(PopupService);
 
   constructor() {
     addIcons({ closeOutline });
@@ -42,30 +38,27 @@ export class CommunityPage implements OnInit {
   messageInput = signal<string>('');
   selectedMoodKey = signal<string | null>(null);
 
-  isPopupOpen = signal<boolean>(false);
-  popupTitle = signal<string>('');
-  popupDesc = signal<string>('');
+  private moodService = inject(MoodService);
+  moods: Mood[] = this.moodService.getMoods();
 
-  moods: MoodOption[] = [
-    { key: "rosso", title: "Rosso", icon: "🔥", color: "#e74c3c" },
-    { key: "giallo", title: "Giallo", icon: "☀️", color: "#f1c40f" },
-    { key: "blu", title: "Blu", icon: "🌊", color: "#3498db" },
-    { key: "verde", title: "Verde", icon: "🌿", color: "#2ecc71" },
-    { key: "arancio", title: "Arancio", icon: "🍊", color: "#e67e22" },
-    { key: "viola", title: "Viola", icon: "🔮", color: "#9b59b6" },
-    { key: "bianco", title: "Bianco", icon: "☁️", color: "#ecf0f1" },
-    { key: "nero", title: "Nero", icon: "🎱", color: "#2c3e50" },
-    { key: "grigio", title: "Grigio", icon: "🌪️", color: "#95a5a6" }
-  ];
+  private unsubscribeMessages: (() => void) | null = null;
 
   ngOnInit() {
-    this.firebaseService.listenToCommunityMessages((data) => {
+    this.unsubscribeMessages = this.firebaseService.listenToCommunityMessages((data) => {
       if (data) {
         const msgs: CommunityMessage[] = Object.values(data);
         msgs.sort((a, b) => new Date(b.timestamp).getTime() - new Date(a.timestamp).getTime());
         this.messages.set(msgs);
+      } else {
+        this.messages.set([]);
       }
     });
+  }
+
+  ngOnDestroy() {
+    if (this.unsubscribeMessages) {
+      this.unsubscribeMessages();
+    }
   }
 
   selectMood(key: string) {
@@ -77,8 +70,7 @@ export class CommunityPage implements OnInit {
     const moodKey = this.selectedMoodKey();
 
     if (!moodKey) {
-      this.showStatus("Attenzione", "Seleziona un colore per il tuo messaggio!");
-      return;
+      this.popupService.showStatus("Attenzione", "Seleziona un colore...");      return;
     }
     if (!msg) {
       this.showStatus("Attenzione", "Scrivi un messaggio!");
@@ -100,20 +92,20 @@ export class CommunityPage implements OnInit {
         this.showStatus("Errore", "Devi essere loggato per scrivere nella community.");
       }
     });
+
+    this.popupService.showStatus("Inviato", "Il tuo messaggio è stato pubblicato...");
   }
 
   showStatus(title: string, message: string) {
-    this.popupTitle.set(title);
-    this.popupDesc.set(message);
-    this.isPopupOpen.set(true);
+    this.popupService.showStatus(title, message);
   }
 
   closePopup() {
-    this.isPopupOpen.set(false);
+    this.popupService.close();
   }
 
   getMoodColor(key: string): string {
-    return this.moods.find(m => m.key === key)?.color || '#ccc';
+    return this.moodService.getMoodColor(key);
   }
 
   formatDate(isoString: string): string {

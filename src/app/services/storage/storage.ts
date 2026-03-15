@@ -79,6 +79,15 @@ export class StorageService {
     return defaultTips[color] || [];
   }
 
+  getArchetypeData(): any {
+    const saved = localStorage.getItem('archetypeData');
+    return saved ? JSON.parse(saved) : { saggio: 0, eroe: 0, esploratore: 0, creatore: 0, sovrano: 0, ribelle: 0 };
+  }
+
+  saveArchetypeData(data: any): void {
+    localStorage.setItem('archetypeData', JSON.stringify(data));
+  }
+
   saveCommunityTips(tips: string[], color?: string): void {
     const key = color ? `community_tips_${color}` : 'community_tips';
     localStorage.setItem(key, JSON.stringify(tips));
@@ -94,6 +103,22 @@ export class StorageService {
     let tips = this.getCommunityTips(color);
     tips = tips.filter(t => t !== tip);
     this.saveCommunityTips(tips, color);
+  }
+
+  getSosPhone(): string {
+    return localStorage.getItem('sos_phone') || '';
+  }
+
+  setSosPhone(phone: string): void {
+    localStorage.setItem('sos_phone', phone);
+  }
+
+  getTheme(): string {
+    return localStorage.getItem('theme') || 'dark';
+  }
+
+  setTheme(theme: string): void {
+    localStorage.setItem('theme', theme);
   }
 
   clearAllData(): void {

@@ -22,7 +22,8 @@
 
       <div class="input-container">
         <textarea 
-          [(ngModel)]="messageInput" 
+          [ngModel]="messageInput()" 
+          (ngModelChange)="messageInput.set($event)"
           rows="3" 
           placeholder="Scrivi un messaggio alla community..."></textarea>
         <button class="btn-send" (click)="sendMessage()">Invia Messaggio</button>
@@ -44,17 +45,17 @@
   </div>
 
   <!-- STATUS POPUP MODAL (Rectangular Window) -->
-  <ion-modal [isOpen]="isPopupOpen()" (didDismiss)="closePopup()" class="rectangular-modal">
+  <ion-modal [isOpen]="popupService.isOpen()" (didDismiss)="closePopup()" class="rectangular-modal">
     <ng-template>
       <div class="modal-window">
         <div class="modal-header">
-          <h3>{{ popupTitle() }}</h3>
+          <h3>{{ popupService.title() }}</h3>
           <button (click)="closePopup()" class="close-icon-btn">
             <ion-icon name="close-outline"></ion-icon>
           </button>
         </div>
         <div class="modal-body">
-          <p>{{ popupDesc() }}</p>
+          <p>{{ popupService.description() }}</p>
         </div>
       </div>
     </ng-template>

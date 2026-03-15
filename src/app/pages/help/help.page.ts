@@ -1,4 +1,6 @@
-import { Component, signal } from '@angular/core';
+import { Component, signal, inject } from '@angular/core';
+import { StorageService } from '../../services/storage/storage';
+import { PopupService } from '../../services/popup/popup.service';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { IonicModule } from '@ionic/angular';
@@ -61,8 +63,11 @@ export class HelpPage {
   ];
 
 
+  private storageService = inject(StorageService);
+  public popupService = inject(PopupService);
+
   ionViewWillEnter() {
-    const savedPhone = localStorage.getItem('sos_phone');
+    const savedPhone = this.storageService.getSosPhone();
     if (savedPhone) {
       this.trustPhone = savedPhone;
     }
@@ -88,7 +93,7 @@ export class HelpPage {
   }
 
   executePlan() {
-    localStorage.setItem('sos_phone', this.trustPhone);
+    this.storageService.setSosPhone(this.trustPhone);
     let issueText = "Te stesso";
     
     if (this.selectedIssue) {
@@ -102,7 +107,7 @@ export class HelpPage {
     }
 
     if (this.helpMode === 'wa' && !this.trustPhone) {
-      alert("Inserisci un numero di telefono!");
+      this.popupService.showStatus("Attenzione", "Inserisci un numero di telefono!");
       return;
     }
 

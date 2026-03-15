@@ -1,6 +1,7 @@
 import { CommonModule } from '@angular/common';
 import { Component, OnDestroy, inject, signal, effect } from '@angular/core';
 import { AuthService } from '../../services/auth';
+import { FirebaseService } from '../../services/firebase/firebase';
 import { Router } from '@angular/router';
 import { AlertController, IonHeader, IonToolbar, IonTitle, IonButtons, IonButton, IonContent, IonFab, IonFabButton, IonIcon } from '@ionic/angular/standalone';
 import { addIcons } from 'ionicons';
@@ -32,16 +33,15 @@ export class MapPage implements OnDestroy {
   
   private alertCtrl = inject(AlertController);
   public auth = inject(AuthService);
+  private firebaseService = inject(FirebaseService);
   private router = inject(Router);
 
   // Signals for state management
-  reports = signal<MapReport[]>([
-    { id: '1', lat: 45.6661, lng: 12.2444, title: 'Sede CSM', category: 'info', description: 'Centro di ascolto principale' },
-    { id: '2', lat: 45.6680, lng: 12.2500, title: 'Segnalazione Critica', category: 'urgent', description: 'Richiesto intervento immediato' },
-    { id: '3', lat: 45.6640, lng: 12.2400, title: 'Supporto Completato', category: 'success', description: 'Caso risolto con successo' }
-  ]);
+  reports = signal<MapReport[]>([]);
   
   selectedCategories = signal<string[]>(['all']);
+
+  private unsubscribeReports: (() => void) | null = null;
 
   constructor() {
     addIcons({ add });
@@ -56,6 +56,18 @@ export class MapPage implements OnDestroy {
 
   ionViewDidEnter() {
     this.initMap();
+    this.loadReports();
+  }
+
+  loadReports() {
+    if (this.unsubscribeReports) this.unsubscribeReports();
+    this.unsubscribeReports = this.firebaseService.listenToMapReports((data) => {
+      if (data) {
+        this.reports.set(Object.values(data));
+      } else {
+        this.reports.set([]);
+      }
+    });
   }
 
   initMap() {
@@ -159,15 +171,14 @@ export class MapPage implements OnDestroy {
 
             this.map.once('click', (e: L.LeafletMouseEvent) => {
               document.getElementById('map-hint')?.remove();
-              const newReport: MapReport = {
-                id: Date.now().toString(),
+              const newReport = {
                 lat: e.latlng.lat,
                 lng: e.latlng.lng,
                 title: data.title || 'Nuova segnalazione',
                 category: data.category || 'info',
                 description: data.description || ''
               };
-              this.reports.update(r => [...r, newReport]);
+              this.firebaseService.sendMapReport(newReport);
             });
           }
         }
@@ -177,6 +188,9 @@ export class MapPage implements OnDestroy {
   }
 
   ngOnDestroy() {
+    if (this.unsubscribeReports) {
+      this.unsubscribeReports();
+    }
     if (this.map) {
       this.map.remove();
     }

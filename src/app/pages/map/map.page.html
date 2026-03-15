@@ -8,7 +8,14 @@
 </ion-header>
 
 <ion-content>
-  <div id="map" style="height: 100%; width: 100%;"></div>
+  <div class="filter-bar">
+    <button [class.active]="isCategorySelected('all')" (click)="toggleCategory('all')">Tutti</button>
+    <button [class.active]="isCategorySelected('urgent')" (click)="toggleCategory('urgent')">🆘 Urgente</button>
+    <button [class.active]="isCategorySelected('info')" (click)="toggleCategory('info')">ℹ️ Info</button>
+    <button [class.active]="isCategorySelected('success')" (click)="toggleCategory('success')">✅ Risolto</button>
+  </div>
+
+  <div id="map" style="height: calc(100% - 60px); width: 100%;"></div>
   
   <ion-fab vertical="bottom" horizontal="end" slot="fixed">
     <ion-fab-button (click)="aggiungiSegnalazione()" aria-label="Aggiungi segnalazione">

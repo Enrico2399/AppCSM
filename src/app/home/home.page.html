@@ -1,4 +1,4 @@
-<ion-content [fullscreen]="true" [style.--background]="activeMood() ? getMoodColor(activeMood()!.class) : 'var(--bg-dark)'">
+<ion-content [fullscreen]="true" [style.--background]="activeMood() ? getMoodColor(activeMood()!.key) : 'var(--bg-dark)'">
   
   <!-- AUTH GUARD OVERLAY -->
   <div class="auth-overlay" *ngIf="!(authService.user$ | async)">
@@ -192,17 +192,17 @@
   </ng-container>
 
   <!-- LEGEND POPUP MODAL (Rectangular Window) -->
-  <ion-modal [isOpen]="isPopupOpen()" (didDismiss)="closePopup()" class="rectangular-modal">
+  <ion-modal [isOpen]="popupService.isOpen()" (didDismiss)="closePopup()" class="rectangular-modal">
     <ng-template>
       <div class="modal-window">
         <div class="modal-header">
-          <h3>{{ popupTitle() }}</h3>
+          <h3>{{ popupService.title() }}</h3>
           <button (click)="closePopup()" class="close-icon-btn">
             <ion-icon name="close-outline"></ion-icon>
           </button>
         </div>
         <div class="modal-body">
-          <p>{{ popupDesc() }}</p>
+          <p>{{ popupService.description() }}</p>
         </div>
       </div>
     </ng-template>
@@ -240,6 +240,11 @@
             I dati relativi al tuo diario emozionale salvati nell'app CSM vengono cancellati automaticamente se il tuo account
             risulta inattivo per oltre <strong>3 mesi</strong> consecutivi. Puoi anche richiederne la cancellazione immediata
             dalla sezione profilo in qualsiasi momento.
+          </p>
+          <p style="text-align: center; margin-top: 10px;">
+            <a routerLink="/privacy" (click)="showConsentModal.set(false)" style="color: var(--ion-color-primary); font-weight: 500; text-decoration: underline;">
+              Leggi l'informativa completa sulla privacy
+            </a>
           </p>
           <div style="display:flex; gap:8px; margin-top: 16px; justify-content: flex-end;">
             <button class="btn-secondary" (click)="declineConsent()">Non acconsento</button>

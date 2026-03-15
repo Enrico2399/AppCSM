@@ -1,17 +1,12 @@
+import { MoodService, Mood } from '../services/mood/mood.service';
 import { Component, OnInit, signal, computed } from '@angular/core';
 import { CommonModule, AsyncPipe } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { RouterModule } from '@angular/router';
 import { 
-  IonContent, 
-  IonHeader, 
-  IonToolbar, 
-  IonButtons, 
-  IonButton, 
+  IonContent,
   IonIcon, 
-  IonAvatar, 
   IonModal,
-  IonTitle,
   IonItem,
   IonInput
 } from '@ionic/angular/standalone';
@@ -22,16 +17,7 @@ import { AuthService } from '../services/auth';
 import { FirebaseService } from '../services/firebase/firebase';
 import { ConfirmationResult } from 'firebase/auth';
 import { take, firstValueFrom } from 'rxjs';
-
-interface Mood {
-  key: string;
-  title: string;
-  icon: string;
-  psych: string;
-  effect: string;
-  class: string;
-  exercise: string;
-}
+import { PopupService } from '../services/popup/popup.service';
 
 @Component({
   selector: 'app-home',
@@ -44,32 +30,16 @@ interface Mood {
     FormsModule,
     RouterModule,
     IonContent,
-    IonHeader,
-    IonToolbar,
-    IonButtons,
-    IonButton,
     IonIcon,
-    IonAvatar,
     IonModal,
-    IonTitle,
     IonItem,
     IonInput
   ]
 })
 export class HomePage implements OnInit {
 
-  moods = signal<Mood[]>([
-    { key: "rosso", title: "Rosso", icon: "🔥", psych: "Passione, Energia / Rabbia, Pericolo", effect: "Aumenta battito cardiaco e adrenalina.", class: "c-rosso", exercise: "Fare 10 saltelli sul posto per scaricare l'energia." },
-    { key: "giallo", title: "Giallo", icon: "☀️", psych: "Felicità, Ottimismo / Ansia, Frustrazione", effect: "Stimola la mente e la concentrazione.", class: "c-giallo", exercise: "Scrivi 3 cose per cui sei grato oggi." },
-    { key: "blu", title: "Blu", icon: "🌊", psych: "Calma, Fiducia / Freddezza, Malinconia", effect: "Riduce la pressione e favorisce il relax.", class: "c-blu", exercise: "Segui il respiro: inspira per 4 secondi, espira per 6." },
-    { key: "verde", title: "Verde", icon: "🌿", psych: "Armonia, Crescita / Invidia, Noia", effect: "Riduce lo stress, favorisce l'equilibrio.", class: "c-verde", exercise: "Guarda fuori dalla finestra per 2 minuti cercando il verde." },
-    { key: "arancio", title: "Arancione", icon: "🍊", psych: "Entusiasmo, Socievolezza / Impulsività", effect: "Stimola la creatività e la socializzazione.", class: "c-arancio", exercise: "Chiama o scrivi un messaggio a un amico che non senti da tempo." },
-    { key: "viola", title: "Viola", icon: "🔮", psych: "Spiritualità, Mistero / Solitudine", effect: "Stimola l'immaginazione e calma la mente.", class: "c-viola", exercise: "Disegna una forma astratta senza staccare la penna dal foglio." },
-    { key: "bianco", title: "Bianco", icon: "☁️", psych: "Purezza, Semplicità / Isolamento", effect: "Crea sensazione di spazio e chiarezza.", class: "c-bianco", exercise: "Chiudi gli occhi e visualizza una stanza vuota e luminosa." },
-    { key: "nero", title: "Nero", icon: "🎱", psych: "Eleganza, Potere / Oppressione, Paura", effect: "Comunica autorità e definisce i confini.", class: "c-nero", exercise: "Scrivi su un foglio una paura e poi strappalo." },
-    { key: "grigio", title: "Grigio", icon: "🌪️", psych: "Neutralità, Equilibrio / Monotonia", effect: "Riduce gli stimoli, crea stabilità.", class: "c-grigio", exercise: "Riordina 5 oggetti sulla tua riflessione per ritrovare ordine." }
-  ]);
-
+  moods = signal<Mood[]>([]);
+  
   activeMood = signal<Mood | null>(null);
   
   angleStep = computed(() => 360 / this.moods().length);
@@ -78,34 +48,34 @@ export class HomePage implements OnInit {
   newTip = signal<string>('');
   moodNote = signal<string>('');
 
-  isPopupOpen = signal<boolean>(false);
-  popupTitle = signal<string>('');
-  popupDesc = signal<string>('');
-
-  // Auth fields
-  email = signal<string>('');
-  password = signal<string>('');
-  name = signal<string>('');
-  isRegistering = signal<boolean>(false);
-  authMethod = signal<'email' | 'phone'>('email');
-
-  // Phone Auth
-  phone = signal<string>('');
-  otp = signal<string>('');
-  showOtpInput = signal<boolean>(false);
-  confirmationResult: ConfirmationResult | null = null;
-  recaptchaVerifier: any;
   isLightMode = signal<boolean>(false);
 
   // Privacy & consenso
   hasConsent = signal<boolean | null>(null);
   showConsentModal = signal<boolean>(false);
 
+  // Auth fields
+  email = signal<string>('');
+  password = signal<string>('');
+  name = signal<string>('');
+  isRegistering = signal<boolean>(false);
+  
+  phone = signal<string>('');
+  otp = signal<string>('');
+  showOtpInput = signal<boolean>(false);
+  authMethod = signal<'email' | 'phone'>('email');
+  
+  recaptchaVerifier: any;
+  confirmationResult: ConfirmationResult | null = null;
+
   constructor(
+    private moodService: MoodService,
     private storageService: StorageService,
     public authService: AuthService,
-    private firebaseService: FirebaseService
+    private firebaseService: FirebaseService,
+    public popupService: PopupService
   ) {
+    this.moods.set(this.moodService.getMoods());
     addIcons({ logoGoogle, logOutOutline, closeOutline });
   }
 
@@ -199,19 +169,8 @@ export class HomePage implements OnInit {
     this.loadTips();
   }
 
-  getMoodColor(className: string): string {
-    const colors: Record<string, string> = {
-      'c-rosso': '#e74c3c',
-      'c-giallo': '#f1c40f',
-      'c-blu': '#3498db',
-      'c-verde': '#2ecc71',
-      'c-arancio': '#e67e22',
-      'c-viola': '#9b59b6',
-      'c-bianco': '#ecf0f1',
-      'c-nero': '#2c3e50',
-      'c-grigio': '#95a5a6'
-    };
-    return colors[className] || 'var(--bg-dark)';
+  getMoodColor(key: string): string {
+    return this.moodService.getMoodColor(key) || 'var(--bg-dark)';
   }
 
   loadTips() {
@@ -243,19 +202,15 @@ export class HomePage implements OnInit {
   }
 
   openPopup(mood: Mood) {
-    this.popupTitle.set(mood.title);
-    this.popupDesc.set(mood.psych);
-    this.isPopupOpen.set(true);
+    this.popupService.showStatus(mood.title, mood.psych);
   }
 
   closePopup() {
-    this.isPopupOpen.set(false);
+    this.popupService.close();
   }
 
   showStatus(title: string, message: string) {
-    this.popupTitle.set(title);
-    this.popupDesc.set(message);
-    this.isPopupOpen.set(true);
+    this.popupService.showStatus(title, message);
   }
 
   async handleLogin() {

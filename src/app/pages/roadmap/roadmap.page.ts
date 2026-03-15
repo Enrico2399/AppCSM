@@ -25,7 +25,9 @@ interface PitchItem {
   standalone: true,
   imports: [IonicModule, CommonModule, FormsModule]
 })
-export class RoadmapPage implements OnInit {
+export class RoadmapPage implements OnInit, OnDestroy {
+  // ... existing fields ...
+  private unsubscribeVotes: (() => void) | null = null;
 
   features: RoadmapFeature[] = [
     {
@@ -80,11 +82,17 @@ export class RoadmapPage implements OnInit {
   ) {}
 
   ngOnInit() {
-    this.firebaseService.listenToVotes((votesData: any) => {
+    this.unsubscribeVotes = this.firebaseService.listenToVotes((votesData: any) => {
       if (votesData) {
         this.votes.set(votesData);
       }
     });
+  }
+
+  ngOnDestroy() {
+    if (this.unsubscribeVotes) {
+      this.unsubscribeVotes();
+    }
   }
 
   hasVoted(featureId: string): boolean {

@@ -135,8 +135,8 @@ export class FirebaseService {
     });
   }
 
-  listenToVotes(callback: (votes: any) => void) {
-    onValue(ref(this.db, 'votes'), (snapshot) => {
+  listenToVotes(callback: (votes: any) => void): Unsubscribe {
+    return onValue(ref(this.db, 'votes'), (snapshot) => {
       callback(snapshot.val());
     });
   }
@@ -152,9 +152,24 @@ export class FirebaseService {
     });
   }
 
-  listenToCommunityMessages(callback: (data: any) => void) {
-    const messagesRef = query(ref(this.db, 'communityMessages'), limitToLast(50));
-    onValue(messagesRef, (snapshot) => {
+  listenToCommunityMessages(callback: (data: any) => void): Unsubscribe {
+    const messagesRef = query(ref(this.db, 'communityMessages'), limitToLast(20));
+    return onValue(messagesRef, (snapshot) => {
+      callback(snapshot.val());
+    });
+  }
+
+  sendMapReport(report: any) {
+    const reportsRef = push(ref(this.db, 'mapReports'));
+    return set(reportsRef, {
+      ...report,
+      timestamp: new Date().toISOString()
+    });
+  }
+
+  listenToMapReports(callback: (data: any) => void): Unsubscribe {
+    const reportsRef = ref(this.db, 'mapReports');
+    return onValue(reportsRef, (snapshot) => {
       callback(snapshot.val());
     });
   }
