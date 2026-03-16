@@ -130,16 +130,32 @@ export class HelpPage {
   private async loadComponentsFromFirebase() {
     try {
       const user = this.firebaseService.auth.currentUser;
-      if (!user || user.isAnonymous) return;
+      const session = this.anonymousSessionService.getCurrentSession()();
       
-      const componentsRef = ref(this.firebaseService.getDatabase(), `users/${user.uid}/helpComponents`);
+      let storagePath: string;
+      if (user && !user.isAnonymous) {
+        storagePath = `users/${user.uid}/helpComponents`;
+      } else if (session) {
+        storagePath = `anonymous_sessions/${session.id}/helpComponents`;
+      } else {
+        return;
+      }
+      
+      const componentsRef = ref(this.firebaseService.getDatabase(), storagePath);
       const snapshot = await get(componentsRef);
       
       if (snapshot.exists()) {
         const data = snapshot.val();
-        const components = Object.values(data).sort((a: any, b: any) => 
+        const now = new Date().toISOString();
+        
+        // Filter out expired components
+        const components = Object.values(data).filter((comp: any) => {
+          const expiresAt = comp.expiresAt;
+          return !expiresAt || expiresAt > now;
+        }).sort((a: any, b: any) => 
           new Date(b.timestamp).getTime() - new Date(a.timestamp).getTime()
         );
+        
         this.addedComponents.set(components);
       }
     } catch (error) {
@@ -185,10 +201,29 @@ export class HelpPage {
   private async saveComponentToFirebase(component: any) {
     try {
       const user = this.firebaseService.auth.currentUser;
-      if (!user || user.isAnonymous) return;
+      const session = this.anonymousSessionService.getCurrentSession()();
       
-      const componentRef = ref(this.firebaseService.getDatabase(), `users/${user.uid}/helpComponents/${component.id}`);
-      await set(componentRef, component);
+      let storagePath: string;
+      let expiresAt: string | null = null;
+      
+      if (user && !user.isAnonymous) {
+        // Logged-in user: 3 months expiration
+        storagePath = `users/${user.uid}/helpComponents/${component.id}`;
+        const threeMonths = new Date();
+        threeMonths.setMonth(threeMonths.getMonth() + 3);
+        expiresAt = threeMonths.toISOString();
+      } else if (session) {
+        // Anonymous user: 24 hours expiration
+        storagePath = `anonymous_sessions/${session.id}/helpComponents/${component.id}`;
+        const oneDay = new Date();
+        oneDay.setHours(oneDay.getHours() + 24);
+        expiresAt = oneDay.toISOString();
+      } else {
+        return;
+      }
+      
+      const componentWithExpiry = { ...component, expiresAt };
+      await set(ref(this.firebaseService.getDatabase(), storagePath), componentWithExpiry);
     } catch (error) {
       console.error('Error saving component to Firebase:', error);
     }
@@ -197,10 +232,18 @@ export class HelpPage {
   private async deleteComponentFromFirebase(componentId: number) {
     try {
       const user = this.firebaseService.auth.currentUser;
-      if (!user || user.isAnonymous) return;
+      const session = this.anonymousSessionService.getCurrentSession()();
       
-      const componentRef = ref(this.firebaseService.getDatabase(), `users/${user.uid}/helpComponents/${componentId}`);
-      await remove(componentRef);
+      let storagePath: string;
+      if (user && !user.isAnonymous) {
+        storagePath = `users/${user.uid}/helpComponents/${componentId}`;
+      } else if (session) {
+        storagePath = `anonymous_sessions/${session.id}/helpComponents/${componentId}`;
+      } else {
+        return;
+      }
+      
+      await remove(ref(this.firebaseService.getDatabase(), storagePath));
     } catch (error) {
       console.error('Error deleting component from Firebase:', error);
     }
@@ -302,10 +345,31 @@ export class HelpPage {
   private async saveCardToFirebase(planData: any) {
     try {
       const user = this.firebaseService.auth.currentUser;
-      if (!user || user.isAnonymous) return;
+      const session = this.anonymousSessionService.getCurrentSession()();
       
-      const cardRef = ref(this.firebaseService.getDatabase(), `users/${user.uid}/currentCard`);
-      await set(cardRef, { ...planData, savedAt: new Date().toISOString() });
+      if (!user && !session) return;
+      
+      let storagePath: string;
+      let expiresAt: string | null = null;
+      
+      if (user && !user.isAnonymous) {
+        // Logged-in user: 3 months expiration
+        storagePath = `users/${user.uid}/currentCard`;
+        const threeMonths = new Date();
+        threeMonths.setMonth(threeMonths.getMonth() + 3);
+        expiresAt = threeMonths.toISOString();
+      } else if (session) {
+        // Anonymous user: 24 hours expiration
+        storagePath = `anonymous_sessions/${session.id}/currentCard`;
+        const oneDay = new Date();
+        oneDay.setHours(oneDay.getHours() + 24);
+        expiresAt = oneDay.toISOString();
+      } else {
+        return;
+      }
+      
+      const cardData = { ...planData, savedAt: new Date().toISOString(), expiresAt };
+      await set(ref(this.firebaseService.getDatabase(), storagePath), cardData);
     } catch (error) {
       console.error('Error saving card to Firebase:', error);
     }
@@ -314,13 +378,27 @@ export class HelpPage {
   private async loadCardFromFirebase() {
     try {
       const user = this.firebaseService.auth.currentUser;
-      if (!user || user.isAnonymous) return;
+      const session = this.anonymousSessionService.getCurrentSession()();
       
-      const cardRef = ref(this.firebaseService.getDatabase(), `users/${user.uid}/currentCard`);
+      let storagePath: string;
+      if (user && !user.isAnonymous) {
+        storagePath = `users/${user.uid}/currentCard`;
+      } else if (session) {
+        storagePath = `anonymous_sessions/${session.id}/currentCard`;
+      } else {
+        return;
+      }
+      
+      const cardRef = ref(this.firebaseService.getDatabase(), storagePath);
       const snapshot = await get(cardRef);
       
       if (snapshot.exists()) {
         const cardData = snapshot.val();
+        // Check if card is expired
+        if (cardData.expiresAt && new Date(cardData.expiresAt) < new Date()) {
+          await remove(cardRef); // Delete expired card
+          return;
+        }
         this.generatedPlan.set(cardData);
       }
     } catch (error) {
@@ -331,7 +409,7 @@ export class HelpPage {
   private async clearCardFromFirebase() {
     try {
       const user = this.firebaseService.auth.currentUser;
-      if (!user || user.isAnonymous) return;
+      if (!user) return;
       
       const cardRef = ref(this.firebaseService.getDatabase(), `users/${user.uid}/currentCard`);
       await remove(cardRef);
