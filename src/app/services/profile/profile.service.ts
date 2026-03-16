@@ -66,8 +66,13 @@ export class ProfileService {
         // For anonymous users, check local storage first
         const localProfile = this.storageService.getAnonymousProfile();
         if (localProfile && !this.isExpired(localProfile.expiresAt)) {
-          this.currentUserProfile.set(localProfile);
-          return localProfile;
+          // Ripristina esplicitamente helpPlans se presenti
+          const profile: UserProfile = {
+            ...localProfile,
+            helpPlans: localProfile.helpPlans || []
+          };
+          this.currentUserProfile.set(profile);
+          return profile;
         }
         
         // Create new anonymous profile
@@ -87,7 +92,12 @@ export class ProfileService {
         const firebaseProfile = await this.firebaseService.getUserProfile(user.uid);
         if (firebaseProfile) {
           const profile: UserProfile = {
-            ...firebaseProfile,
+            displayName: firebaseProfile.displayName || user.displayName || '',
+            email: firebaseProfile.email || user.email || '',
+            photoURL: firebaseProfile.photoURL || user.photoURL,
+            archetypeProfile: firebaseProfile.archetypeProfile,
+            preferences: firebaseProfile.preferences,
+            helpPlans: firebaseProfile.helpPlans || [],   // <-- ripristino esplicito
             isAnonymous: false,
             createdAt: firebaseProfile.createdAt || new Date().toISOString()
           };
@@ -110,8 +120,10 @@ export class ProfileService {
     const updatedProfile = { ...currentProfile, ...profile };
     
     if (currentProfile.isAnonymous) {
-      // Save to local storage for anonymous users
-      await this.saveAnonymousProfile(updatedProfile);
+      // Merge con il profilo già salvato in localStorage per non perdere helpPlans
+      const existing = this.storageService.getAnonymousProfile() || {};
+      const mergedProfile = { ...existing, ...updatedProfile };
+      await this.saveAnonymousProfile(mergedProfile);
     } else {
       // Save to Firebase for authenticated users
       const user = this.firebaseService.auth.currentUser;

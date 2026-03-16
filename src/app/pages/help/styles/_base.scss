@@ -20,32 +20,45 @@ ion-content {
 }
 
 .delete-btn {
-  background: rgba(255, 0, 0, 0.15);
-  border: 1px solid rgba(255, 0, 0, 0.3);
+  background: #dc3545;
+  border: 2px solid #b02a37;
   border-radius: 50%;
-  width: 30px;
-  height: 30px;
+  width: 28px;
+  height: 28px;
+  min-width: 28px;
   display: flex;
   align-items: center;
   justify-content: center;
   cursor: pointer;
   transition: all 0.3s ease;
-  position: absolute;
-  top: 10px;
-  right: 10px;
-  &:hover {
-    background: rgba(255, 0, 0, 0.3);
-    border-color: rgba(255, 0, 0, 0.6);
+  position: relative;
+
+  // X fallback sempre visibile anche senza ion-icon
+  &::after {
+    content: '✕';
+    font-size: 0.75rem;
+    color: white;
+    font-weight: 700;
+    line-height: 1;
   }
+
+  &:hover {
+    background: #b02a37;
+    border-color: #8b242b;
+    transform: scale(1.1);
+  }
+
   ion-icon {
-    color: #dc3545;
-    font-size: 16px;
+    color: white !important;
+    font-size: 14px;
+    position: absolute;
   }
 }
 
 .light-theme .delete-btn {
-  background: rgba(255, 0, 0, 0.1);
-  border-color: rgba(255, 0, 0, 0.4);
+  background: #dc3545;
+  border-color: #b02a37;
+  ion-icon { color: white !important; }
 }
 
 @media (max-width: 768px) {

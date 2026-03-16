@@ -12,9 +12,9 @@ import { signOut } from 'firebase/auth';
 import { doc, setDoc, deleteDoc, collection, getDocs, query, orderBy, serverTimestamp } from 'firebase/firestore';
 import { ref, get, set, remove } from 'firebase/database';
 import { addIcons } from 'ionicons';
-import { logoWhatsapp, call, exit } from 'ionicons/icons';
+import { logoWhatsapp, call, exit, logOutOutline, closeOutline } from 'ionicons/icons';
 
-addIcons({ logoWhatsapp, call, exit });
+addIcons({ logoWhatsapp, call, exit, logOutOutline, closeOutline });
 
 interface Comment {
   text: string;
@@ -94,6 +94,9 @@ export class HelpPage {
     
     // Load anonymous components
     this.loadAnonymousComponents();
+    
+    // Load current card from Firebase for logged-in users
+    this.loadCardFromFirebase();
   }
 
   private loadSavedData() {
@@ -267,6 +270,9 @@ export class HelpPage {
     // Save the generated plan to profile
     await this.saveGeneratedPlan();
     
+    // Save to Firebase for persistence on refresh
+    await this.saveCardToFirebase(planData);
+    
     // Add component to anonymous persistence
     this.addComponent({
       type: 'help-plan',
@@ -290,6 +296,47 @@ export class HelpPage {
       console.log('Help plan saved with ID:', planId);
     } catch (error) {
       console.error('Error saving help plan:', error);
+    }
+  }
+
+  private async saveCardToFirebase(planData: any) {
+    try {
+      const user = this.firebaseService.auth.currentUser;
+      if (!user || user.isAnonymous) return;
+      
+      const cardRef = ref(this.firebaseService.getDatabase(), `users/${user.uid}/currentCard`);
+      await set(cardRef, { ...planData, savedAt: new Date().toISOString() });
+    } catch (error) {
+      console.error('Error saving card to Firebase:', error);
+    }
+  }
+
+  private async loadCardFromFirebase() {
+    try {
+      const user = this.firebaseService.auth.currentUser;
+      if (!user || user.isAnonymous) return;
+      
+      const cardRef = ref(this.firebaseService.getDatabase(), `users/${user.uid}/currentCard`);
+      const snapshot = await get(cardRef);
+      
+      if (snapshot.exists()) {
+        const cardData = snapshot.val();
+        this.generatedPlan.set(cardData);
+      }
+    } catch (error) {
+      console.error('Error loading card from Firebase:', error);
+    }
+  }
+
+  private async clearCardFromFirebase() {
+    try {
+      const user = this.firebaseService.auth.currentUser;
+      if (!user || user.isAnonymous) return;
+      
+      const cardRef = ref(this.firebaseService.getDatabase(), `users/${user.uid}/currentCard`);
+      await remove(cardRef);
+    } catch (error) {
+      console.error('Error clearing card from Firebase:', error);
     }
   }
 

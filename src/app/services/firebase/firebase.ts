@@ -95,7 +95,10 @@ export class FirebaseService {
       }
     }
 
+    // Merge: preserva tutti i dati esistenti (helpPlans, preferences, ecc.)
+    // e aggiorna solo i campi di autenticazione
     const updatePayload = {
+      ...existing,                                                      // preserva helpPlans, preferences, ecc.
       displayName: user.displayName || existing.displayName || null,
       email: user.email || existing.email || null,
       photoURL: user.photoURL || existing.photoURL || null,
@@ -233,8 +236,14 @@ export class FirebaseService {
 
   async saveUserProfile(userId: string, profileData: any): Promise<void> {
     const userRef = ref(this.db, `users/${userId}`);
+
+    // Leggi prima i dati esistenti per fare un merge sicuro
+    const snapshot = await get(userRef);
+    const existing = snapshot.val() || {};
+
     const updatePayload = {
-      ...profileData,
+      ...existing,          // preserva tutto ciò che c'è già (helpPlans, preferences, ecc.)
+      ...profileData,       // sovrascrive solo i campi passati
       updatedAt: new Date().toISOString()
     };
 

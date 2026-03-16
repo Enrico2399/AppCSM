@@ -63,69 +63,92 @@
 
 .plan-header {
   display: flex;
-  flex-direction: row;        // ← sempre in riga, anche su mobile
-  justify-content: space-between;
+  flex-direction: row;
+  justify-content: flex-start;
   align-items: center;
-  flex-wrap: nowrap;          // ← la X non va mai a capo
-  gap: 8px;
+  flex-wrap: nowrap;
+  gap: 12px;
   margin-bottom: 10px;
-  
-  .plan-mode {
-    font-weight: 600;
-    color: var(--ion-color-primary);
-    flex: 1;                  // ← prende lo spazio disponibile
-    min-width: 0;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    white-space: nowrap;
-  }
-  
+
+  // Data (es. "Oggi", "Ieri") — sempre a sinistra su tutti gli schermi
   .plan-date {
     font-size: 0.85rem;
     color: #888;
     flex-shrink: 0;
+    order: 0;
+    text-align: left;
+    margin-right: auto; // spinge tutto il resto a destra
+  }
+  
+  .plan-mode {
+    font-weight: 600;
+    color: var(--ion-color-primary);
+    flex-shrink: 0;
+    min-width: 0;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    order: 1;
+    margin-right: 0;
   }
 
-  // X icona in alto a destra — sempre visibile
+  // X rossa — cerchio rosso con X bianca, sempre visibile
   .delete-btn {
     flex-shrink: 0;
-    background: none;
-    border: none;
+    background: #dc3545;
+    border: 2px solid #b02a37;
     cursor: pointer;
-    color: var(--ion-color-danger);
-    padding: 4px;
+    padding: 0;
     display: flex;
     align-items: center;
     justify-content: center;
     border-radius: 50%;
-    transition: background 0.2s ease;
+    transition: all 0.2s ease;
+    order: 2;
+    width: 28px;
+    height: 28px;
+    min-width: 28px;
 
     &:hover {
-      background: rgba(var(--ion-color-danger-rgb), 0.15);
+      background: #b02a37;
+      border-color: #8b242b;
+      transform: scale(1.1);
+    }
+
+    // Fallback testo X se ion-icon non carica
+    &::after {
+      content: '✕';
+      font-size: 0.8rem;
+      color: white;
+      font-weight: 700;
+      line-height: 1;
     }
 
     ion-icon {
-      font-size: 1.2rem;
+      font-size: 1rem;
+      color: white !important;
+      position: absolute; // sovrapposto al ::after
     }
   }
 }
 
-// X esplicitamente rossa in light mode
-:host-context(.light-theme) .delete-btn {
-  color: #e74c3c !important;
-}
-
-// Desktop: data 'Oggi' a sinistra
+// Forza allineamento data a sinistra su desktop (> 768px)
 @media (min-width: 769px) {
   .plan-header {
     .plan-date {
-      order: -1;
-      margin-right: 10px;
-      margin-left: 0;
+      text-align: left;
+      margin-right: auto;
     }
-    .plan-mode {
-      flex: 0 1 auto;
-    }
+  }
+}
+
+// X esplicitamente rossa in light mode - stesso stile
+:host-context(.light-theme) .delete-btn {
+  background: #dc3545;
+  border-color: #b02a37;
+  
+  ion-icon {
+    color: white !important;
   }
 }
 

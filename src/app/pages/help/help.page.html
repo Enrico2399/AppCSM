@@ -101,12 +101,12 @@
           <div class="plans-list">
             <div class="plan-item" *ngFor="let plan of getSavedPlans()" [class.used]="plan.isUsed">
               <div class="plan-header">
+                <span class="plan-date">{{ formatDate(plan.createdAt) }}</span>
                 <span class="plan-mode">
                   {{ plan.mode === 'wa' ? '📱 Contatto Diretto' : '📖 Auto-Aiuto' }}
                 </span>
-                <span class="plan-date">{{ formatDate(plan.createdAt) }}</span>
                 <button class="delete-btn" (click)="deletePlan(plan.id)" aria-label="Elimina piano">
-                  <ion-icon name="close-outline"></ion-icon>
+                  <ion-icon name="close-outline" color="light"></ion-icon>
                 </button>
               </div>
               <div class="plan-content">
@@ -145,12 +145,12 @@
           <div class="plans-list">
             <div class="plan-item" *ngFor="let component of addedComponents()">
               <div class="plan-header">
+                <span class="plan-date">{{ formatDate(component.timestamp) }}</span>
                 <span class="plan-mode">
                   {{ component.type === 'help-plan' ? '🛠️ Piano Aiuto' : '📝 Componente' }}
                 </span>
-                <span class="plan-date">{{ formatDate(component.timestamp) }}</span>
                 <button class="delete-btn" (click)="deleteComponent(component.id)" aria-label="Elimina componente">
-                  <ion-icon name="close-outline"></ion-icon>
+                  <ion-icon name="close-outline" color="light"></ion-icon>
                 </button>
               </div>
               <div class="plan-content">
@@ -213,7 +213,11 @@
 
 <!-- Logout FAB Button -->
 <ion-fab vertical="bottom" horizontal="end" slot="fixed">
-  <ion-fab-button color="danger" (click)="logout()" aria-label="Logout">
-    <ion-icon name="exit"></ion-icon>
+  <ion-fab-button class="logout-fab" (click)="logout()" aria-label="Logout">
+    <svg xmlns="http://www.w3.org/2000/svg" width="26" height="26" viewBox="0 0 512 512" fill="none">
+      <path d="M160 96H96a32 32 0 0 0-32 32v256a32 32 0 0 0 32 32h64" stroke="white" stroke-width="40" stroke-linecap="round" stroke-linejoin="round"/>
+      <polyline points="336 352 448 256 336 160" stroke="white" stroke-width="40" stroke-linecap="round" stroke-linejoin="round"/>
+      <line x1="192" y1="256" x2="448" y2="256" stroke="white" stroke-width="40" stroke-linecap="round"/>
+    </svg>
   </ion-fab-button>
 </ion-fab>
