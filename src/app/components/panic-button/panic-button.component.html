@@ -14,11 +14,11 @@
   [attr.aria-pressed]="isPressed">
   
   <div class="panic-button">
-    <ion-icon 
-      name="eye-off-outline" 
-      class="panic-icon"
-      [class.active]="isPressed">
-    </ion-icon>
+    <svg xmlns="http://www.w3.org/2000/svg" width="26" height="26" viewBox="0 0 512 512" fill="none" class="panic-icon-svg">
+      <path d="M160 96H96a32 32 0 0 0-32 32v256a32 32 0 0 0 32 32h64" stroke="#ff4444" stroke-width="40" stroke-linecap="round" stroke-linejoin="round"/>
+      <polyline points="336 352 448 256 336 160" stroke="#ff4444" stroke-width="40" stroke-linecap="round" stroke-linejoin="round"/>
+      <line x1="192" y1="256" x2="448" y2="256" stroke="#ff4444" stroke-width="40" stroke-linecap="round"/>
+    </svg>
     
     <div class="panic-text" *ngIf="isPressed">
       <span class="hold-text">Tieni premuto</span>

@@ -36,6 +36,13 @@
         </ion-avatar>
         <h3>{{ user.displayName }}</h3>
         <p style="opacity: 0.7;">{{ user.email }}</p>
+        
+        <p *ngIf="user.isAnonymous" style="text-align: center; margin-top: 16px; font-size: 0.85rem; opacity: 0.9;">
+          <strong>Cancellazione automatica dei dati dopo 24 ore, fai il login non da anonimo se vuoi i tuoi dati mantenuti.</strong>
+        </p>
+        <p *ngIf="!user.isAnonymous" style="text-align: center; margin-top: 16px; font-size: 0.85rem; opacity: 0.9;">
+          Cancellazione automatica dei dati dopo 3 mesi di inattività
+        </p>
       </div>
       
       <hr>
@@ -47,10 +54,6 @@
       <p class="danger-label">Gestione Dati:</p>
       <button (click)="clearAllData()" class="danger-btn">Cancella dati locali sul dispositivo</button>
       <button (click)="clearCloudData()" class="danger-btn">Cancella diario e consensi da CSM (cloud)</button>
-      
-      <p style="text-align: center; margin-top: 16px; font-size: 0.85rem; opacity: 0.9;">
-        Cancellazione automatica dei dati dopo 3 mesi di inattività
-      </p>
       
       <p style="text-align: center; margin-top: 8px;">
         <a routerLink="/privacy" (click)="closeProfileModal()" style="font-size: 0.85rem;">
