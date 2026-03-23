@@ -1,0 +1,462 @@
+.meditations-container {
+  max-width: 800px;
+  margin: 0 auto;
+  padding-bottom: 200px; // Space for audio player
+}
+
+.search-section {
+  margin-bottom: 24px;
+}
+
+.categories-section {
+  margin-bottom: 32px;
+}
+
+.categories-section h3 {
+  margin: 0 0 16px 0;
+  font-size: 1.2rem;
+  color: var(--ion-text-color);
+  font-weight: 600;
+}
+
+.category-chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.category-chip {
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.category-chip:hover {
+  transform: translateY(-2px);
+}
+
+.loading-section {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 60px 20px;
+  text-align: center;
+}
+
+.loading-section ion-spinner {
+  margin-bottom: 16px;
+}
+
+.loading-section p {
+  color: var(--ion-color-medium);
+  margin: 0;
+}
+
+.list-header {
+  margin-bottom: 24px;
+}
+
+.list-header h3 {
+  margin: 0 0 4px 0;
+  font-size: 1.3rem;
+  color: var(--ion-text-color);
+  font-weight: 600;
+}
+
+.list-header p {
+  margin: 0;
+  color: var(--ion-color-medium);
+  font-size: 0.9rem;
+}
+
+.meditations-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 20px;
+}
+
+.meditation-card {
+  background: var(--ion-color-light);
+  border-radius: 16px;
+  padding: 20px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  border: 1px solid var(--ion-color-light-shade);
+}
+
+.meditation-card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 8px 24px rgba(var(--ion-color-primary-rgb), 0.15);
+  border-color: var(--ion-color-primary);
+}
+
+.card-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 16px;
+}
+
+.meditation-info h4 {
+  margin: 0 0 8px 0;
+  font-size: 1.1rem;
+  font-weight: 600;
+  color: var(--ion-text-color);
+  line-height: 1.3;
+}
+
+.meditation-info .description {
+  margin: 0;
+  color: var(--ion-color-medium);
+  font-size: 0.9rem;
+  line-height: 1.4;
+}
+
+.meditation-actions {
+  display: flex;
+  gap: 4px;
+}
+
+.favorite-btn,
+.download-btn {
+  --color: var(--ion-color-medium);
+  --padding-start: 8px;
+  --padding-end: 8px;
+}
+
+.favorite-btn:hover {
+  --color: var(--ion-color-danger);
+}
+
+.download-btn:hover {
+  --color: var(--ion-color-primary);
+}
+
+.card-content {
+  margin-bottom: 20px;
+}
+
+.meditation-meta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 16px;
+  margin-bottom: 16px;
+}
+
+.meta-item {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 0.85rem;
+  color: var(--ion-color-medium);
+}
+
+.meta-item ion-icon {
+  font-size: 1rem;
+}
+
+.mood-tags {
+  margin-bottom: 12px;
+}
+
+.tags-label {
+  display: block;
+  font-size: 0.85rem;
+  color: var(--ion-color-medium);
+  margin-bottom: 8px;
+}
+
+.tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+
+.mood-tag {
+  padding: 4px 8px;
+  border-radius: 12px;
+  font-size: 0.75rem;
+  font-weight: 500;
+  color: white;
+}
+
+.premium-badge {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  color: var(--ion-color-warning);
+  font-weight: 600;
+  font-size: 0.85rem;
+}
+
+.premium-badge ion-icon {
+  font-size: 1rem;
+}
+
+.card-footer ion-button {
+  --border-radius: 12px;
+  font-weight: 500;
+}
+
+.empty-state {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 80px 20px;
+  text-align: center;
+}
+
+.empty-icon {
+  font-size: 4rem;
+  color: var(--ion-color-medium);
+  margin-bottom: 20px;
+}
+
+.empty-state h3 {
+  margin: 0 0 8px 0;
+  font-size: 1.3rem;
+  color: var(--ion-text-color);
+  font-weight: 600;
+}
+
+.empty-state p {
+  margin: 0;
+  color: var(--ion-color-medium);
+  font-size: 0.9rem;
+}
+
+// Audio Player
+.audio-player {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  background: var(--ion-color-light);
+  border-top: 1px solid var(--ion-color-light-shade);
+  padding: 16px;
+  z-index: 1000;
+  box-shadow: 0 -4px 12px rgba(0, 0, 0, 0.1);
+}
+
+.player-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 12px;
+}
+
+.now-playing h4 {
+  margin: 0 0 2px 0;
+  font-size: 1rem;
+  font-weight: 600;
+  color: var(--ion-text-color);
+}
+
+.now-playing p {
+  margin: 0;
+  font-size: 0.8rem;
+  color: var(--ion-color-medium);
+}
+
+.close-player {
+  --color: var(--ion-color-medium);
+  --padding-start: 8px;
+  --padding-end: 8px;
+}
+
+.player-progress {
+  margin-bottom: 16px;
+}
+
+.progress-bar {
+  --bar-background: var(--ion-color-light-shade);
+  --bar-background-active: var(--ion-color-primary);
+}
+
+.time-display {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 4px;
+  font-size: 0.75rem;
+  color: var(--ion-color-medium);
+}
+
+.player-controls {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+.main-controls {
+  display: flex;
+  justify-content: center;
+  flex: 1;
+}
+
+.play-pause-btn {
+  --color: var(--ion-color-primary);
+  --background: rgba(var(--ion-color-primary-rgb), 0.1);
+  --border-radius: 50%;
+  width: 56px;
+  height: 56px;
+}
+
+.secondary-controls {
+  display: flex;
+  gap: 4px;
+  flex-wrap: wrap;
+  max-width: 200px;
+}
+
+.volume-control {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex: 1;
+  max-width: 150px;
+}
+
+.volume-btn {
+  --color: var(--ion-color-medium);
+  --padding-start: 4px;
+  --padding-end: 4px;
+}
+
+.volume-slider {
+  flex: 1;
+  --bar-background: var(--ion-color-light-shade);
+  --bar-background-active: var(--ion-color-primary);
+}
+
+// Helper functions for mood colors and titles
+// These would be implemented in the component but shown here for reference
+/*
+getMoodColor(tag: string): string {
+  const colors: Record<string, string> = {
+    'rosso': '#e74c3c',
+    'giallo': '#f1c40f',
+    'blu': '#3498db',
+    'verde': '#2ecc71',
+    'arancio': '#e67e22',
+    'viola': '#9b59b6',
+    'bianco': '#ecf0f1',
+    'nero': '#2c3e50',
+    'grigio': '#95a5a6'
+  };
+  return colors[tag] || '#ccc';
+}
+
+getMoodTitle(tag: string): string {
+  const titles: Record<string, string> = {
+    'rosso': 'Rosso',
+    'giallo': 'Giallo',
+    'blu': 'Blu',
+    'verde': 'Verde',
+    'arancio': 'Arancione',
+    'viola': 'Viola',
+    'bianco': 'Bianco',
+    'nero': 'Nero',
+    'grigio': 'Grigio'
+  };
+  return titles[tag] || tag;
+}
+*/
+
+// Responsive design
+@media (min-width: 768px) {
+  .meditations-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (min-width: 1024px) {
+  .meditations-grid {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}
+
+@media (max-width: 480px) {
+  .meditations-container {
+    padding-bottom: 240px;
+  }
+  
+  .audio-player {
+    padding: 12px;
+  }
+  
+  .player-controls {
+    flex-direction: column;
+    gap: 12px;
+  }
+  
+  .main-controls {
+    order: 2;
+  }
+  
+  .secondary-controls {
+    order: 1;
+    max-width: 100%;
+    justify-content: center;
+  }
+  
+  .volume-control {
+    order: 3;
+    max-width: 100%;
+  }
+  
+  .meditation-card {
+    padding: 16px;
+  }
+  
+  .card-header {
+    flex-direction: column;
+    gap: 12px;
+  }
+  
+  .meditation-actions {
+    align-self: flex-end;
+  }
+}
+
+// Theme support
+@media (prefers-color-scheme: dark) {
+  .meditation-card,
+  .audio-player {
+    background: rgba(var(--ion-color-dark-tint-rgb), 0.3);
+    border-color: var(--ion-color-dark-shade);
+  }
+  
+  .meditation-card:hover {
+    border-color: var(--ion-color-primary);
+  }
+}
+
+// Animations
+.meditation-card {
+  animation: fadeInUp 0.3s ease-out;
+}
+
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.audio-player {
+  animation: slideUp 0.3s ease-out;
+}
+
+@keyframes slideUp {
+  from {
+    transform: translateY(100%);
+  }
+  to {
+    transform: translateY(0);
+  }
+}

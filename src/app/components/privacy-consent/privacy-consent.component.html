@@ -1,0 +1,229 @@
+<ion-header [translucent]="true">
+  <ion-toolbar>
+    <ion-buttons slot="start">
+      <ion-back-button defaultHref="/home"></ion-back-button>
+    </ion-buttons>
+    <ion-title>Privacy e Consensi</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content [fullscreen]="true" class="ion-padding">
+  <div class="consent-container">
+    <!-- Header informativo -->
+    <div class="header-section">
+      <div class="privacy-icon">🔒</div>
+      <h1>La tua Privacy è Importante</h1>
+      <p class="subtitle">
+        Controlla come utilizziamo i tuoi dati e esercita i tuoi diritti GDPR
+      </p>
+    </div>
+
+    <!-- Stato consenso -->
+    <div class="consent-status" [class.has-consent]="hasConsented()">
+      <ion-icon [name]="hasConsented() ? 'checkmark-circle' : 'alert-circle'"></ion-icon>
+      <span>{{ hasConsented() ? 'Hai già dato il consenso' : 'Consenso non ancora registrato' }}</span>
+    </div>
+
+    <!-- Form consensi -->
+    <form [formGroup]="consentForm" class="consent-form">
+      <!-- Consenso essenziale (non modificabile) -->
+      <div class="consent-item essential">
+        <ion-checkbox 
+          formControlName="essential" 
+          disabled="true"
+          id="essential-consent"
+        ></ion-checkbox>
+        <ion-label for="essential-consent" class="consent-label">
+          <strong>Dati Essenziali</strong>
+          <span class="required">Obbligatorio</span>
+          <p class="description">
+            Necessari per il funzionamento base dell'app: autenticazione, salvataggio profilo, 
+            stati d'animo e funzionalità core.
+          </p>
+        </ion-label>
+      </div>
+
+      <!-- Analytics -->
+      <div class="consent-item">
+        <ion-checkbox formControlName="analytics" id="analytics-consent"></ion-checkbox>
+        <ion-label for="analytics-consent" class="consent-label">
+          <strong>Analytics e Statistiche</strong>
+          <span class="optional">Opzionale</span>
+          <p class="description">
+            Dati anonimi di utilizzo per migliorare l'app: funzionalità più usate, 
+            performance, bug reports. Nessun dato personale identificabile.
+          </p>
+        </ion-label>
+      </div>
+
+      <!-- Cookies -->
+      <div class="consent-item">
+        <ion-checkbox formControlName="cookies" id="cookies-consent"></ion-checkbox>
+        <ion-label for="cookies-consent" class="consent-label">
+          <strong>Cookies e Sessione</strong>
+          <span class="optional">Opzionale</span>
+          <p class="description">
+            Cookie tecnici per mantenere la sessione, preferenze tema, 
+            e migliorare l'esperienza di navigazione.
+          </p>
+        </ion-label>
+      </div>
+
+      <!-- Localizzazione -->
+      <div class="consent-item">
+        <ion-checkbox formControlName="location" id="location-consent"></ion-checkbox>
+        <ion-label for="location-consent" class="consent-label">
+          <strong>Localizzazione</strong>
+          <span class="optional">Opzionale</span>
+          <p class="description">
+            Posizione per servizi basati sulla localizzazione: 
+            centri CSM vicini, segnalazioni mappa, servizi locali.
+          </p>
+        </ion-label>
+      </div>
+
+      <!-- Marketing -->
+      <div class="consent-item marketing">
+        <ion-checkbox formControlName="marketing" id="marketing-consent"></ion-checkbox>
+        <ion-label for="marketing-consent" class="consent-label">
+          <strong>Marketing e Comunicazioni</strong>
+          <span class="optional">Opzionale</span>
+          <p class="description">
+            Email promozionali, novità, aggiornamenti sulle funzionalità 
+            e contenuti di benessere mentale.
+          </p>
+        </ion-label>
+      </div>
+
+      <!-- Dettagli aggiuntivi -->
+      <div class="details-section">
+        <ion-button 
+          fill="clear" 
+          size="small" 
+          (click)="toggleDetails()"
+          class="details-toggle"
+        >
+          <ion-icon [name]="showDetails() ? 'chevron-up' : 'chevron-down'"></ion-icon>
+          {{ showDetails() ? 'Meno dettagli' : 'Più dettagli' }}
+        </ion-button>
+
+        <div class="details-content" *ngIf="showDetails()">
+          <div class="detail-item">
+            <h4>📊 Cosa raccogliamo</h4>
+            <ul>
+              <li>Nome, email, foto profilo</li>
+              <li>Stati d'animo e note personali</li>
+              <li>Messaggi nella community</li>
+              <li>Dati tecnici (IP, browser, dispositivo)</li>
+            </ul>
+          </div>
+
+          <div class="detail-item">
+            <h4>⏰ Per quanto tempo</h4>
+            <ul>
+              <li>Dati personali: 2 anni dopo cancellazione</li>
+              <li>Analytics: 25 mesi</li>
+              <li>Log tecnici: 6 mesi</li>
+            </ul>
+          </div>
+
+          <div class="detail-item">
+            <h4>🔐 Come proteggiamo i dati</h4>
+            <ul>
+              <li>Crittografia end-to-end</li>
+              <li>Server UE/SEE (Firebase)</li>
+              <li>Accesso limitato al personale autorizzato</li>
+              <li>Backup sicuri e ridondanti</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+
+      <!-- Pulsanti azione -->
+      <div class="action-buttons">
+        <div class="quick-actions">
+          <ion-button
+            expand="block"
+            fill="outline"
+            (click)="acceptAll()"
+            [disabled]="isLoading()"
+            class="accept-all-btn"
+          >
+            <ion-icon name="checkmark-circle"></ion-icon>
+            Accetta Tutto
+          </ion-button>
+
+          <ion-button
+            expand="block"
+            fill="outline"
+            (click)="rejectAll()"
+            [disabled]="isLoading()"
+            class="reject-all-btn"
+          >
+            <ion-icon name="close-circle"></ion-icon>
+            Rifiuta Opzionali
+          </ion-button>
+        </div>
+
+        <ion-button
+          expand="block"
+          size="large"
+          (click)="saveConsent()"
+          [disabled]="consentForm.invalid || isLoading()"
+          class="save-consent-btn"
+        >
+          <ion-spinner *ngIf="isLoading()" name="circles"></ion-spinner>
+          <span *ngIf="!isLoading()">Salva Preferenze Privacy</span>
+        </ion-button>
+      </div>
+    </form>
+
+    <!-- Azioni GDPR -->
+    <div class="gdpr-actions" *ngIf="hasConsented()">
+      <h3>I Tuoi Diritti GDPR</h3>
+      
+      <div class="gdpr-buttons">
+        <ion-button
+          expand="block"
+          fill="outline"
+          (click)="withdrawConsent()"
+          class="withdraw-btn"
+        >
+          <ion-icon name="refresh"></ion-icon>
+          Revoca Consenso Parziale
+        </ion-button>
+
+        <ion-button
+          expand="block"
+          fill="outline"
+          (click)="requestDeletion()"
+          class="delete-btn"
+        >
+          <ion-icon name="trash"></ion-icon>
+          Richiedi Cancellazione Dati
+        </ion-button>
+
+        <ion-button
+          expand="block"
+          fill="clear"
+          (click)="showPrivacyPolicy()"
+          class="policy-btn"
+        >
+          <ion-icon name="document-text"></ion-icon>
+          Leggi Privacy Policy Completa
+        </ion-button>
+      </div>
+    </div>
+
+    <!-- Footer informativo -->
+    <div class="footer-info">
+      <p>
+        <strong>CSM App</strong> rispetta il GDPR e la tua privacy. 
+        Puoi modificare i consensi in qualsiasi momento dalle impostazioni del profilo.
+      </p>
+      <p class="contact-info">
+        Per assistenza privacy: <a href="mailto:privacy@csmapp.it">privacy@csmapp.it</a>
+      </p>
+    </div>
+  </div>
+</ion-content>

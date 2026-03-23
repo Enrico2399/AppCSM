@@ -272,4 +272,11 @@ export class FirebaseService {
       userId: this.auth.currentUser?.uid || 'anonymous'
     });
   }
+
+  // Get mood history for statistics
+  async getMoodHistory(userId: string): Promise<any[]> {
+    const snapshot = await get(ref(this.db, `moodHistory/${userId}`));
+    const data = snapshot.val();
+    return data ? Object.values(data) : [];
+  }
 }

@@ -1,19 +1,23 @@
-import { Component, OnInit, OnDestroy, signal } from '@angular/core';
+import { Component, OnInit, OnDestroy, signal, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { FormsModule } from '@angular/forms';
+import { FormsModule, ReactiveFormsModule, FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { IonicModule, NavController, AlertController } from '@ionic/angular';
 import { Auth, User } from '@firebase/auth';
 import { FirebaseService } from '../../services/firebase/firebase';
 import { PrivacyService, UserProfile, UserPreferences } from '../../services/privacy/privacy.service';
 import { StorageService } from '../../services/storage/storage';
 import { AnonymousSessionService } from '../../services/anonymous-session/anonymous-session.service';
+import { Chart, ChartConfiguration, ChartType, registerables } from 'chart.js/auto';
+
+// Registra Chart.js components
+Chart.register(...registerables);
 
 @Component({
   selector: 'app-profile',
   templateUrl: './profile.page.html',
   styleUrls: ['./profile.page.scss'],
   standalone: true,
-  imports: [IonicModule, CommonModule, FormsModule]
+  imports: [IonicModule, CommonModule, FormsModule, ReactiveFormsModule]
 })
 export class ProfilePage implements OnInit, OnDestroy {
   user = signal<User | null>(null);
@@ -32,14 +36,40 @@ export class ProfilePage implements OnInit, OnDestroy {
   shareWithTherapist = signal(false);
   analyticsConsent = signal(false);
 
+  // Statistiche personali
+  moodHistory = signal<any[]>([]);
+  totalMoodEntries = signal(0);
+  currentStreak = signal(0);
+  longestStreak = signal(0);
+  mostUsedMood = signal<string>('');
+  moodChart: Chart<'doughnut', number[], string> | null = null;
+  showStats = signal(false);
+  
+  // Form per modifica profilo
+  editForm: FormGroup;
+
   constructor(
     private navCtrl: NavController,
     private alertCtrl: AlertController,
     private firebaseService: FirebaseService,
     private privacyService: PrivacyService,
     private storageService: StorageService,
-    private anonymousSessionService: AnonymousSessionService
-  ) {}
+    private anonymousSessionService: AnonymousSessionService,
+    private formBuilder: FormBuilder
+  ) {
+    // Inizializzo il form di modifica profilo
+    this.editForm = this.formBuilder.group({
+      displayName: ['', [Validators.required, Validators.minLength(2)]],
+      email: ['', [Validators.required, Validators.email]],
+      theme: ['dark'],
+      moodReminders: [true],
+      communityUpdates: [false],
+      weeklyReports: [true],
+      dataRetention: [365],
+      shareWithTherapist: [false],
+      analyticsConsent: [false]
+    });
+  }
 
   ngOnInit() {
     this.loadUserData();
@@ -85,6 +115,9 @@ export class ProfilePage implements OnInit, OnDestroy {
           this.analyticsConsent.set(consent.analytics);
           this.shareWithTherapist.set(consent.sharingWithTherapist);
         }
+
+        // Carico le statistiche personali
+        await this.loadUserStatistics(currentUser.uid);
       }
     } catch (error) {
       console.error('Error loading user data:', error);
@@ -107,6 +140,184 @@ export class ProfilePage implements OnInit, OnDestroy {
       this.shareWithTherapist.set(profile.preferences.privacy?.shareWithTherapist ?? false);
       this.analyticsConsent.set(profile.preferences.privacy?.analyticsConsent ?? false);
     }
+
+    // Popolo anche il form di modifica
+    this.editForm.patchValue({
+      displayName: profile.displayName || '',
+      email: profile.email || '',
+      theme: profile.preferences?.theme || 'dark',
+      moodReminders: profile.preferences?.notifications?.moodReminders ?? true,
+      communityUpdates: profile.preferences?.notifications?.communityUpdates ?? false,
+      weeklyReports: profile.preferences?.notifications?.weeklyReports ?? true,
+      dataRetention: profile.preferences?.privacy?.dataRetention ?? 365,
+      shareWithTherapist: profile.preferences?.privacy?.shareWithTherapist ?? false,
+      analyticsConsent: profile.preferences?.privacy?.analyticsConsent ?? false
+    });
+  }
+
+  private async loadUserStatistics(userId: string) {
+    try {
+      // Carico la cronologia degli stati d'animo
+      const history = await this.firebaseService.getMoodHistory(userId);
+      this.moodHistory.set(history || []);
+      
+      // Calcolo le statistiche
+      this.calculateStatistics(history || []);
+      
+      // Creo il grafico se ci sono dati
+      if (history && history.length > 0) {
+        this.createMoodChart(history);
+      }
+    } catch (error) {
+      console.error('Error loading user statistics:', error);
+    }
+  }
+
+  private calculateStatistics(history: any[]) {
+    if (!history || history.length === 0) {
+      this.totalMoodEntries.set(0);
+      this.currentStreak.set(0);
+      this.longestStreak.set(0);
+      this.mostUsedMood.set('');
+      return;
+    }
+
+    // Numero totale di entry
+    this.totalMoodEntries.set(history.length);
+
+    // Calcolo streak attuale e longest streak
+    const streaks = this.calculateStreaks(history);
+    this.currentStreak.set(streaks.current);
+    this.longestStreak.set(streaks.longest);
+
+    // Calcolo umore più utilizzato
+    const moodCounts = history.reduce((acc, entry) => {
+      const mood = entry.moodKey || entry.mood;
+      acc[mood] = (acc[mood] || 0) + 1;
+      return acc;
+    }, {});
+
+    const mostUsed = Object.entries(moodCounts).reduce((a, b) => 
+      moodCounts[a[0] as string] > moodCounts[b[0] as string] ? a : b
+    );
+    
+    this.mostUsedMood.set(mostUsed[0] as string);
+  }
+
+  private calculateStreaks(history: any[]) {
+    if (!history || history.length === 0) return { current: 0, longest: 0 };
+
+    const dates = history
+      .map(entry => new Date(entry.timestamp).toDateString())
+      .sort((a, b) => new Date(b).getTime() - new Date(a).getTime());
+
+    let currentStreak = 0;
+    let longestStreak = 0;
+    let tempStreak = 0;
+
+    const today = new Date().toDateString();
+    let expectedDate = new Date(today);
+
+    for (const dateStr of dates) {
+      const entryDate = new Date(dateStr);
+      
+      if (entryDate.toDateString() === expectedDate.toDateString()) {
+        tempStreak++;
+        if (expectedDate.toDateString() === today) {
+          currentStreak = tempStreak;
+        }
+        expectedDate.setDate(expectedDate.getDate() - 1);
+      } else if (entryDate < expectedDate) {
+        break;
+      }
+    }
+
+    longestStreak = Math.max(longestStreak, tempStreak);
+
+    return { current: currentStreak, longest: longestStreak };
+  }
+
+  private createMoodChart(history: any[]) {
+    // Raggruppo per umore
+    const moodCounts = history.reduce((acc, entry) => {
+      const mood = entry.moodKey || entry.mood;
+      acc[mood] = (acc[mood] || 0) + 1;
+      return acc;
+    }, {});
+
+    const labels = Object.keys(moodCounts);
+    const data = Object.values(moodCounts) as number[];
+
+    // Distruggo il grafico esistente se presente
+    if (this.moodChart) {
+      this.moodChart.destroy();
+    }
+
+    // Creo il nuovo grafico
+    const ctx = document.getElementById('moodChart') as HTMLCanvasElement;
+    if (ctx) {
+      this.moodChart = new Chart(ctx, {
+        type: 'doughnut',
+        data: {
+          labels: labels.map(label => this.getMoodTitle(label)),
+          datasets: [{
+            data: data,
+            backgroundColor: labels.map(label => this.getMoodColor(label)),
+            borderWidth: 2,
+            borderColor: '#fff'
+          }]
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          plugins: {
+            legend: {
+              position: 'bottom',
+              labels: {
+                padding: 15,
+                font: {
+                  size: 12
+                }
+              }
+            }
+          }
+        }
+      } as ChartConfiguration<'doughnut', number[], string>);
+    }
+  }
+
+  private getMoodTitle(moodKey: string): string {
+    const moodMap: Record<string, string> = {
+      'rosso': 'Rosso',
+      'giallo': 'Giallo', 
+      'blu': 'Blu',
+      'verde': 'Verde',
+      'arancio': 'Arancione',
+      'viola': 'Viola',
+      'bianco': 'Bianco',
+      'nero': 'Nero',
+      'grigio': 'Grigio'
+    };
+    return moodMap[moodKey] || moodKey;
+  }
+
+  private getMoodColor(moodKey: string): string {
+    const colorMap: Record<string, string> = {
+      'rosso': '#e74c3c',
+      'giallo': '#f1c40f',
+      'blu': '#3498db', 
+      'verde': '#2ecc71',
+      'arancio': '#e67e22',
+      'viola': '#9b59b6',
+      'bianco': '#ecf0f1',
+      'nero': '#2c3e50',
+      'grigio': '#95a5a6'
+    };
+    return colorMap[moodKey] || '#ccc';
+  }
+
+  toggleStats() {
+    this.showStats.set(!this.showStats());
   }
 
   private async createDefaultProfile(user: User) {

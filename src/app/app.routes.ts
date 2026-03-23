@@ -12,6 +12,18 @@ export const routes: Routes = [
     loadComponent: () => import('./home/home.page').then((m) => m.HomePage),
   },
   {
+    path: 'registration',
+    loadComponent: () => import('./pages/registration/registration.page').then(m => m.RegistrationPage)
+  },
+  {
+    path: 'firebase-test',
+    loadComponent: () => import('./components/firebase-test/firebase-test.component').then(m => m.FirebaseTestComponent)
+  },
+  {
+    path: 'comprehensive-test',
+    loadComponent: () => import('./components/comprehensive-test/comprehensive-test.component').then(m => m.ComprehensiveTestComponent)
+  },
+  {
     path: 'archetipi',
     loadComponent: () => import('./pages/archetipi/archetipi.page').then(m => m.ArchetipiPage),
     canActivate: [AuthGuard]

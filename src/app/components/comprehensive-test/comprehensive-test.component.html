@@ -1,0 +1,267 @@
+<ion-header [translucent]="true">
+  <ion-toolbar>
+    <ion-title>Comprehensive Test Suite</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content [fullscreen]="true" class="ion-padding">
+  <div class="test-container">
+    <div class="test-header">
+      <h1>🧪 CSM App Test Suite</h1>
+      <p>Test completo di tutte le funzionalità implementate</p>
+      
+      <!-- Progress Bar -->
+      <div class="progress-section" *ngIf="progress() > 0">
+        <div class="progress-info">
+          <span>Progress: {{ progress() }}%</span>
+          <span *ngIf="currentTest()">Testing: {{ currentTest() }}</span>
+        </div>
+        <ion-progress-bar 
+          [value]="progress()" 
+          [color]="getProgressColor()"
+          class="progress-bar"
+        ></ion-progress-bar>
+      </div>
+    </div>
+
+    <div class="test-controls">
+      <ion-button 
+        expand="block" 
+        size="large" 
+        (click)="runAllTests()"
+        [disabled]="isRunning()"
+        class="main-test-button"
+      >
+        <ion-spinner *ngIf="isRunning()" name="circles"></ion-spinner>
+        <span *ngIf="!isRunning()">🚀 Run All Tests</span>
+      </ion-button>
+
+      <div class="individual-tests">
+        <h4>Test Individual Features:</h4>
+        <div class="test-grid">
+          <ion-button 
+            fill="outline" 
+            size="small"
+            (click)="testIndividualFeature('auth')"
+            [disabled]="isRunning()"
+          >
+            🔐 Auth
+          </ion-button>
+          
+          <ion-button 
+            fill="outline" 
+            size="small"
+            (click)="testIndividualFeature('database')"
+            [disabled]="isRunning()"
+          >
+            🗄️ Database
+          </ion-button>
+          
+          <ion-button 
+            fill="outline" 
+            size="small"
+            (click)="testIndividualFeature('registration')"
+            [disabled]="isRunning()"
+          >
+            📝 Registration
+          </ion-button>
+          
+          <ion-button 
+            fill="outline" 
+            size="small"
+            (click)="testIndividualFeature('profile')"
+            [disabled]="isRunning()"
+          >
+            👤 Profile
+          </ion-button>
+          
+          <ion-button 
+            fill="outline" 
+            size="small"
+            (click)="testIndividualFeature('privacy')"
+            [disabled]="isRunning()"
+          >
+            🔒 Privacy
+          </ion-button>
+          
+          <ion-button 
+            fill="outline" 
+            size="small"
+            (click)="testIndividualFeature('mood')"
+            [disabled]="isRunning()"
+          >
+            🎨 Mood
+          </ion-button>
+          
+          <ion-button 
+            fill="outline" 
+            size="small"
+            (click)="testIndividualFeature('community')"
+            [disabled]="isRunning()"
+          >
+            👥 Community
+          </ion-button>
+          
+          <ion-button 
+            fill="outline" 
+            size="small"
+            (click)="testIndividualFeature('meditations')"
+            [disabled]="isRunning()"
+          >
+            🎧 Meditations
+          </ion-button>
+          
+          <ion-button 
+            fill="outline" 
+            size="small"
+            (click)="testIndividualFeature('notifications')"
+            [disabled]="isRunning()"
+          >
+            🔔 Notifications
+          </ion-button>
+          
+          <ion-button 
+            fill="outline" 
+            size="small"
+            (click)="testIndividualFeature('export')"
+            [disabled]="isRunning()"
+          >
+            📤 Export
+          </ion-button>
+        </div>
+      </div>
+
+      <div class="secondary-actions">
+        <ion-button 
+          fill="clear" 
+          color="medium"
+          (click)="clearResults()"
+          [disabled]="isRunning()"
+        >
+          🗑️ Clear Results
+        </ion-button>
+      </div>
+    </div>
+
+    <div class="test-results">
+      <h3>📊 Test Results</h3>
+      <div class="results-container">
+        <div 
+          *ngFor="let result of testResults()" 
+          class="result-item"
+          [class.success]="result.includes('✅')"
+          [class.error]="result.includes('❌')"
+          [class.warning]="result.includes('⚠️')"
+          [class.info]="result.includes('ℹ️') || result.includes('🔍') || result.includes('  ✓')"
+        >
+          {{ result }}
+        </div>
+      </div>
+    </div>
+
+    <div class="test-features">
+      <h4>🎯 Features Being Tested</h4>
+      <div class="feature-grid">
+        <div class="feature-card">
+          <h5>🔐 Authentication System</h5>
+          <ul>
+            <li>Anonymous login</li>
+            <li>Email authentication</li>
+            <li>Auth state management</li>
+            <li>Session persistence</li>
+          </ul>
+        </div>
+        
+        <div class="feature-card">
+          <h5>🗄️ Firebase Database</h5>
+          <ul>
+            <li>Realtime Database connection</li>
+            <li>CRUD operations</li>
+            <li>Data integrity</li>
+            <li>Security rules</li>
+          </ul>
+        </div>
+        
+        <div class="feature-card">
+          <h5>📝 Registration Flow</h5>
+          <ul>
+            <li>Form validation</li>
+            <li>Password strength checker</li>
+            <li>Email verification</li>
+            <li>Terms acceptance</li>
+          </ul>
+        </div>
+        
+        <div class="feature-card">
+          <h5>👤 Profile Management</h5>
+          <ul>
+            <li>Profile CRUD operations</li>
+            <li>Preferences management</li>
+            <li>GDPR compliance</li>
+            <li>Data export</li>
+          </ul>
+        </div>
+        
+        <div class="feature-card">
+          <h5>🔒 Privacy & Consent</h5>
+          <ul>
+            <li>Consent management</li>
+            <li>Privacy policy</li>
+            <li>Right to be forgotten</li>
+            <li>Data deletion</li>
+          </ul>
+        </div>
+        
+        <div class="feature-card">
+          <h5>🎨 Mood Tracking</h5>
+          <ul>
+            <li>Mood logging</li>
+            <li>History tracking</li>
+            <li>Statistics calculation</li>
+            <li>Chart visualization</li>
+          </ul>
+        </div>
+        
+        <div class="feature-card">
+          <h5>👥 Community Features</h5>
+          <ul>
+            <li>Message posting</li>
+            <li>Community feed</li>
+            <li>Mood integration</li>
+            <li>Real-time updates</li>
+          </ul>
+        </div>
+        
+        <div class="feature-card">
+          <h5>🎧 Audio Meditations</h5>
+          <ul>
+            <li>Audio player</li>
+            <li>Meditation library</li>
+            <li>Categories & filters</li>
+            <li>Progress tracking</li>
+          </ul>
+        </div>
+        
+        <div class="feature-card">
+          <h5>🔔 Notifications</h5>
+          <ul>
+            <li>Push notifications</li>
+            <li>Local notifications</li>
+            <li>Permission management</li>
+            <li>Scheduling system</li>
+          </ul>
+        </div>
+        
+        <div class="feature-card">
+          <h5>📤 Data Export</h5>
+          <ul>
+            <li>CSV export</li>
+            <li>PDF generation</li>
+            <li>Data sharing</li>
+            <li>Backup functionality</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </div>
+</ion-content>

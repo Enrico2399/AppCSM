@@ -1,0 +1,172 @@
+<ion-header [translucent]="true">
+  <ion-toolbar>
+    <ion-buttons slot="start">
+      <ion-back-button defaultHref="/home"></ion-back-button>
+    </ion-buttons>
+    <ion-title>Registrazione</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content [fullscreen]="true" class="ion-padding">
+  <div class="registration-container">
+    <!-- Logo e titolo -->
+    <div class="header-section">
+      <div class="logo">🧠</div>
+      <h1>Benvenuto in CSM</h1>
+      <p class="subtitle">Crea il tuo account per iniziare il percorso di benessere</p>
+    </div>
+
+    <!-- Form di registrazione -->
+    <form [formGroup]="registrationForm" (ngSubmit)="onSubmit()">
+      <!-- Nome -->
+      <ion-item class="input-item" [class.error]="nameControl?.invalid && nameControl?.touched">
+        <ion-label position="stacked" class="input-label">Nome Completo</ion-label>
+        <ion-input
+          formControlName="name"
+          type="text"
+          placeholder="Inserisci il tuo nome"
+          autocomplete="name"
+        ></ion-input>
+        <ion-note slot="error" *ngIf="nameControl?.invalid && nameControl?.touched">
+          <span *ngIf="nameControl?.errors?.['required']">Il nome è obbligatorio</span>
+          <span *ngIf="nameControl?.errors?.['minlength']">Minimo 2 caratteri</span>
+          <span *ngIf="nameControl?.errors?.['maxlength']">Massimo 50 caratteri</span>
+        </ion-note>
+      </ion-item>
+
+      <!-- Email -->
+      <ion-item class="input-item" [class.error]="emailControl?.invalid && emailControl?.touched">
+        <ion-label position="stacked" class="input-label">Email</ion-label>
+        <ion-input
+          formControlName="email"
+          type="email"
+          placeholder="nome@esempio.com"
+          autocomplete="email"
+          inputmode="email"
+        ></ion-input>
+        <ion-note slot="error" *ngIf="emailControl?.invalid && emailControl?.touched">
+          <span *ngIf="emailControl?.errors?.['required']">L'email è obbligatoria</span>
+          <span *ngIf="emailControl?.errors?.['email']">Email non valida</span>
+        </ion-note>
+      </ion-item>
+
+      <!-- Password -->
+      <ion-item class="input-item" [class.error]="passwordControl?.invalid && passwordControl?.touched">
+        <ion-label position="stacked" class="input-label">Password</ion-label>
+        <ion-input
+          formControlName="password"
+          [type]="showPassword() ? 'text' : 'password'"
+          placeholder="Crea una password sicura"
+          autocomplete="new-password"
+        ></ion-input>
+        <ion-button
+          slot="end"
+          fill="clear"
+          size="small"
+          (click)="togglePasswordVisibility()"
+          type="button"
+        >
+          <ion-icon [name]="showPassword() ? 'eye-off' : 'eye'"></ion-icon>
+        </ion-button>
+        <ion-note slot="error" *ngIf="passwordControl?.invalid && passwordControl?.touched">
+          <span *ngIf="passwordControl?.errors?.['required']">La password è obbligatoria</span>
+          <span *ngIf="passwordControl?.errors?.['minlength']">Minimo 8 caratteri</span>
+          <span *ngIf="passwordControl?.errors?.['weakPassword']">Password troppo debole</span>
+        </ion-note>
+      </ion-item>
+
+      <!-- Indicatore forza password -->
+      <div class="password-strength" *ngIf="passwordControl?.value && passwordControl?.touched">
+        <div class="strength-bar">
+          <div 
+            class="strength-fill" 
+            [class.weak]="passwordStrength() === 'weak'"
+            [class.medium]="passwordStrength() === 'medium'"
+            [class.strong]="passwordStrength() === 'strong'"
+          ></div>
+        </div>
+        <span class="strength-text" [ngClass]="getPasswordStrengthColor()">
+          {{ getPasswordStrengthText() }}
+        </span>
+      </div>
+
+      <!-- Conferma Password -->
+      <ion-item class="input-item" [class.error]="confirmPasswordControl?.invalid && confirmPasswordControl?.touched">
+        <ion-label position="stacked" class="input-label">Conferma Password</ion-label>
+        <ion-input
+          formControlName="confirmPassword"
+          [type]="showConfirmPassword() ? 'text' : 'password'"
+          placeholder="Ripeti la password"
+          autocomplete="new-password"
+        ></ion-input>
+        <ion-button
+          slot="end"
+          fill="clear"
+          size="small"
+          (click)="toggleConfirmPasswordVisibility()"
+          type="button"
+        >
+          <ion-icon [name]="showConfirmPassword() ? 'eye-off' : 'eye'"></ion-icon>
+        </ion-button>
+        <ion-note slot="error" *ngIf="confirmPasswordControl?.invalid && confirmPasswordControl?.touched">
+          <span *ngIf="confirmPasswordControl?.errors?.['required']">Conferma la password</span>
+          <span *ngIf="registrationForm?.errors?.['passwordMismatch']">Le password non coincidono</span>
+        </ion-note>
+      </ion-item>
+
+      <!-- Termini e Privacy -->
+      <div class="terms-section">
+        <ion-checkbox 
+          formControlName="termsAccepted"
+          id="terms-checkbox"
+        ></ion-checkbox>
+        <ion-label for="terms-checkbox" class="terms-label">
+          Accetto i 
+          <a href="javascript:void(0)" (click)="showTerms()" class="link">Termini e Condizioni</a> 
+          e l' 
+          <a href="javascript:void(0)" (click)="showPrivacyPolicy()" class="link">Privacy Policy</a>
+        </ion-label>
+        <ion-note slot="error" *ngIf="termsControl?.invalid && termsControl?.touched">
+          <span *ngIf="termsControl?.errors?.['required']">È necessario accettare i termini</span>
+        </ion-note>
+      </div>
+
+      <!-- Pulsanti -->
+      <div class="button-section">
+        <ion-button
+          expand="block"
+          size="large"
+          type="submit"
+          [disabled]="registrationForm.invalid || isLoading()"
+          class="register-button"
+        >
+          <ion-spinner *ngIf="isLoading()" name="circles"></ion-spinner>
+          <span *ngIf="!isLoading()">Crea Account</span>
+        </ion-button>
+
+        <ion-button
+          expand="block"
+          fill="clear"
+          size="large"
+          (click)="goToLogin()"
+          type="button"
+          class="login-button"
+        >
+          Hai già un account? Accedi
+        </ion-button>
+      </div>
+    </form>
+
+    <!-- Requisiti password -->
+    <div class="password-requirements">
+      <h4>Requisiti Password:</h4>
+      <ul>
+        <li [class.valid]="hasMinLength()">Almeno 8 caratteri</li>
+        <li [class.valid]="hasBonusLength()">12+ caratteri (bonus)</li>
+        <li [class.valid]="hasUpperAndLower()">Maiuscole e minuscole</li>
+        <li [class.valid]="hasNumber()">Almeno un numero</li>
+        <li [class.valid]="hasSpecialChars()">Caratteri speciali</li>
+      </ul>
+    </div>
+  </div>
+</ion-content>

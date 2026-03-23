@@ -1,6 +1,7 @@
-import { Component, OnInit, OnDestroy, signal, computed } from '@angular/core';
+import { Component, OnInit, OnDestroy, signal, computed, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { IonicModule } from '@ionic/angular';
+import { Router } from '@angular/router';
 import { ProfileService } from '../../services/profile/profile.service';
 
 @Component({
@@ -24,15 +25,14 @@ export class AnonymousWarningComponent implements OnInit, OnDestroy {
     {
       text: 'Crea Account',
       handler: () => {
-        // Navigate to registration or show registration modal
+        // Navigate to registration
         this.dismissToast();
-        // TODO: Implement navigation to registration
-        console.log('Navigate to registration');
+        this.router.navigate(['/registration']);
       }
     }
   ];
   
-  constructor(private profileService: ProfileService) {}
+  constructor(private profileService: ProfileService, private router: Router) {}
 
   ngOnInit() {
     // Check immediately

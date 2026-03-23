@@ -70,10 +70,11 @@ export class CommunityPage implements OnInit, OnDestroy {
     const moodKey = this.selectedMoodKey();
 
     if (!moodKey) {
-      this.popupService.showStatus("Attenzione", "Seleziona un colore...");      return;
+      this.popupService.showStatus("Attenzione", "Seleziona un colore...");
+      return;
     }
     if (!msg) {
-      this.showStatus("Attenzione", "Scrivi un messaggio!");
+      this.popupService.showStatus("Attenzione", "Scrivi un messaggio!");
       return;
     }
 
@@ -87,17 +88,14 @@ export class CommunityPage implements OnInit, OnDestroy {
         );
         this.messageInput.set('');
         this.selectedMoodKey.set(null);
-        this.showStatus("Inviato", "Il tuo messaggio è stato pubblicato nella community!");
+        this.popupService.showStatus("Inviato", "Il tuo messaggio è stato pubblicato nella community!");
       } else {
-        this.showStatus("Errore", "Devi essere loggato per scrivere nella community.");
+        this.popupService.showStatus("Errore", "Devi essere loggato per scrivere nella community.");
       }
     });
 
-    this.popupService.showStatus("Inviato", "Il tuo messaggio è stato pubblicato...");
-  }
-
-  showStatus(title: string, message: string) {
-    this.popupService.showStatus(title, message);
+    // Rimuovo la chiamata duplicata
+    // this.popupService.showStatus("Inviato", "Il tuo messaggio è stato pubblicato...");
   }
 
   closePopup() {

@@ -26,7 +26,9 @@
           (ngModelChange)="messageInput.set($event)"
           rows="3" 
           placeholder="Scrivi un messaggio alla community..."></textarea>
-        <button class="btn-send" (click)="sendMessage()">Invia Messaggio</button>
+        <button class="btn-send" (click)="sendMessage()" title="Invia messaggio">
+          <ion-icon name="send"></ion-icon>
+        </button>
       </div>
     </div>
 

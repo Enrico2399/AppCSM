@@ -100,11 +100,35 @@
 }
 
 .btn-send { 
-  background: white; 
-  color: black; 
-  border: none; 
-  padding: 10px 20px; 
-  border-radius: 10px; 
-  cursor: pointer; 
-  font-weight: bold; 
+  background: var(--ion-color-primary); 
+  color: white; 
+  border: none;
+  border-radius: 50%;
+  width: 40px;
+  height: 40px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  margin-left: 8px;
+  
+  ion-icon {
+    font-size: 1rem;
+  }
+  
+  &:hover {
+    transform: scale(1.05);
+    background: var(--ion-color-primary-shade);
+  }
+  
+  &:active {
+    transform: scale(0.95);
+  }
+  
+  &:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+    transform: none;
+  }
 }

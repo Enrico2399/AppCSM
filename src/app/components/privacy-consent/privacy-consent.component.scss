@@ -1,0 +1,345 @@
+.consent-container {
+  max-width: 500px;
+  margin: 0 auto;
+  padding: 20px 0;
+}
+
+.header-section {
+  text-align: center;
+  margin-bottom: 32px;
+}
+
+.privacy-icon {
+  font-size: 3rem;
+  margin-bottom: 16px;
+}
+
+.header-section h1 {
+  font-size: 1.6rem;
+  font-weight: 600;
+  margin: 0 0 8px 0;
+  color: var(--ion-text-color);
+}
+
+.subtitle {
+  color: var(--ion-color-medium);
+  margin: 0;
+  font-size: 0.95rem;
+  line-height: 1.4;
+}
+
+.consent-status {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 16px;
+  border-radius: 12px;
+  margin-bottom: 24px;
+  background: var(--ion-color-light);
+  border-left: 4px solid var(--ion-color-warning);
+  font-weight: 500;
+}
+
+.consent-status.has-consent {
+  border-left-color: var(--ion-color-success);
+  background: rgba(var(--ion-color-success-rgb), 0.1);
+}
+
+.consent-status ion-icon {
+  font-size: 1.5rem;
+}
+
+.consent-status.has-consent ion-icon {
+  color: var(--ion-color-success);
+}
+
+.consent-form {
+  margin-bottom: 32px;
+}
+
+.consent-item {
+  display: flex;
+  align-items: flex-start;
+  gap: 16px;
+  padding: 20px;
+  margin-bottom: 16px;
+  border-radius: 12px;
+  background: var(--ion-color-light);
+  border: 1px solid var(--ion-color-light-shade);
+  transition: all 0.3s ease;
+}
+
+.consent-item:hover {
+  border-color: var(--ion-color-primary);
+  box-shadow: 0 2px 8px rgba(var(--ion-color-primary-rgb), 0.1);
+}
+
+.consent-item.essential {
+  background: rgba(var(--ion-color-primary-rgb), 0.05);
+  border-color: var(--ion-color-primary);
+}
+
+.consent-item.marketing {
+  background: rgba(var(--ion-color-warning-rgb), 0.05);
+  border-color: var(--ion-color-warning);
+}
+
+.consent-label {
+  flex: 1;
+  margin: 0;
+  cursor: pointer;
+}
+
+.consent-label strong {
+  display: block;
+  font-size: 1.1rem;
+  font-weight: 600;
+  color: var(--ion-text-color);
+  margin-bottom: 4px;
+}
+
+.required {
+  display: inline-block;
+  background: var(--ion-color-primary);
+  color: white;
+  padding: 2px 8px;
+  border-radius: 12px;
+  font-size: 0.7rem;
+  font-weight: 500;
+  margin-left: 8px;
+}
+
+.optional {
+  display: inline-block;
+  background: var(--ion-color-medium);
+  color: white;
+  padding: 2px 8px;
+  border-radius: 12px;
+  font-size: 0.7rem;
+  font-weight: 500;
+  margin-left: 8px;
+}
+
+.description {
+  margin: 8px 0 0 0;
+  font-size: 0.9rem;
+  color: var(--ion-color-medium);
+  line-height: 1.4;
+}
+
+.details-section {
+  margin: 24px 0;
+  text-align: center;
+}
+
+.details-toggle {
+  --color: var(--ion-color-primary);
+  font-weight: 500;
+}
+
+.details-content {
+  margin-top: 16px;
+  text-align: left;
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 16px;
+}
+
+.detail-item {
+  padding: 16px;
+  background: var(--ion-color-light);
+  border-radius: 12px;
+  border-left: 3px solid var(--ion-color-primary);
+}
+
+.detail-item h4 {
+  margin: 0 0 12px 0;
+  font-size: 1rem;
+  color: var(--ion-text-color);
+  font-weight: 600;
+}
+
+.detail-item ul {
+  margin: 0;
+  padding-left: 20px;
+  list-style: none;
+}
+
+.detail-item li {
+  margin-bottom: 6px;
+  font-size: 0.85rem;
+  color: var(--ion-color-medium);
+  position: relative;
+  padding-left: 16px;
+}
+
+.detail-item li::before {
+  content: "•";
+  position: absolute;
+  left: 0;
+  color: var(--ion-color-primary);
+  font-weight: bold;
+}
+
+.action-buttons {
+  margin-top: 32px;
+}
+
+.quick-actions {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+  margin-bottom: 16px;
+}
+
+.accept-all-btn {
+  --border-color: var(--ion-color-success);
+  --color: var(--ion-color-success);
+}
+
+.reject-all-btn {
+  --border-color: var(--ion-color-warning);
+  --color: var(--ion-color-warning);
+}
+
+.save-consent-btn {
+  --border-radius: 12px;
+  --box-shadow: 0 4px 12px rgba(var(--ion-color-primary-rgb), 0.3);
+  font-weight: 600;
+  height: 56px;
+}
+
+.gdpr-actions {
+  margin-top: 40px;
+  padding-top: 24px;
+  border-top: 1px solid var(--ion-color-light-shade);
+}
+
+.gdpr-actions h3 {
+  text-align: center;
+  margin: 0 0 20px 0;
+  font-size: 1.2rem;
+  color: var(--ion-text-color);
+  font-weight: 600;
+}
+
+.gdpr-buttons {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.withdraw-btn {
+  --border-color: var(--ion-color-warning);
+  --color: var(--ion-color-warning);
+}
+
+.delete-btn {
+  --border-color: var(--ion-color-danger);
+  --color: var(--ion-color-danger);
+}
+
+.policy-btn {
+  --color: var(--ion-color-primary);
+  font-weight: 500;
+}
+
+.footer-info {
+  margin-top: 32px;
+  padding: 20px;
+  background: var(--ion-color-light);
+  border-radius: 12px;
+  text-align: center;
+}
+
+.footer-info p {
+  margin: 0 0 8px 0;
+  font-size: 0.85rem;
+  color: var(--ion-color-medium);
+  line-height: 1.4;
+}
+
+.contact-info {
+  font-size: 0.8rem !important;
+}
+
+.contact-info a {
+  color: var(--ion-color-primary);
+  text-decoration: none;
+  font-weight: 500;
+}
+
+.contact-info a:hover {
+  text-decoration: underline;
+}
+
+/* Stili per tema scuro */
+@media (prefers-color-scheme: dark) {
+  .conssent-item,
+  .detail-item,
+  .footer-info {
+    background: rgba(var(--ion-color-dark-tint-rgb), 0.3);
+  }
+  
+  .conssent-item.essential {
+    background: rgba(var(--ion-color-primary-rgb), 0.1);
+  }
+  
+  .conssent-item.marketing {
+    background: rgba(var(--ion-color-warning-rgb), 0.1);
+  }
+}
+
+/* Responsive */
+@media (max-width: 480px) {
+  .conssent-container {
+    padding: 10px 0;
+  }
+  
+  .header-section h1 {
+    font-size: 1.4rem;
+  }
+  
+  .subtitle {
+    font-size: 0.85rem;
+  }
+  
+  .quick-actions {
+    grid-template-columns: 1fr;
+  }
+  
+  .conssent-item {
+    padding: 16px;
+  }
+  
+  .details-content {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* Animazioni */
+.consent-item {
+  animation: fadeInUp 0.3s ease-out;
+}
+
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Checkbox personalizzati */
+ion-checkbox {
+  --size: 24px;
+  --checkbox-background-checked: var(--ion-color-primary);
+}
+
+ion-checkbox[disabled] {
+  --checkbox-background: var(--ion-color-medium);
+  opacity: 0.6;
+}

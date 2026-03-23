@@ -1,0 +1,251 @@
+<ion-header [translucent]="true">
+  <ion-toolbar>
+    <ion-buttons slot="start">
+      <ion-back-button defaultHref="/home"></ion-back-button>
+    </ion-buttons>
+    <ion-title>Audio-Meditazioni</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content [fullscreen]="true" class="ion-padding">
+  <div class="meditations-container">
+    <!-- Search bar -->
+    <div class="search-section">
+      <ion-searchbar
+        [(ngModel)]="searchTerm"
+        (ionInput)="onSearchChange($event)"
+        placeholder="Cerca meditazioni..."
+        animated="true"
+        debounce="300"
+      ></ion-searchbar>
+    </div>
+
+    <!-- Category filters -->
+    <div class="categories-section">
+      <h3>Categorie</h3>
+      <div class="category-chips">
+        <ion-chip 
+          *ngFor="let category of categories"
+          [color]="selectedCategory() === category.id ? 'primary' : 'medium'"
+          (click)="filterByCategory(category.id)"
+          class="category-chip"
+        >
+          <ion-icon [name]="category.icon"></ion-icon>
+          {{ category.name }}
+        </ion-chip>
+      </div>
+    </div>
+
+    <!-- Loading state -->
+    <div class="loading-section" *ngIf="isLoading()">
+      <ion-spinner name="circles"></ion-spinner>
+      <p>Caricamento meditazioni...</p>
+    </div>
+
+    <!-- Meditations list -->
+    <div class="meditations-list" *ngIf="!isLoading()">
+      <div class="list-header">
+        <h3>{{ filteredMeditations().length }} Meditazioni</h3>
+        <p *ngIf="selectedCategory() !== 'all'">
+          {{ getCategoryName(selectedCategory()) }}
+        </p>
+      </div>
+
+      <div class="meditations-grid">
+        <div 
+          *ngFor="let meditation of filteredMeditations()" 
+          class="meditation-card"
+          (click)="playMeditation(meditation)"
+        >
+          <div class="card-header">
+            <div class="meditation-info">
+              <h4>{{ meditation.title }}</h4>
+              <p class="description">{{ meditation.description }}</p>
+            </div>
+            <div class="meditation-actions">
+              <ion-button 
+                fill="clear" 
+                size="small" 
+                (click)="toggleFavorite(meditation, $event)"
+                class="favorite-btn"
+              >
+                <ion-icon name="heart-outline"></ion-icon>
+              </ion-button>
+              <ion-button 
+                fill="clear" 
+                size="small" 
+                (click)="downloadForOffline(meditation, $event)"
+                class="download-btn"
+                [disabled]="meditation.isPremium"
+              >
+                <ion-icon name="download-outline"></ion-icon>
+              </ion-button>
+            </div>
+          </div>
+
+          <div class="card-content">
+            <div class="meditation-meta">
+              <div class="meta-item">
+                <ion-icon name="time"></ion-icon>
+                <span>{{ formatTime(meditation.duration) }}</span>
+              </div>
+              <div class="meta-item">
+                <ion-icon [name]="getCategoryIcon(meditation.category)"></ion-icon>
+                <span>{{ getCategoryName(meditation.category) }}</span>
+              </div>
+              <div class="meta-item">
+                <ion-chip 
+                  [color]="getDifficultyColor(meditation.difficulty)"
+                  size="small"
+                >
+                  {{ getDifficultyText(meditation.difficulty) }}
+                </ion-chip>
+              </div>
+            </div>
+
+            <div class="mood-tags" *ngIf="meditation.moodTags.length > 0">
+              <span class="tags-label">Adatto per:</span>
+              <div class="tags">
+                <span 
+                  *ngFor="let tag of meditation.moodTags" 
+                  class="mood-tag"
+                  [style.background-color]="getMoodColor(tag)"
+                >
+                  {{ getMoodTitle(tag) }}
+                </span>
+              </div>
+            </div>
+
+            <div class="premium-badge" *ngIf="meditation.isPremium">
+              <ion-icon name="diamond"></ion-icon>
+              <span>Premium</span>
+            </div>
+          </div>
+
+          <div class="card-footer">
+            <ion-button 
+              expand="block" 
+              fill="outline"
+              [disabled]="meditation.isPremium"
+            >
+              <ion-icon name="play"></ion-icon>
+              {{ meditation.isPremium ? 'Premium' : 'Ascolta' }}
+            </ion-button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Empty state -->
+    <div class="empty-state" *ngIf="!isLoading() && filteredMeditations().length === 0">
+      <ion-icon name="musical-notes" class="empty-icon"></ion-icon>
+      <h3>Nessuna meditazione trovata</h3>
+      <p>Prova a cambiare categoria o termine di ricerca</p>
+    </div>
+  </div>
+
+  <!-- Audio Player (fixed at bottom) -->
+  <div class="audio-player" *ngIf="showPlayer() && currentMeditation()">
+    <div class="player-header">
+      <div class="now-playing">
+        <h4>{{ currentMeditation()?.title }}</h4>
+        <p>{{ getCategoryName(currentMeditation()!.category) }}</p>
+      </div>
+      <ion-button 
+        fill="clear" 
+        size="small" 
+        (click)="stop()"
+        class="close-player"
+      >
+        <ion-icon name="close"></ion-icon>
+      </ion-button>
+    </div>
+
+    <div class="player-progress">
+      <ion-range 
+        [value]="currentTime()" 
+        [max]="duration()" 
+        (ionChange)="seekTo($event)"
+        class="progress-bar"
+      ></ion-range>
+      <div class="time-display">
+        <span>{{ formatTime(currentTime()) }}</span>
+        <span>{{ formatTime(duration()) }}</span>
+      </div>
+    </div>
+
+    <div class="player-controls">
+      <div class="main-controls">
+        <ion-button 
+          fill="clear" 
+          size="large" 
+          (click)="togglePlayPause()"
+          class="play-pause-btn"
+        >
+          <ion-icon [name]="isPlaying() ? 'pause' : 'play'"></ion-icon>
+        </ion-button>
+      </div>
+
+      <div class="secondary-controls">
+        <ion-button 
+          fill="clear" 
+          size="small" 
+          (click)="setSpeed(0.5)"
+          [color]="playbackSpeed() === 0.5 ? 'primary' : 'medium'"
+        >
+          0.5x
+        </ion-button>
+        <ion-button 
+          fill="clear" 
+          size="small" 
+          (click)="setSpeed(0.75)"
+          [color]="playbackSpeed() === 0.75 ? 'primary' : 'medium'"
+        >
+          0.75x
+        </ion-button>
+        <ion-button 
+          fill="clear" 
+          size="small" 
+          (click)="setSpeed(1)"
+          [color]="playbackSpeed() === 1 ? 'primary' : 'medium'"
+        >
+          1x
+        </ion-button>
+        <ion-button 
+          fill="clear" 
+          size="small" 
+          (click)="setSpeed(1.25)"
+          [color]="playbackSpeed() === 1.25 ? 'primary' : 'medium'"
+        >
+          1.25x
+        </ion-button>
+        <ion-button 
+          fill="clear" 
+          size="small" 
+          (click)="setSpeed(1.5)"
+          [color]="playbackSpeed() === 1.5 ? 'primary' : 'medium'"
+        >
+          1.5x
+        </ion-button>
+      </div>
+
+      <div class="volume-control">
+        <ion-button 
+          fill="clear" 
+          size="small" 
+          (click)="toggleMute()"
+          class="volume-btn"
+        >
+          <ion-icon [name]="isMuted() ? 'volume-mute' : 'volume-high'"></ion-icon>
+        </ion-button>
+        <ion-range 
+          [value]="volume()" 
+          [max]="1" 
+          [step]="0.1"
+          (ionChange)="setVolume($event)"
+          class="volume-slider"
+        ></ion-range>
+      </div>
+    </div>
+  </div>
+</ion-content>

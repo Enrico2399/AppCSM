@@ -1,0 +1,104 @@
+<ion-header [translucent]="true">
+  <ion-toolbar>
+    <ion-title>Firebase Test</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content [fullscreen]="true" class="ion-padding">
+  <div class="test-container">
+    <div class="test-header">
+      <h1>🔥 Firebase Connectivity Test</h1>
+      <p>Test complete delle funzionalità backend Firebase</p>
+    </div>
+
+    <div class="test-controls">
+      <ion-button 
+        expand="block" 
+        size="large" 
+        (click)="runAllTests()"
+        [disabled]="isRunning()"
+        class="test-button"
+      >
+        <ion-spinner *ngIf="isRunning()" name="circles"></ion-spinner>
+        <span *ngIf="!isRunning()">🚀 Run All Tests</span>
+      </ion-button>
+
+      <div class="secondary-controls">
+        <ion-button 
+          fill="outline" 
+          (click)="testAnonymousLogin()"
+          [disabled]="isRunning()"
+        >
+          👤 Test Anonymous Login
+        </ion-button>
+
+        <ion-button 
+          fill="outline" 
+          (click)="testLogout()"
+          [disabled]="isRunning()"
+        >
+          🚪 Test Logout
+        </ion-button>
+
+        <ion-button 
+          fill="clear" 
+          color="medium"
+          (click)="clearResults()"
+        >
+          🗑️ Clear Results
+        </ion-button>
+      </div>
+    </div>
+
+    <div class="test-results">
+      <h3>📊 Test Results</h3>
+      <div class="results-container">
+        <div 
+          *ngFor="let result of testResults()" 
+          class="result-item"
+          [class.success]="result.includes('✅')"
+          [class.error]="result.includes('❌')"
+          [class.warning]="result.includes('⚠️')"
+          [class.info]="result.includes('ℹ️') || result.includes('🔍')"
+        >
+          {{ result }}
+        </div>
+      </div>
+    </div>
+
+    <div class="test-info">
+      <h4>ℹ️ Test Information</h4>
+      <div class="info-grid">
+        <div class="info-item">
+          <h5>🔥 Firebase Initialization</h5>
+          <p>Verifica che l'app Firebase sia correttamente inizializzata con le credenziali del progetto.</p>
+        </div>
+        
+        <div class="info-item">
+          <h5>🔐 Authentication State</h5>
+          <p>Controlla lo stato di autenticazione corrente e verifica il funzionamento del listener auth state.</p>
+        </div>
+        
+        <div class="info-item">
+          <h5>🗄️ Database Connection</h5>
+          <p>Testa la connessione al Realtime Database e verifica l'accesso ai reference.</p>
+        </div>
+        
+        <div class="info-item">
+          <h5>📝 Database Operations</h5>
+          <p>Verifica le operazioni di scrittura e lettura sul database.</p>
+        </div>
+        
+        <div class="info-item">
+          <h5>🛡️ Security Rules</h5>
+          <p>Testa le regole di sicurezza Firebase per verificare che funzionino correttamente.</p>
+        </div>
+        
+        <div class="info-item">
+          <h5>👤 Anonymous Login</h5>
+          <p>Testa il login anonimo per verificare il funzionamento dell'autenticazione senza account.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</ion-content>

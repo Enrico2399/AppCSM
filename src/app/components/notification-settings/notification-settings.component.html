@@ -1,0 +1,204 @@
+<ion-header [translucent]="true">
+  <ion-toolbar>
+    <ion-buttons slot="start">
+      <ion-back-button defaultHref="/profile"></ion-back-button>
+    </ion-buttons>
+    <ion-title>Impostazioni Notifiche</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content [fullscreen]="true" class="ion-padding">
+  <div class="notification-container">
+    <!-- Stato permessi -->
+    <div class="permission-status" [class.has-permission]="hasPermission()">
+      <ion-icon [name]="hasPermission() ? 'checkmark-circle' : 'alert-circle'"></ion-icon>
+      <div class="status-text">
+        <h3>{{ hasPermission() ? 'Notifiche Abilitate' : 'Notifiche Disabilitate' }}</h3>
+        <p>{{ hasPermission() ? 'Riceverai promemoria e aggiornamenti' : 'Concedi i permessi per attivare le notifiche' }}</p>
+      </div>
+      <ion-button 
+        *ngIf="!hasPermission()"
+        fill="outline" 
+        (click)="requestPermission()"
+        [disabled]="isLoading()"
+      >
+        <ion-icon name="notifications"></ion-icon>
+        Abilita Notifiche
+      </ion-button>
+    </div>
+
+    <!-- Impostazioni notifiche -->
+    <div class="settings-section" *ngIf="hasPermission()">
+      <h3>🔔 Impostazioni Promemoria</h3>
+      
+      <form [formGroup]="settingsForm" class="settings-form">
+        <!-- Promemoria umore -->
+        <div class="setting-item">
+          <ion-item>
+            <ion-checkbox formControlName="moodReminders" id="mood-reminders"></ion-checkbox>
+            <ion-label for="mood-reminders" class="setting-label">
+              <div class="label-content">
+                <strong>Promemoria Umore Giornaliero</strong>
+                <p>Ricevi un promemoria per registrare il tuo stato d'animo</p>
+              </div>
+            </ion-label>
+          </ion-item>
+        </div>
+
+        <!-- Promemoria grounding -->
+        <div class="setting-item">
+          <ion-item>
+            <ion-checkbox formControlName="groundingReminders" id="grounding-reminders"></ion-checkbox>
+            <ion-label for="grounding-reminders" class="setting-label">
+              <div class="label-content">
+                <strong>Esercizi di Grounding</strong>
+                <p>Promemoria per esercizi di radicamento e relax</p>
+              </div>
+            </ion-label>
+          </ion-item>
+        </div>
+
+        <!-- Report settimanale -->
+        <div class="setting-item">
+          <ion-item>
+            <ion-checkbox formControlName="weeklyReports" id="weekly-reports"></ion-checkbox>
+            <ion-label for="weekly-reports" class="setting-label">
+              <div class="label-content">
+                <strong>Report Settimanale</strong>
+                <p>Ricevi un riepilogo delle tue tendenze emotive ogni domenica</p>
+              </div>
+            </ion-label>
+          </ion-item>
+        </div>
+
+        <!-- Aggiornamenti community -->
+        <div class="setting-item">
+          <ion-item>
+            <ion-checkbox formControlName="communityUpdates" id="community-updates"></ion-checkbox>
+            <ion-label for="community-updates" class="setting-label">
+              <div class="label-content">
+                <strong>Aggiornamenti Community</strong>
+                <p>Notifiche su nuovi messaggi e attività nella community</p>
+              </div>
+            </ion-label>
+          </ion-item>
+        </div>
+
+        <!-- Orario promemoria -->
+        <div class="setting-item">
+          <ion-item>
+            <ion-label position="stacked">Orario Promemoria</ion-label>
+            <ion-input 
+              formControlName="reminderTime" 
+              type="time" 
+              placeholder="09:00"
+            ></ion-input>
+            <ion-note slot="error" *ngIf="settingsForm.get('reminderTime')?.invalid">
+              Inserisci un orario valido (HH:MM)
+            </ion-note>
+          </ion-item>
+        </div>
+
+        <!-- Pulsanti azione -->
+        <div class="action-buttons">
+          <ion-button
+            expand="block"
+            size="large"
+            (click)="saveSettings()"
+            [disabled]="settingsForm.invalid || isLoading()"
+            class="save-button"
+          >
+            <ion-spinner *ngIf="isLoading()" name="circles"></ion-spinner>
+            <span *ngIf="!isLoading()">Salva Impostazioni</span>
+          </ion-button>
+
+          <div class="secondary-actions">
+            <ion-button
+              fill="outline"
+              (click)="testNotification()"
+              [disabled]="!hasPermission()"
+              class="test-button"
+            >
+              <ion-icon name="notifications"></ion-icon>
+              Test Notifica
+            </ion-button>
+
+            <ion-button
+              fill="outline"
+              color="danger"
+              (click)="clearAllNotifications()"
+              [disabled]="scheduledNotifications().length === 0"
+              class="clear-button"
+            >
+              <ion-icon name="trash"></ion-icon>
+              Cancella Tutte
+            </ion-button>
+          </div>
+        </div>
+      </form>
+    </div>
+
+    <!-- Notifiche programmate -->
+    <div class="scheduled-section" *ngIf="hasPermission() && scheduledNotifications().length > 0">
+      <h3>📅 Notifiche Programmate</h3>
+      
+      <div class="scheduled-list">
+        <div 
+          *ngFor="let notification of scheduledNotifications()" 
+          class="scheduled-item"
+        >
+          <div class="notification-info">
+            <ion-icon [name]="getNotificationIcon(notification.type)"></ion-icon>
+            <div class="notification-details">
+              <h4>{{ notification.title }}</h4>
+              <p>{{ notification.body }}</p>
+              <span class="notification-time">
+                {{ formatScheduledTime(notification.scheduledTime) }} - 
+                {{ getTimeUntil(notification.scheduledTime) }}
+              </span>
+            </div>
+          </div>
+          <div class="notification-type">
+            {{ getNotificationTypeLabel(notification.type) }}
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Informazioni -->
+    <div class="info-section">
+      <h3>ℹ️ Informazioni sulle Notifiche</h3>
+      
+      <div class="info-content">
+        <div class="info-item">
+          <h4>🔔 Tipi di Notifiche</h4>
+          <ul>
+            <li><strong>Promemoria Umore:</strong> Ti ricorda di registrare il tuo stato d'animo</li>
+            <li><strong>Grounding:</strong> Ti invita a fare esercizi di rilassamento</li>
+            <li><strong>Report Settimanale:</strong> Ti mostra le tendenze emotive della settimana</li>
+            <li><strong>Community:</strong> Ti aggiorna sulle attività della community</li>
+          </ul>
+        </div>
+
+        <div class="info-item">
+          <h4>⚙️ Gestione</h4>
+          <ul>
+            <li>Puoi modificare le impostazioni in qualsiasi momento</li>
+            <li>Le notifiche rispettano i fusi orari del tuo dispositivo</li>
+            <li>Puoi testare le notifiche per verificare che funzionino</li>
+            <li>Le notifiche possono essere disattivate dalle impostazioni del dispositivo</li>
+          </ul>
+        </div>
+
+        <div class="info-item">
+          <h4>🔐 Privacy</h4>
+          <ul>
+            <li>Le notifiche non contengono dati personali sensibili</li>
+            <li>Solo tu puoi vedere il contenuto delle notifiche</li>
+            <li>Puoi revocare il consenso in qualsiasi momento</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </div>
+</ion-content>

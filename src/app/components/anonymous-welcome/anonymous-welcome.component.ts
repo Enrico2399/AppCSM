@@ -1,6 +1,7 @@
-import { Component, OnInit, OnDestroy, signal, computed } from '@angular/core';
+import { Component, OnInit, OnDestroy, signal, computed, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { IonicModule } from '@ionic/angular';
+import { Router } from '@angular/router';
 import { AnonymousSessionService } from '../../services/anonymous-session/anonymous-session.service';
 
 @Component({
@@ -34,7 +35,7 @@ export class AnonymousWelcomeComponent implements OnInit, OnDestroy {
     }
   });
 
-  constructor(private anonymousSessionService: AnonymousSessionService) {}
+  constructor(private anonymousSessionService: AnonymousSessionService, private router: Router) {}
 
   ngOnInit() {
     this.session.set(this.anonymousSessionService.getCurrentSession());
@@ -72,8 +73,7 @@ export class AnonymousWelcomeComponent implements OnInit, OnDestroy {
   }
 
   createAccount() {
-    // TODO: Naviga alla pagina di registrazione
-    console.log('Navigate to registration');
+    this.router.navigate(['/registration']);
     this.closeWelcome();
   }
 }
