@@ -1,0 +1,56 @@
+{
+  "rules": {
+    ".read": true,
+    ".write": false,
+    
+    "moodHistory": {
+      "$uid": {
+        ".read": "auth.uid === $uid",
+        ".write": "auth.uid === $uid && auth.uid !== null"
+      }
+    },
+    
+    "anonymousSessions": {
+      "$uid": {
+        ".read": "auth.uid === $uid",
+        ".write": "auth.uid === $uid && auth.uid !== null"
+      }
+    },
+    
+    "helpPlans": {
+      "$uid": {
+        ".read": "auth.uid === $uid",
+        ".write": "auth.uid === $uid && auth.uid !== null"
+      }
+    },
+    
+    "votes": {
+      ".read": true,
+      ".write": "auth.uid !== null"
+    },
+    
+    "users": {
+      "$uid": {
+        ".read": "auth.uid === $uid",
+        ".write": "auth.uid === $uid && auth.uid !== null"
+      }
+    },
+    
+    "consents": {
+      "$uid": {
+        ".read": "auth.uid === $uid",
+        ".write": "auth.uid === $uid && auth.uid !== null"
+      }
+    },
+    
+    "userActions": {
+      ".read": false,
+      ".write": "auth.uid !== null"
+    },
+    
+    "performanceMetrics": {
+      ".read": false,
+      ".write": "auth.uid !== null"
+    }
+  }
+}

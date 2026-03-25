@@ -1,4 +1,4 @@
-import { Component, signal, inject } from '@angular/core';
+import { Component, inject, OnInit, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { IonicModule } from '@ionic/angular';
@@ -7,7 +7,9 @@ import { AuthService } from '../../services/auth';
 import { FirebaseService } from '../../services/firebase/firebase';
 import { NotificationService } from '../../services/notifications/notifications.service';
 import { AudioMeditationService } from '../../services/audio-meditation/audio-meditation.service';
+import { firstValueFrom } from 'rxjs';
 import { take } from 'rxjs';
+import { ref, set, get } from 'firebase/database';
 
 @Component({
   selector: 'app-comprehensive-test',
@@ -92,7 +94,8 @@ export class ComprehensiveTestComponent {
       this.progress.set(100);
 
     } catch (error) {
-      this.addResult(`❌ Test failed: ${error.message}`);
+      this.addResult(`❌ Test failed: ${(error as Error).message}`);
+      throw error;
     } finally {
       this.isRunning.set(false);
     }
@@ -106,7 +109,7 @@ export class ComprehensiveTestComponent {
       await testFunction();
       this.addResult(`✅ ${testName} - PASSED`);
     } catch (error) {
-      this.addResult(`❌ ${testName} - FAILED: ${error.message}`);
+      this.addResult(`❌ ${testName} - FAILED: ${(error as Error).message}`);
       throw error;
     }
     
@@ -115,7 +118,7 @@ export class ComprehensiveTestComponent {
 
   private async testAuthentication() {
     // Test anonymous login
-    await this.authService.signInAnonymously();
+    await this.authService.loginAnonymously();
     const user = await firstValueFrom(this.authService.user$);
     
     if (!user) {
@@ -145,11 +148,11 @@ export class ComprehensiveTestComponent {
       userId: user.uid
     };
     
-    await this.firebaseService.setDatabaseRef(`test/${user.uid}`, testData);
+    await set(ref(this.firebaseService.getDatabase(), `test/${user.uid}`), testData);
     this.addResult(`  ✓ Database write successful`);
 
     // Test read
-    const snapshot = await this.firebaseService.getDatabaseRef(`test/${user.uid}`);
+    const snapshot = await get(ref(this.firebaseService.getDatabase(), `test/${user.uid}`));
     const data = snapshot.val();
     
     if (!data || data.test !== 'comprehensive-test') {
@@ -246,7 +249,7 @@ export class ComprehensiveTestComponent {
       thought: 'Test mood entry'
     };
     
-    await this.firebaseService.logMood(user.uid, moodData);
+    await this.firebaseService.logMood(user.uid, 'blu', 'Blu', '😊', 'Test mood entry');
     this.addResult(`  ✓ Mood logging successful`);
 
     // Test mood history
@@ -281,7 +284,7 @@ export class ComprehensiveTestComponent {
     this.addResult(`  ✓ Community message sent successful`);
 
     // Test community read
-    const messages = await this.firebaseService.getDatabaseRef('communityMessages');
+    const messages = this.firebaseService.getDatabase();
     const messageSnapshot = await messages;
     
     this.addResult(`  ✓ Community messages accessible`);
@@ -362,7 +365,7 @@ export class ComprehensiveTestComponent {
       }
       
     } catch (error) {
-      this.addResult(`  ⚠️ Export test warning: ${error.message}`);
+      this.addResult(`  ⚠️ Export test warning: ${(error as Error).message}`);
     }
   }
 
@@ -409,7 +412,7 @@ export class ComprehensiveTestComponent {
       
       this.addResult(`✅ ${feature} test completed successfully`);
     } catch (error) {
-      this.addResult(`❌ ${feature} test failed: ${error.message}`);
+      this.addResult(`❌ ${feature} test failed: ${(error as Error).message}`);
     } finally {
       this.isRunning.set(false);
       this.currentTest.set('');

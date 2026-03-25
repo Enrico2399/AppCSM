@@ -1,6 +1,7 @@
 import { Injectable, inject } from '@angular/core';
 import { BehaviorSubject } from 'rxjs';
 import { FirebaseService } from './firebase/firebase';
+import { AnonymousSessionService } from './anonymous-session/anonymous-session.service';
 import { 
   GoogleAuthProvider, 
   signInWithPopup, 
@@ -19,6 +20,7 @@ import {
 @Injectable({ providedIn: 'root' })
 export class AuthService {
   private firebaseService = inject(FirebaseService);
+  private anonymousSessionService = inject(AnonymousSessionService);
   private userSubject = new BehaviorSubject<User | null>(null);
   
   user$ = this.userSubject.asObservable();
@@ -75,6 +77,10 @@ export class AuthService {
     const res = await signInAnonymously(this.firebaseService.auth);
     if (res.user) {
       await this.firebaseService.upsertUserProfile(res.user);
+      
+      // Crea sessione anonima
+      const session = this.anonymousSessionService.createSession();
+      await this.anonymousSessionService.saveSessionToFirebase(res.user.uid, session);
     }
     return res;
   }

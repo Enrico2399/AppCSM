@@ -1,4 +1,4 @@
-import { Injectable, signal } from '@angular/core';
+import { Injectable, signal, inject } from '@angular/core';
 import { PushNotifications } from '@capacitor/push-notifications';
 import { LocalNotifications } from '@capacitor/local-notifications';
 import { FirebaseService } from '../firebase/firebase';
@@ -223,8 +223,7 @@ export class NotificationService {
           title: notification.title,
           body: notification.body,
           schedule: { at: notification.scheduledTime },
-          sound: 'default',
-          data: { type: notification.type }
+          sound: 'default'
         }]
       });
     } catch (error) {
@@ -251,8 +250,7 @@ export class NotificationService {
           title,
           body,
           schedule: { at: new Date(Date.now() + 1000) }, // 1 second from now
-          sound: 'default',
-          data: { type }
+          sound: 'default'
         }]
       });
     } catch (error) {
@@ -268,8 +266,7 @@ export class NotificationService {
           title,
           body,
           schedule: { at: new Date(Date.now() + 1000) },
-          sound: 'default',
-          data: { type }
+          sound: 'default'
         }]
       });
     } catch (error) {
@@ -391,7 +388,7 @@ export class NotificationService {
         title: n.title,
         body: n.body,
         scheduledTime: new Date(n.schedule?.at || Date.now()),
-        type: (n.data as any)?.type || 'mood'
+        type: 'mood' // Default type since data is not available
       }));
     } catch (error) {
       console.error('Error getting pending notifications:', error);

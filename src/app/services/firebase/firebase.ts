@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { initializeApp, FirebaseApp } from 'firebase/app';
+import { initializeApp, FirebaseApp, getApps } from 'firebase/app';
 import { 
   getDatabase, 
   ref, 
@@ -14,6 +14,7 @@ import {
   Unsubscribe
 } from 'firebase/database';
 import { getAuth, Auth, User } from 'firebase/auth';
+import { getFirestore } from 'firebase/firestore';
 
 @Injectable({
   providedIn: 'root',
@@ -278,5 +279,9 @@ export class FirebaseService {
     const snapshot = await get(ref(this.db, `moodHistory/${userId}`));
     const data = snapshot.val();
     return data ? Object.values(data) : [];
+  }
+
+  ngOnDestroy() {
+    // Cleanup resources se necessario
   }
 }

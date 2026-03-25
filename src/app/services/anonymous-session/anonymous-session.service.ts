@@ -1,5 +1,7 @@
-import { Injectable, signal } from '@angular/core';
+import { Injectable, signal, inject } from '@angular/core';
 import { StorageService } from '../storage/storage';
+import { FirebaseService } from '../firebase/firebase';
+import { ref, set, get, remove, onValue } from 'firebase/database';
 
 export interface AnonymousSession {
   id: string;
@@ -20,8 +22,13 @@ export interface AnonymousSession {
 export class AnonymousSessionService {
   private currentSession = signal<AnonymousSession | null>(null);
   private readonly SESSION_DURATION_HOURS = 24;
+  private firebaseService = inject(FirebaseService);
+  private readonly CLEANUP_INTERVAL = 60 * 60 * 1000; // 1 ora
+  private cleanupTimer: any;
 
-  constructor(private storageService: StorageService) {}
+  constructor(private storageService: StorageService) {
+    this.startCleanupTimer();
+  }
 
   // Crea nuova sessione anonima
   createSession(): AnonymousSession {
@@ -150,5 +157,74 @@ export class AnonymousSessionService {
   // Ottieni sessione corrente
   getCurrentSession() {
     return this.currentSession.asReadonly();
+  }
+
+  // Cleanup automatico sessioni Firebase scadute
+  private async cleanupExpiredFirebaseSessions(): Promise<void> {
+    try {
+      const sessionsRef = ref(this.firebaseService.getDatabase(), 'anonymousSessions');
+      const sessions = await get(sessionsRef);
+      
+      if (!sessions.exists()) return;
+
+      const now = Date.now();
+      const sessionData = sessions.val();
+      const expiredSessions: string[] = [];
+
+      // Identifica sessioni scadute
+      for (const [uid, session] of Object.entries(sessionData)) {
+        const sessionTyped = session as any;
+        if (sessionTyped.expiresAt && new Date(sessionTyped.expiresAt) <= new Date(now)) {
+          expiredSessions.push(uid);
+        }
+      }
+
+      // Cancella sessioni scadute
+      for (const uid of expiredSessions) {
+        await remove(ref(this.firebaseService.getDatabase(), `anonymousSessions/${uid}`));
+        console.log(`Sessione anonima Firebase scaduta cancellata: ${uid}`);
+      }
+
+      if (expiredSessions.length > 0) {
+        console.log(`Cleanup Firebase completato: ${expiredSessions.length} sessioni anonime cancellate`);
+      }
+
+    } catch (error) {
+      console.error('Errore durante cleanup sessioni anonime Firebase:', error);
+    }
+  }
+
+  // Avvia timer cleanup
+  private startCleanupTimer(): void {
+    this.cleanupTimer = setInterval(() => {
+      this.cleanupExpiredFirebaseSessions();
+    }, this.CLEANUP_INTERVAL);
+  }
+
+  // Ferma timer cleanup
+  stopCleanupTimer(): void {
+    if (this.cleanupTimer) {
+      clearInterval(this.cleanupTimer);
+      this.cleanupTimer = null;
+    }
+  }
+
+  // Salva sessione in Firebase
+  async saveSessionToFirebase(uid: string, session: AnonymousSession): Promise<void> {
+    await set(ref(this.firebaseService.getDatabase(), `anonymousSessions/${uid}`), session);
+  }
+
+  // Aggiorna attività sessione Firebase
+  async updateSessionActivity(uid: string): Promise<void> {
+    const sessionRef = ref(this.firebaseService.getDatabase(), `anonymousSessions/${uid}`);
+    const session = await get(sessionRef);
+    
+    if (session.exists()) {
+      await set(ref(this.firebaseService.getDatabase(), `anonymousSessions/${uid}/lastActivity`), new Date().toISOString());
+    }
+  }
+
+  ngOnDestroy() {
+    this.stopCleanupTimer();
   }
 }

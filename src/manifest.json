@@ -1,12 +1,15 @@
 {
   "name": "CSM - Centro Salute Mentale",
   "short_name": "CSM",
-  "description": "App per il benessere mentale e supporto psicologico",
+  "description": "App per il benessere mentale e supporto psicologico basata su archetipi junghiani",
   "start_url": "/",
   "display": "standalone",
-  "background_color": "#ffffff",
-  "theme_color": "#3880ff",
+  "background_color": "#1a1a2e",
+  "theme_color": "#16213e",
   "orientation": "portrait",
+  "scope": "/",
+  "lang": "it",
+  "categories": ["health", "wellness", "lifestyle"],
   "icons": [
     {
       "src": "assets/icons/icon-72x72.png",
@@ -48,5 +51,93 @@
       "sizes": "512x512",
       "type": "image/png"
     }
-  ]
+  ],
+  "shortcuts": [
+    {
+      "name": "Tracciamento Umore",
+      "short_name": "Umore",
+      "description": "Registra il tuo stato d'animo",
+      "url": "/home",
+      "icons": [
+        {
+          "src": "assets/icons/icon-192x192.png",
+          "sizes": "192x192"
+        }
+      ]
+    },
+    {
+      "name": "Esercizi Grounding",
+      "short_name": "Grounding",
+      "description": "Tecniche di radicamento",
+      "url": "/grounding",
+      "icons": [
+        {
+          "src": "assets/icons/icon-192x192.png",
+          "sizes": "192x192"
+        }
+      ]
+    },
+    {
+      "name": "Aiuto Immediato",
+      "short_name": "Aiuto",
+      "description": "Panic button e risorse",
+      "url": "/help",
+      "icons": [
+        {
+          "src": "assets/icons/icon-192x192.png",
+          "sizes": "192x192"
+        }
+      ]
+    }
+  ],
+  "screenshots": [
+    {
+      "src": "assets/screenshots/home.png",
+      "sizes": "375x667",
+      "type": "image/png",
+      "form_factor": "narrow"
+    },
+    {
+      "src": "assets/screenshots/mood.png",
+      "sizes": "375x667",
+      "type": "image/png",
+      "form_factor": "narrow"
+    },
+    {
+      "src": "assets/screenshots/help.png",
+      "sizes": "375x667",
+      "type": "image/png",
+      "form_factor": "narrow"
+    }
+  ],
+  "related_applications": [],
+  "prefer_related_applications": false,
+  "edge_side_panel": {
+    "preferred_width": 400
+  },
+  "launch_handler": {
+    "client_mode": "focus-existing"
+  },
+  "protocol_handlers": [
+    {
+      "protocol": "web+csm",
+      "url": "/handle-protocol?type=%s"
+    }
+  ],
+  "share_target": {
+    "action": "/share",
+    "method": "POST",
+    "enctype": "multipart/form-data",
+    "params": {
+      "title": "title",
+      "text": "text",
+      "url": "url",
+      "files": [
+        {
+          "name": "mood_file",
+          "accept": ["image/*", "audio/*"]
+        }
+      ]
+    }
+  }
 }

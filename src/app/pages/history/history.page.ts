@@ -7,6 +7,7 @@ import { RouterModule } from '@angular/router';
 import { FirebaseService } from '../../services/firebase/firebase';
 import { AuthService } from '../../services/auth';
 import { ChartService } from '../../services/chart/chart.service';
+import { AnonymousSessionService } from '../../services/anonymous-session/anonymous-session.service';
 import { addIcons } from 'ionicons';
 import { trashOutline, trendingUpOutline, calendarOutline, barChartOutline, heartOutline, downloadOutline, filterOutline, shareOutline } from 'ionicons/icons';
 import { take } from 'rxjs';
@@ -33,6 +34,7 @@ export class HistoryPage implements OnInit, AfterViewInit, OnDestroy {
   private formBuilder = inject(FormBuilder);
   private alertCtrl = inject(AlertController);
   private loadingCtrl = inject(LoadingController);
+  private anonymousSessionService = inject(AnonymousSessionService);
 
   history = signal<MoodLog[]>([]);
   
@@ -194,10 +196,25 @@ export class HistoryPage implements OnInit, AfterViewInit, OnDestroy {
       this.unsubscribeMoodHistory();
       this.unsubscribeMoodHistory = null;
     }
+    
     this.isLoading.set(true);
+    
+    // Timeout per evitare loop infinito
+    const loadingTimeout = setTimeout(() => {
+      this.isLoading.set(false);
+      console.warn('History loading timeout - forcing stop');
+    }, 10000); // 10 secondi timeout
+    
     this.authService.user$.pipe(take(1)).subscribe(user => {
       if (user) {
+        // Aggiorna attività sessione anonima
+        if (user.isAnonymous) {
+          this.anonymousSessionService.updateSessionActivity(user.uid);
+        }
+        
         this.unsubscribeMoodHistory = this.firebaseService.listenToMoodHistory(user.uid, (data) => {
+          clearTimeout(loadingTimeout);
+          
           if (data) {
             const logs: MoodLog[] = Object.values(data);
             // Sorting descending by timestamp
@@ -209,7 +226,9 @@ export class HistoryPage implements OnInit, AfterViewInit, OnDestroy {
           this.isLoading.set(false);
         });
       } else {
+        clearTimeout(loadingTimeout);
         this.isLoading.set(false);
+        this.history.set([]);
       }
     });
   }
@@ -494,58 +513,91 @@ export class HistoryPage implements OnInit, AfterViewInit, OnDestroy {
   async exportCsv() {
     const data = this.filteredHistory();
     if (!data.length) {
-      alert('Nessun dato da esportare per l\'intervallo selezionato.');
+      const alert = await this.alertCtrl.create({
+        header: 'Nessun Dato',
+        message: 'Nessun dato da esportare per l\'intervallo selezionato.',
+        buttons: ['OK']
+      });
+      await alert.present();
       return;
     }
 
-    const header = [
-      'timestamp_iso',
-      'data_it',
-      'ora_it',
-      'moodKey',
-      'moodTitle',
-      'icon',
-      'thought'
-    ].join(';');
-
-    const rows = data.map(log => {
-      const d = new Date(log.timestamp);
-      const dateIt = d.toLocaleDateString('it-IT');
-      const timeIt = d.toLocaleTimeString('it-IT', { hour: '2-digit', minute: '2-digit' });
-      const thought = (log.thought || '').replace(/"/g, '""');
-      return [
-        log.timestamp,
-        dateIt,
-        timeIt,
-        log.moodKey,
-        log.moodTitle,
-        log.icon,
-        `"${thought}"`
-      ].join(';');
+    const loading = await this.loadingCtrl.create({
+      message: 'Creazione file CSV in corso...'
     });
+    await loading.present();
 
-    // Riga di riepilogo per i grafici
-    const summaryHeader = '\n\n#RIEPILOGO_FREQUENZE';
-    const summaryRows = Object.entries(this.stats()).map(([key, value]) => {
-      const mood = this.moodData().find(m => m.key === key);
-      return [
-        mood?.key || key,
-        mood?.title || '',
-        value
+    try {
+      const header = [
+        'timestamp_iso',
+        'data_it',
+        'ora_it',
+        'moodKey',
+        'moodTitle',
+        'icon',
+        'thought'
       ].join(';');
-    });
 
-    const csvContent = [header, ...rows, summaryHeader, 'moodKey;moodTitle;count', ...summaryRows].join('\n');
+      const rows = data.map(log => {
+        const d = new Date(log.timestamp);
+        const dateIt = d.toLocaleDateString('it-IT');
+        const timeIt = d.toLocaleTimeString('it-IT', { hour: '2-digit', minute: '2-digit' });
+        const thought = (log.thought || '').replace(/"/g, '""');
+        return [
+          log.timestamp,
+          dateIt,
+          timeIt,
+          log.moodKey,
+          log.moodTitle,
+          log.icon,
+          `"${thought}"`
+        ].join(';');
+      });
 
-    const blob = new Blob(['\ufeff' + csvContent], { type: 'text/csv;charset=utf-8;' });
-    const url = URL.createObjectURL(blob);
-    const a = document.createElement('a');
-    a.href = url;
-    a.download = 'diario_emozionale_csm.csv';
-    document.body.appendChild(a);
-    a.click();
-    document.body.removeChild(a);
-    URL.revokeObjectURL(url);
+      // Riga di riepilogo per i grafici
+      const summaryHeader = '\n\n#RIEPILOGO_FREQUENZE';
+      const summaryRows = Object.entries(this.stats()).map(([key, value]) => {
+        const mood = this.moodData().find(m => m.key === key);
+        return [
+          mood?.key || key,
+          mood?.title || '',
+          value
+        ].join(';');
+      });
+
+      const csvContent = [header, ...rows, summaryHeader, 'moodKey;moodTitle;count', ...summaryRows].join('\n');
+
+      const blob = new Blob(['\ufeff' + csvContent], { type: 'text/csv;charset=utf-8;' });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      
+      // Nome file con data corrente
+      const today = new Date().toLocaleDateString('it-IT').replace(/\//g, '-');
+      a.download = `diario_emozionale_csm_${today}.csv`;
+      
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+      URL.revokeObjectURL(url);
+
+      const successAlert = await this.alertCtrl.create({
+        header: 'Export Completato',
+        message: `File CSV esportato con successo! ${data.length} record inclusi.`,
+        buttons: ['OK']
+      });
+      await successAlert.present();
+
+    } catch (error) {
+      const errorAlert = await this.alertCtrl.create({
+        header: 'Errore Export',
+        message: `Si è verificato un errore durante l'esportazione: ${(error as Error).message}`,
+        buttons: ['OK']
+      });
+      await errorAlert.present();
+    } finally {
+      await loading.dismiss();
+    }
   }
 
   async deleteHistory() {
@@ -579,8 +631,9 @@ export class HistoryPage implements OnInit, AfterViewInit, OnDestroy {
   }
 
   ngOnDestroy() {
-  if (this.unsubscribeMoodHistory) {
-    this.unsubscribeMoodHistory();
+    if (this.unsubscribeMoodHistory) {
+      this.unsubscribeMoodHistory();
+    }
+    this.anonymousSessionService.stopCleanupTimer();
   }
-}
 }

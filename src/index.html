@@ -1,9 +1,9 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="it">
 
 <head>
   <meta charset="utf-8" />
-  <title>Ionic App</title>
+  <title>CSM - Centro Salute Mentale</title>
 
   <base href="/" />
 
@@ -12,15 +12,63 @@
   <meta name="format-detection" content="telephone=no" />
   <meta name="msapplication-tap-highlight" content="no" />
 
-  <link rel="icon" type="image/png" href="assets/icon/favicon.png" />
-
-  <!-- add to homescreen for ios -->
+  <!-- PWA Meta Tags -->
   <meta name="mobile-web-app-capable" content="yes" />
-  <meta name="apple-mobile-web-app-status-bar-style" content="black" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+  <meta name="apple-mobile-web-app-title" content="CSM" />
+  <meta name="application-name" content="CSM" />
+  <meta name="theme-color" content="#16213e" />
+  <meta name="background-color" content="#1a1a2e" />
+  
+  <!-- Apple Icons -->
+  <link rel="apple-touch-icon" href="assets/icons/icon-152x152.png" />
+  <link rel="apple-touch-icon" sizes="152x152" href="assets/icons/icon-152x152.png" />
+  <link rel="apple-touch-icon" sizes="167x167" href="assets/icons/icon-167x167.png" />
+  <link rel="apple-touch-icon" sizes="180x180" href="assets/icons/icon-180x180.png" />
+  
+  <!-- Standard Icons -->
+  <link rel="icon" type="image/png" sizes="32x32" href="assets/icons/icon-32x32.png" />
+  <link rel="icon" type="image/png" sizes="16x16" href="assets/icons/icon-16x16.png" />
+  <link rel="icon" type="image/png" href="assets/icon/favicon.png" />
+  
+  <!-- PWA Manifest -->
+  <link rel="manifest" href="manifest.json" />
+  
+  <!-- Microsoft Tile -->
+  <meta name="msapplication-TileColor" content="#16213e" />
+  <meta name="msapplication-TileImage" content="assets/icons/icon-144x144.png" />
+  
+  <!-- Open Graph -->
+  <meta property="og:title" content="CSM - Centro Salute Mentale" />
+  <meta property="og:description" content="App per il benessere mentale e supporto psicologico basata su archetipi junghiani" />
+  <meta property="og:image" content="assets/icons/icon-512x512.png" />
+  <meta property="og:type" content="website" />
+  
+  <!-- Twitter Card -->
+  <meta name="twitter:card" content="summary" />
+  <meta name="twitter:title" content="CSM - Centro Salute Mentale" />
+  <meta name="twitter:description" content="App per il benessere mentale e supporto psicologico basata su archetipi junghiani" />
+  <meta name="twitter:image" content="assets/icons/icon-512x512.png" />
 </head>
 
 <body>
   <app-root></app-root>
+  
+  <!-- Service Worker Registration -->
+  <script>
+    if ('serviceWorker' in navigator) {
+      window.addEventListener('load', () => {
+        navigator.serviceWorker.register('/sw.js')
+          .then((registration) => {
+            console.log('SW registered: ', registration);
+          })
+          .catch((registrationError) => {
+            console.log('SW registration failed: ', registrationError);
+          });
+      });
+    }
+  </script>
 </body>
 
 </html>

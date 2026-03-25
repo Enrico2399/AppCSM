@@ -1,4 +1,4 @@
-import { Injectable, signal } from '@angular/core';
+import { Injectable, signal, inject } from '@angular/core';
 import { FirebaseService } from '../firebase/firebase';
 import { AuthService } from '../auth';
 import { take } from 'rxjs';
@@ -211,8 +211,8 @@ export class AudioMeditationService {
   }
 
   private updateProgress(): void {
-    if (this.audio && this.duration.get() > 0) {
-      const progress = (this.audio.currentTime / this.duration.get()) * 100;
+    if (this.audio && this.duration() > 0) {
+      const progress = (this.audio.currentTime / this.duration()) * 100;
       
       // Update session progress
       const session = this.currentSession();
@@ -223,7 +223,7 @@ export class AudioMeditationService {
     }
   }
 
-  private async handlePlaybackEnded(): void {
+  private async handlePlaybackEnded(): Promise<void> {
     this.isPlaying.set(false);
     this.stopProgressTracking();
 
@@ -249,7 +249,8 @@ export class AudioMeditationService {
 
     try {
       // Save session to Firebase analytics
-      await this.firebaseService.logUserAction('meditation_completed', {
+      await this.firebaseService.logUserAction({
+        action: 'meditation_completed',
         meditationId: session.meditationId,
         duration: session.endTime ? session.endTime.getTime() - session.startTime.getTime() : 0,
         completed: session.completed,
@@ -275,8 +276,8 @@ export class AudioMeditationService {
   }
 
   getProgressPercentage(): number {
-    if (this.duration.get() === 0) return 0;
-    return (this.currentTime.get() / this.duration.get()) * 100;
+    if (this.duration() === 0) return 0;
+    return (this.currentTime() / this.duration()) * 100;
   }
 
   private getDefaultMeditations(): AudioMeditation[] {
@@ -413,7 +414,8 @@ export class AudioMeditationService {
 
     try {
       // Save to Firebase
-      await this.firebaseService.logUserAction('meditation_favorited', {
+      await this.firebaseService.logUserAction({
+        action: 'meditation_favorited',
         meditationId
       });
     } catch (error) {
@@ -427,7 +429,8 @@ export class AudioMeditationService {
 
     try {
       // Remove from Firebase
-      await this.firebaseService.logUserAction('meditation_unfavorited', {
+      await this.firebaseService.logUserAction({
+        action: 'meditation_unfavorited',
         meditationId
       });
     } catch (error) {

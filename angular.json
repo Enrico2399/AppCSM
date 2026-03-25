@@ -37,6 +37,19 @@
             ],
             "styles": ["src/global.scss", "src/theme/variables.scss"],
             "scripts": [],
+            "allowedCommonJsDependencies": [
+              "firebase-admin",
+              "crypto",
+              "stream",
+              "util", 
+              "url",
+              "http",
+              "https",
+              "net",
+              "tls",
+              "assert",
+              "querystring"
+            ],
             "browser": "src/main.ts"
           },
           "configurations": {

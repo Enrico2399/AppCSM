@@ -1,24 +1,18 @@
 import { MoodService, Mood } from '../services/mood/mood.service';
-import { Component, OnInit, signal, computed } from '@angular/core';
+import { Component, signal, inject, OnInit, computed } from '@angular/core';
 import { CommonModule, AsyncPipe } from '@angular/common';
 import { FormsModule } from '@angular/forms';
+import { IonicModule } from '@ionic/angular';
 import { RouterModule } from '@angular/router';
-import { 
-  IonContent,
-  IonIcon, 
-  IonModal,
-  IonItem,
-  IonInput
-} from '@ionic/angular/standalone';
-import { addIcons } from 'ionicons';
-import { logoGoogle, logOutOutline, closeOutline } from 'ionicons/icons';
-import { StorageService } from '../services/storage/storage';
-import { AuthService } from '../services/auth';
 import { FirebaseService } from '../services/firebase/firebase';
-import { ConfirmationResult, User } from 'firebase/auth';
-import { take, firstValueFrom } from 'rxjs';
-import { PopupService } from '../services/popup/popup.service';
+import { AuthService } from '../services/auth';
 import { AnonymousSessionService } from '../services/anonymous-session/anonymous-session.service';
+import { StorageService } from '../services/storage/storage';
+import { PopupService } from '../services/popup/popup.service';
+import { addIcons } from 'ionicons';
+import { heartOutline, heartDislikeOutline, timeOutline, checkmarkCircle, alertCircle, logoGoogle, logOutOutline, closeOutline } from 'ionicons/icons';
+import { take, firstValueFrom } from 'rxjs';
+import { User, ConfirmationResult } from '@firebase/auth';
 
 @Component({
   selector: 'app-home',
@@ -30,11 +24,7 @@ import { AnonymousSessionService } from '../services/anonymous-session/anonymous
     AsyncPipe,
     FormsModule,
     RouterModule,
-    IonContent,
-    IonIcon,
-    IonModal,
-    IonItem,
-    IonInput
+    IonicModule
   ]
 })
 export class HomePage implements OnInit {
@@ -140,6 +130,11 @@ export class HomePage implements OnInit {
 
     this.authService.user$.pipe(take(1)).subscribe((user: User | null) => {
       if (user) {
+        // Aggiorna attività sessione anonima
+        if (user.isAnonymous) {
+          this.anonymousSessionService.updateSessionActivity(user.uid);
+        }
+        
         this.firebaseService.logMood(user.uid, mood.key, mood.title, mood.icon, note);
         this.showStatus("Registrato", "Stato d'animo registrato nella tua cronologia!");
         this.moodNote.set('');
@@ -159,6 +154,11 @@ export class HomePage implements OnInit {
 
     this.authService.user$.pipe(take(1)).subscribe((user: User | null) => {
       if (user) {
+        // Aggiorna attività sessione anonima
+        if (user.isAnonymous) {
+          this.anonymousSessionService.updateSessionActivity(user.uid);
+        }
+        
         this.firebaseService.logMood(user.uid, mood.key, mood.title, mood.icon, "");
         this.showStatus("Registrato", "Emozione registrata istantaneamente!");
       } else {
