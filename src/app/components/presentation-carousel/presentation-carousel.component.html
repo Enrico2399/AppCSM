@@ -1,0 +1,385 @@
+<div class="presentation-carousel">
+  <div class="carousel-header">
+    <h2 class="carousel-title">Scopri il Progetto CSM</h2>
+  </div>
+  
+  <div class="carousel-container">
+    <!-- Freccia Sinistra -->
+    <ion-button 
+      class="nav-button prev-button" 
+      fill="clear" 
+      (click)="goToPrevious()"
+      aria-label="Slide precedente">
+      <ion-icon name="chevron-back" slot="icon-only"></ion-icon>
+    </ion-button>
+    
+    <!-- Container Swiper -->
+    <div class="swiper-container" #swiperContainer>
+      <div class="swiper-wrapper">
+        <!-- Slide 1: Hero -->
+        <div class="swiper-slide">
+          <div class="slide-content slide-hero">
+            <div class="hero-badge">
+              <ion-icon name="rocket"></ion-icon>
+              App Online Gratuita
+            </div>
+            <h1 class="hero-title">CSM</h1>
+            <p class="hero-subtitle">Consapevolezza Salute Mentale</p>
+            <div class="hero-tagline">Il benessere mentale a portata di tutti</div>
+            <a class="hero-url" href="https://csmtreviso-f59fe.web.app" target="_blank">csmtreviso-f59fe.web.app</a>
+            
+            <div class="hero-stats">
+              <div class="stat-item">
+                <ion-icon name="layers"></ion-icon>
+                <div class="stat-content">
+                  <div class="stat-label">Tecnologia</div>
+                  <div class="stat-value">Angular + Ionic</div>
+                </div>
+              </div>
+              <div class="stat-item">
+                <ion-icon name="server"></ion-icon>
+                <div class="stat-content">
+                  <div class="stat-label">Server</div>
+                  <div class="stat-value">Firebase</div>
+                </div>
+              </div>
+              <div class="stat-item">
+                <ion-icon name="code-slash"></ion-icon>
+                <div class="stat-content">
+                  <div class="stat-label">Versione</div>
+                  <div class="stat-value">1.0.0 Gratis</div>
+                </div>
+              </div>
+              <div class="stat-item">
+                <ion-icon name="calendar"></ion-icon>
+                <div class="stat-content">
+                  <div class="stat-label">Data</div>
+                  <div class="stat-value">Marzo 2026</div>
+                </div>
+              </div>
+              <div class="stat-item">
+                <ion-icon name="git-branch"></ion-icon>
+                <div class="stat-content">
+                  <div class="stat-label">Progetto</div>
+                  <div class="stat-value">Open Source</div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Slide 2: Mission & Vision -->
+        <div class="swiper-slide">
+          <div class="slide-content slide-mission">
+            <div class="section-header">
+              <ion-chip color="primary">
+                <ion-icon name="flag" slot="start"></ion-icon>
+                La Nostra Missione
+              </ion-chip>
+              <h2 class="section-title">Perché <span>CSM</span></h2>
+            </div>
+            
+            <div class="mission-grid">
+              <ion-card class="mission-card">
+                <ion-card-header>
+                  <div class="card-icon">
+                    <ion-icon name="heart"></ion-icon>
+                  </div>
+                  <ion-card-title>Missione</ion-card-title>
+                </ion-card-header>
+                <ion-card-content>
+                  <p>Offrire strumenti digitali gratuiti e professionali per supportare la salute mentale di tutti, promuovendo la consapevolezza emotiva e il benessere psicologico.</p>
+                </ion-card-content>
+              </ion-card>
+              
+              <ion-card class="vision-card">
+                <ion-card-header>
+                  <div class="card-icon">
+                    <ion-icon name="eye"></ion-icon>
+                  </div>
+                  <ion-card-title>Visione</ion-card-title>
+                </ion-card-header>
+                <ion-card-content>
+                  <p>Diventare il punto di riferimento italiano per il benessere mentale digitale, unendo tecnologia, psicologia e community in un ambiente sicuro e inclusivo.</p>
+                </ion-card-content>
+              </ion-card>
+            </div>
+            
+            <div class="values-row">
+              <div class="value-item">
+                <ion-icon name="shield-checkmark"></ion-icon>
+                <span>Privacy al 100%</span>
+              </div>
+              <div class="value-item">
+                <ion-icon name="accessibility"></ion-icon>
+                <span>Accessibile a Tutti</span>
+              </div>
+              <div class="value-item">
+                <ion-icon name="people"></ion-icon>
+                <span>Community Attiva</span>
+              </div>
+              <div class="value-item">
+                <ion-icon name="hardware-chip"></ion-icon>
+                <span>Tecnologia Avanzata</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Slide 3: Core Features -->
+        <div class="swiper-slide">
+          <div class="slide-content slide-features">
+            <div class="section-header">
+              <ion-chip color="secondary">
+                <ion-icon name="apps" slot="start"></ion-icon>
+                Funzionalità
+              </ion-chip>
+              <h2 class="section-title">Cosa Puoi <span>Fare</span></h2>
+            </div>
+            
+            <div class="features-grid">
+              <ion-card class="feature-card" *ngFor="let feature of featuresData">
+                <ion-card-content>
+                  <div class="feature-icon">
+                    <ion-icon [name]="feature.icon"></ion-icon>
+                  </div>
+                  <h3 class="feature-title">{{feature.title}}</h3>
+                  <p class="feature-description">{{feature.description}}</p>
+                </ion-card-content>
+              </ion-card>
+            </div>
+          </div>
+        </div>
+
+        <!-- Slide 4: Stack Tecnologico -->
+        <div class="swiper-slide">
+          <div class="slide-content slide-stack">
+            <div class="section-header">
+              <ion-chip color="tertiary">
+                <ion-icon name="build" slot="start"></ion-icon>
+                Tecnologia
+              </ion-chip>
+              <h2 class="section-title">Come Funziona</h2>
+            </div>
+            
+            <div class="stack-grid">
+              <div class="stack-column">
+                <div class="stack-header">
+                  <ion-icon name="phone-portrait"></ion-icon>
+                  <h3>App Mobile</h3>
+                </div>
+                <div class="tech-list">
+                  <div class="tech-item" *ngFor="let tech of frontendTech">
+                    <ion-icon name="checkmark-circle"></ion-icon>
+                    <span>{{tech}}</span>
+                  </div>
+                </div>
+              </div>
+              
+              <div class="stack-column">
+                <div class="stack-header">
+                  <ion-icon name="server"></ion-icon>
+                  <h3>Servizi Online</h3>
+                </div>
+                <div class="tech-list">
+                  <div class="tech-item" *ngFor="let tech of backendTech">
+                    <ion-icon name="checkmark-circle"></ion-icon>
+                    <span>{{tech}}</span>
+                  </div>
+                </div>
+              </div>
+              
+              <div class="stack-column">
+                <div class="stack-header">
+                  <ion-icon name="construct"></ion-icon>
+                  <h3>Sviluppo</h3>
+                </div>
+                <div class="tech-list">
+                  <div class="tech-item" *ngFor="let tech of devopsTech">
+                    <ion-icon name="checkmark-circle"></ion-icon>
+                    <span>{{tech}}</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Slide 5: Performance Metrics -->
+        <div class="swiper-slide">
+          <div class="slide-content slide-metrics">
+            <div class="section-header">
+              <ion-chip color="success">
+                <ion-icon name="speedometer" slot="start"></ion-icon>
+                Performance
+              </ion-chip>
+              <h2 class="section-title">Numeri e <span>Risultati</span></h2>
+            </div>
+            
+            <div class="metrics-grid">
+              <div class="metric-card" *ngFor="let metric of metricsData">
+                <div class="metric-icon">
+                  <ion-icon [name]="metric.icon"></ion-icon>
+                </div>
+                <div class="metric-value">{{metric.value}}</div>
+                <div class="metric-label">{{metric.label}}</div>
+              </div>
+            </div>
+            
+            <div class="engagement-section">
+              <h3>
+                <ion-icon name="people" slot="start"></ion-icon>
+                Utilizzo App
+              </h3>
+              <div class="engagement-grid">
+                <div class="engagement-item" *ngFor="let eng of engagementData">
+                  <div class="eng-value">{{eng.value}}</div>
+                  <div class="eng-label">{{eng.label}}</div>
+                </div>
+              </div>
+            </div>
+            
+            <div class="compliance-section">
+              <h3>
+                <ion-icon name="shield-checkmark" slot="start"></ion-icon>
+                Sicurezza e Privacy
+              </h3>
+              <div class="compliance-list">
+                <div class="compliance-item" *ngFor="let comp of complianceData">
+                  <ion-icon name="checkmark-circle"></ion-icon>
+                  <span>{{comp}}</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Slide 6: Roadmap -->
+        <div class="swiper-slide">
+          <div class="slide-content slide-roadmap">
+            <div class="section-header">
+              <ion-chip color="medium">
+                <ion-icon name="time" slot="start"></ion-icon>
+                Futuro
+              </ion-chip>
+              <h2 class="section-title">Cosa Arriva <span>Presto</span></h2>
+            </div>
+            
+            <div class="roadmap-grid">
+              <ion-card class="roadmap-card" *ngFor="let quarter of roadmapData">
+                <ion-card-header [class]="'quarter-header q' + quarter.quarter.toLowerCase()">
+                  <ion-card-title>{{quarter.title}}</ion-card-title>
+                </ion-card-header>
+                <ion-card-content>
+                  <div class="feature-list">
+                    <div class="feature-item" *ngFor="let feature of quarter.features">
+                      <ion-icon [name]="feature.icon"></ion-icon>
+                      <span>{{feature.name}}</span>
+                    </div>
+                  </div>
+                </ion-card-content>
+              </ion-card>
+            </div>
+            
+            <div class="roadmap-note">
+              <ion-icon name="information-circle"></ion-icon>
+              <span>Le novità arrivano in base ai feedback della community e alle necessità reali</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Slide 7: Vantaggi Competitivi & CTA -->
+        <div class="swiper-slide">
+          <div class="slide-content slide-cta">
+            <div class="section-header">
+              <ion-chip color="danger">
+                <ion-icon name="trophy" slot="start"></ion-icon>
+                Perché Sceglierci
+              </ion-chip>
+              <h2 class="section-title">CSM vs <span>Altre App</span></h2>
+            </div>
+            
+            <div class="competition-section">
+              <div class="competitor-item" *ngFor="let competitor of competitors">
+                <div class="competitor-dot" [style.background]="competitor.color"></div>
+                <div class="competitor-info">
+                  <h4>{{competitor.name}}</h4>
+                  <p>{{competitor.description}}</p>
+                </div>
+              </div>
+            </div>
+            
+            <div class="usp-section">
+              <div class="usp-grid">
+                <ion-chip *ngFor="let usp of uspData" color="light">{{usp}}</ion-chip>
+              </div>
+            </div>
+            
+            <div class="cta-section">
+              <ion-card class="cta-card">
+                <ion-card-content>
+                  <h2 class="cta-title">
+                    <ion-icon name="sparkles" slot="start"></ion-icon>
+                    Inizia Ora 🧠✨
+                  </h2>
+                  <p class="cta-description">Unisciti alla community e inizia il tuo percorso di benessere mentale</p>
+                  
+                  <div class="cta-buttons">
+                    <ion-button expand="block" fill="solid" color="primary" href="https://csmtreviso-f59fe.web.app" target="_blank">
+                      <ion-icon name="rocket" slot="start"></ion-icon>
+                      Prova Gratuitamente
+                    </ion-button>
+                    
+                    <ion-button expand="block" fill="outline" color="light" href="https://github.com/Enrico2399/AppCSM" target="_blank">
+                      <ion-icon name="logo-github" slot="start"></ion-icon>
+                      Guarda il Codice
+                    </ion-button>
+                  </div>
+                </ion-card-content>
+              </ion-card>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    
+    <!-- Freccia Destra -->
+    <ion-button 
+      class="nav-button next-button" 
+      fill="clear" 
+      (click)="goToNext()"
+      aria-label="Slide successiva">
+      <ion-icon name="chevron-forward" slot="icon-only"></ion-icon>
+    </ion-button>
+  </div>
+  
+  <!-- Indicatore Slide -->
+  <div class="slide-indicator">
+    <ion-button 
+      class="indicator-btn prev-indicator" 
+      fill="clear" 
+      size="small"
+      (click)="goToPrevious()"
+      aria-label="Slide precedente">
+      <span class="slide-number">{{getPreviousSlideIndex() + 1}}</span>
+    </ion-button>
+    
+    <div class="current-slide">
+      <span class="current-number">{{currentSlide + 1}}</span>
+      <span class="divider">/</span>
+      <span class="total-number">{{totalSlides}}</span>
+    </div>
+    
+    <ion-button 
+      class="indicator-btn next-indicator" 
+      fill="clear" 
+      size="small"
+      (click)="goToNext()"
+      aria-label="Slide successiva">
+      <span class="slide-number">{{getNextSlideIndex() + 1}}</span>
+    </ion-button>
+  </div>
+  
+  <!-- Pagination Bullets -->
+  <div class="swiper-pagination"></div>
+</div>

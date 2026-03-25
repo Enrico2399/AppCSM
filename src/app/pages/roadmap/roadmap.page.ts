@@ -4,6 +4,7 @@ import { FormsModule } from '@angular/forms';
 import { IonicModule } from '@ionic/angular';
 import { FirebaseService } from '../../services/firebase/firebase';
 import { StorageService } from '../../services/storage/storage';
+import { PresentationCarouselComponent } from '../../components/presentation-carousel/presentation-carousel.component';
 
 interface RoadmapFeature {
   id: string;
@@ -23,7 +24,7 @@ interface PitchItem {
   templateUrl: './roadmap.page.html',
   styleUrls: ['./roadmap.page.scss'],
   standalone: true,
-  imports: [IonicModule, CommonModule, FormsModule]
+  imports: [IonicModule, CommonModule, FormsModule, PresentationCarouselComponent]
 })
 export class RoadmapPage implements OnInit, OnDestroy {
   // ... existing fields ...
