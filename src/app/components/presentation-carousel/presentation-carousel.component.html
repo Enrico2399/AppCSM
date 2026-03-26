@@ -4,7 +4,17 @@
   </div>
   
   <div class="carousel-container">
-    <!-- Freccia Sinistra -->
+    <!-- Freccia Sinistra Esterna -->
+    <ion-button 
+      class="side-nav-button left-side-nav" 
+      fill="solid" 
+      color="primary"
+      (click)="goToPrevious()"
+      aria-label="Slide precedente">
+      <ion-icon name="chevron-back" slot="icon-only"></ion-icon>
+    </ion-button>
+    
+    <!-- Freccia Sinistra Interna -->
     <ion-button 
       class="nav-button prev-button" 
       fill="clear" 
@@ -343,10 +353,20 @@
       </div>
     </div>
     
-    <!-- Freccia Destra -->
+    <!-- Freccia Destra Interna -->
     <ion-button 
       class="nav-button next-button" 
       fill="clear" 
+      (click)="goToNext()"
+      aria-label="Slide successiva">
+      <ion-icon name="chevron-forward" slot="icon-only"></ion-icon>
+    </ion-button>
+    
+    <!-- Freccia Destra Esterna -->
+    <ion-button 
+      class="side-nav-button right-side-nav" 
+      fill="solid" 
+      color="primary"
       (click)="goToNext()"
       aria-label="Slide successiva">
       <ion-icon name="chevron-forward" slot="icon-only"></ion-icon>
@@ -361,13 +381,16 @@
       size="small"
       (click)="goToPrevious()"
       aria-label="Slide precedente">
+      <ion-icon name="chevron-back" slot="start"></ion-icon>
       <span class="slide-number">{{getPreviousSlideIndex() + 1}}</span>
     </ion-button>
     
     <div class="current-slide">
+      <ion-icon name="apps" slot="start"></ion-icon>
       <span class="current-number">{{currentSlide + 1}}</span>
       <span class="divider">/</span>
       <span class="total-number">{{totalSlides}}</span>
+      <ion-icon name="apps" slot="end"></ion-icon>
     </div>
     
     <ion-button 
@@ -377,6 +400,7 @@
       (click)="goToNext()"
       aria-label="Slide successiva">
       <span class="slide-number">{{getNextSlideIndex() + 1}}</span>
+      <ion-icon name="chevron-forward" slot="end"></ion-icon>
     </ion-button>
   </div>
   
