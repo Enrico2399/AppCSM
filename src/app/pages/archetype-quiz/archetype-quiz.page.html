@@ -14,7 +14,8 @@
     <div class="progress-section">
       <ion-progress-bar 
         value="{{getProgressPercentage()}}" 
-        color="primary">
+        color="primary"
+        aria-label="Avanzamento del quiz">
       </ion-progress-bar>
       <p class="progress-text">
         Domanda {{getCurrentQuestionIndex() + 1}} di {{getAllQuestions().length}}
@@ -34,10 +35,15 @@
           <ion-item *ngFor="let option of getCurrentQuestion().options" 
                     [class.selected]="isOptionSelected(getCurrentQuestion().id, option.id)"
                     (click)="onAnswerChange(getCurrentQuestion().id, option.id)"
-                    button>
+                    button
+                    role="checkbox"
+                    [attr.aria-checked]="isOptionSelected(getCurrentQuestion().id, option.id)"
+                    [attr.aria-label]="option.text">
             <ion-label>{{option.text}}</ion-label>
             <ion-checkbox 
               slot="end"
+              aria-hidden="true"
+              tabindex="-1"
               [checked]="isOptionSelected(getCurrentQuestion().id, option.id)">
             </ion-checkbox>
           </ion-item>
@@ -51,7 +57,7 @@
         fill="outline"
         (click)="previousQuestion()"
         [disabled]="getCurrentQuestionIndex() === 0">
-        <ion-icon name="chevron-back-outline" slot="start"></ion-icon>
+        <ion-icon name="chevron-back-outline" slot="start" aria-hidden="true"></ion-icon>
         Precedente
       </ion-button>
 
@@ -61,7 +67,7 @@
         [disabled]="!canGoNext()"
         color="primary">
         {{getCurrentQuestionIndex() === getAllQuestions().length - 1 ? 'Completa Quiz' : 'Prossima'}}
-        <ion-icon name="chevron-forward-outline" slot="end"></ion-icon>
+        <ion-icon name="chevron-forward-outline" slot="end" aria-hidden="true"></ion-icon>
       </ion-button>
     </div>
   </div>
@@ -76,7 +82,7 @@
         <div class="results-content">
           <h4>Il tuo profilo archetipale:</h4>
           <div class="archetype-result">
-            <ion-icon name="star-outline" color="primary"></ion-icon>
+            <ion-icon name="star-outline" color="primary" aria-hidden="true"></ion-icon>
             <span class="primary-archetype">{{archetypeProfile()?.primary?.toUpperCase()}}</span>
           </div>
           
@@ -95,14 +101,14 @@
         expand="block"
         fill="outline"
         (click)="resetQuiz()">
-        <ion-icon name="refresh-outline" slot="start"></ion-icon>
+        <ion-icon name="refresh-outline" slot="start" aria-hidden="true"></ion-icon>
         Rifai il Test
       </ion-button>
       
       <ion-button 
         expand="block"
         (click)="goBack()">
-        <ion-icon name="home-outline" slot="start"></ion-icon>
+        <ion-icon name="home-outline" slot="start" aria-hidden="true"></ion-icon>
         Torna Indietro
       </ion-button>
     </div>
