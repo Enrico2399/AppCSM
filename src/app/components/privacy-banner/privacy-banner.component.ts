@@ -4,10 +4,15 @@ import { IonicModule } from '@ionic/angular';
 import { RouterLink } from '@angular/router';
 import { Subscription } from 'rxjs';
 import { AuthService } from '../../services/auth';
-import { PrivacyService } from '../../services/privacy/privacy.service';
 
 const STORAGE_KEY = 'csm-privacy-banner-dismissed-v1';
 
+// Nota: gli utenti registrati passano gia' dal modale di consenso obbligatorio
+// in home.page.ts (accettazione o logout forzato se rifiutano). Questo banner
+// e' pensato per il buco reale che quel modale non copre: le sessioni anonime,
+// per cui non esiste alcuna richiesta di consenso. Per questo mostra il banner
+// solo quando non c'e' un utente registrato, evitando di sottoporre chi si
+// registra a due richieste di consenso in sequenza.
 @Component({
   selector: 'app-privacy-banner',
   templateUrl: './privacy-banner.component.html',
@@ -18,41 +23,17 @@ const STORAGE_KEY = 'csm-privacy-banner-dismissed-v1';
 export class PrivacyBannerComponent implements OnInit, OnDestroy {
   visible = signal(false);
 
-  private currentUserId: string | null = null;
-  private isAnonymousUser = false;
   private userSub?: Subscription;
 
-  constructor(
-    private authService: AuthService,
-    private privacyService: PrivacyService
-  ) {}
+  constructor(private authService: AuthService) {}
 
   ngOnInit() {
     if (this.isLocallyDismissed()) {
       return;
     }
 
-    this.userSub = this.authService.user$.subscribe(async (user) => {
-      this.currentUserId = user?.uid ?? null;
-      this.isAnonymousUser = !!user?.isAnonymous;
-
-      if (!user || user.isAnonymous) {
-        // Nessun utente registrato: mostriamo il banner in base alla sola scelta locale
-        this.visible.set(!this.isLocallyDismissed());
-        return;
-      }
-
-      try {
-        const consent = await this.privacyService.getPrivacyConsent(user.uid);
-        if (consent) {
-          this.setLocallyDismissed();
-          this.visible.set(false);
-        } else {
-          this.visible.set(true);
-        }
-      } catch (error) {
-        console.error('Errore nel controllo del consenso privacy', error);
-      }
+    this.userSub = this.authService.user$.subscribe((user) => {
+      this.visible.set((!user || user.isAnonymous) && !this.isLocallyDismissed());
     });
   }
 
@@ -60,30 +41,17 @@ export class PrivacyBannerComponent implements OnInit, OnDestroy {
     this.userSub?.unsubscribe();
   }
 
-  async acceptAll() {
-    await this.saveChoice(true);
+  acceptAll() {
+    this.dismiss();
   }
 
-  async acceptNecessaryOnly() {
-    await this.saveChoice(false);
+  acceptNecessaryOnly() {
+    this.dismiss();
   }
 
-  private async saveChoice(analytics: boolean) {
+  private dismiss() {
     this.setLocallyDismissed();
     this.visible.set(false);
-
-    if (this.currentUserId && !this.isAnonymousUser) {
-      try {
-        await this.privacyService.setPrivacyConsent(this.currentUserId, {
-          dataProcessing: true,
-          analytics,
-          sharingWithTherapist: false,
-          marketing: false
-        });
-      } catch (error) {
-        console.error('Errore nel salvataggio del consenso privacy', error);
-      }
-    }
   }
 
   private isLocallyDismissed(): boolean {
