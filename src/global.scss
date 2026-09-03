@@ -36,8 +36,14 @@
  */
 
 /* @import "@ionic/angular/css/palettes/dark.always.css"; */
-/* @import "@ionic/angular/css/palettes/dark.class.css"; */
-@import '@ionic/angular/css/palettes/dark.system.css';
+/* @import "@ionic/angular/css/palettes/dark.system.css"; */
+// dark.class.css invece di dark.system.css: i componenti nativi di Ionic devono
+// seguire il tema chiaro/scuro scelto nell'app (classe 'ion-palette-dark' su
+// <html>, sincronizzata in app.component.ts), non la preferenza del sistema
+// operativo. Con dark.system.css i due potevano andare in disaccordo, rendendo
+// illeggibili i controlli nativi (toggle, select) quando l'app era in scuro ma
+// il sistema in chiaro (o viceversa).
+@import '@ionic/angular/css/palettes/dark.class.css';
 
 :root {
   --bg-dark: #121212;
