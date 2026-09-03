@@ -1,5 +1,6 @@
 import { Component } from '@angular/core';
 import { IonApp, IonRouterOutlet } from '@ionic/angular/standalone';
+import { Router, NavigationEnd } from '@angular/router';
 import { NavbarComponent } from './components/navbar/navbar.component';
 import { PanicButtonComponent } from './components/panic-button/panic-button.component';
 import { AnonymousWarningComponent } from './components/anonymous-warning/anonymous-warning.component';
@@ -12,7 +13,7 @@ import { PrivacyBannerComponent } from './components/privacy-banner/privacy-bann
   imports: [IonApp, IonRouterOutlet, NavbarComponent, PanicButtonComponent, AnonymousWarningComponent, PrivacyBannerComponent],
 })
 export class AppComponent {
-  constructor() {
+  constructor(private router: Router) {
     const savedTheme = localStorage.getItem('theme');
     if (savedTheme === 'light') {
       document.body.classList.add('light-theme');
@@ -26,6 +27,20 @@ export class AppComponent {
     // (es. i toggle nella pagina Profilo). Le due classi vengono sincronizzate qui.
     this.syncIonicPalette();
     window.addEventListener('themeChanged', () => this.syncIonicPalette());
+
+    // Al cambio pagina il nuovo ion-content eredita la posizione di scroll di
+    // quello precedente invece di partire dall'alto (verificato dal vivo: da
+    // Risorse scrollata in basso a Pantheon Archetipico, che si apriva gia'
+    // scrollato). Lo scroll di Ionic vive dentro lo Shadow DOM di ion-content,
+    // quindi il ripristino scroll a livello finestra di Angular Router (che agisce
+    // su window) non basta: va resettato esplicitamente ion-content stesso.
+    this.router.events.subscribe((event) => {
+      if (event instanceof NavigationEnd) {
+        requestAnimationFrame(() => {
+          document.querySelector('ion-content')?.scrollToTop(0);
+        });
+      }
+    });
   }
 
   private syncIonicPalette() {
