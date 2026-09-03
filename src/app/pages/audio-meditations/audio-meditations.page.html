@@ -68,6 +68,7 @@
                 size="small" 
                 (click)="toggleFavorite(meditation, $event)"
                 class="favorite-btn"
+                aria-label="Aggiungi ai preferiti"
               >
                 <ion-icon name="heart-outline"></ion-icon>
               </ion-button>
@@ -77,6 +78,7 @@
                 (click)="downloadForOffline(meditation, $event)"
                 class="download-btn"
                 [disabled]="meditation.isPremium"
+                aria-label="Scarica per l'ascolto offline"
               >
                 <ion-icon name="download-outline"></ion-icon>
               </ion-button>
@@ -156,6 +158,7 @@
         size="small" 
         (click)="stop()"
         class="close-player"
+        aria-label="Chiudi il player"
       >
         <ion-icon name="close"></ion-icon>
       </ion-button>
@@ -181,6 +184,7 @@
           size="large" 
           (click)="togglePlayPause()"
           class="play-pause-btn"
+          [attr.aria-label]="isPlaying() ? 'Metti in pausa' : 'Riproduci'"
         >
           <ion-icon [name]="isPlaying() ? 'pause' : 'play'"></ion-icon>
         </ion-button>
@@ -235,6 +239,7 @@
           size="small" 
           (click)="toggleMute()"
           class="volume-btn"
+          [attr.aria-label]="isMuted() ? 'Riattiva audio' : 'Disattiva audio'"
         >
           <ion-icon [name]="isMuted() ? 'volume-mute' : 'volume-high'"></ion-icon>
         </ion-button>

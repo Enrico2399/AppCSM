@@ -65,6 +65,7 @@
           size="small"
           (click)="togglePasswordVisibility()"
           type="button"
+          [attr.aria-label]="showPassword() ? 'Nascondi password' : 'Mostra password'"
         >
           <ion-icon [name]="showPassword() ? 'eye-off' : 'eye'"></ion-icon>
         </ion-button>
@@ -105,6 +106,7 @@
           size="small"
           (click)="toggleConfirmPasswordVisibility()"
           type="button"
+          [attr.aria-label]="showConfirmPassword() ? 'Nascondi conferma password' : 'Mostra conferma password'"
         >
           <ion-icon [name]="showConfirmPassword() ? 'eye-off' : 'eye'"></ion-icon>
         </ion-button>
