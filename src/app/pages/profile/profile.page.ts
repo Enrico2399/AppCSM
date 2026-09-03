@@ -4,6 +4,7 @@ import { FormsModule, ReactiveFormsModule, FormBuilder, FormGroup, Validators } 
 import { IonicModule, NavController, AlertController } from '@ionic/angular';
 import { Auth, User } from '@firebase/auth';
 import { FirebaseService } from '../../services/firebase/firebase';
+import { AuthService } from '../../services/auth';
 import { PrivacyService, UserProfile, UserPreferences } from '../../services/privacy/privacy.service';
 import { StorageService } from '../../services/storage/storage';
 import { AnonymousSessionService } from '../../services/anonymous-session/anonymous-session.service';
@@ -44,6 +45,8 @@ export class ProfilePage implements OnInit, OnDestroy {
   mostUsedMood = signal<string>('');
   moodChart: Chart<'doughnut', number[], string> | null = null;
   showStats = signal(false);
+  emailVerified = signal(true);
+  resendingVerification = signal(false);
   
   // Form per modifica profilo
   editForm: FormGroup;
@@ -55,7 +58,8 @@ export class ProfilePage implements OnInit, OnDestroy {
     private privacyService: PrivacyService,
     private storageService: StorageService,
     private anonymousSessionService: AnonymousSessionService,
-    private formBuilder: FormBuilder
+    private formBuilder: FormBuilder,
+    private authService: AuthService
   ) {
     // Inizializzo il form di modifica profilo
     this.editForm = this.formBuilder.group({
@@ -98,6 +102,8 @@ export class ProfilePage implements OnInit, OnDestroy {
       }
 
       if (currentUser) {
+        this.emailVerified.set(currentUser.emailVerified);
+
         // Load user profile from Firebase
         const profile = await this.privacyService.getUserProfile(currentUser.uid);
         
@@ -492,6 +498,21 @@ export class ProfilePage implements OnInit, OnDestroy {
     } catch (error) {
       console.error('Error clearing mood history:', error);
       this.showError('Errore nella cancellazione della cronologia');
+    }
+  }
+
+  async resendVerification() {
+    if (this.resendingVerification()) {
+      return;
+    }
+    this.resendingVerification.set(true);
+    try {
+      await this.authService.resendVerificationEmail();
+      this.showSuccess('Email di verifica inviata. Controlla la tua casella di posta.');
+    } catch (error: any) {
+      this.showError(error?.message || "Si e' verificato un errore nell'invio dell'email.");
+    } finally {
+      this.resendingVerification.set(false);
     }
   }
 

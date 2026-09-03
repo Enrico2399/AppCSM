@@ -69,6 +69,12 @@ export class FirebaseService {
     // Profilo archetipo
     tasks.push(remove(ref(this.db, `archetypeProfiles/${userId}`)));
 
+    // Profilo utente principale
+    tasks.push(remove(ref(this.db, `users/${userId}`)));
+
+    // Consenso privacy (percorso legacy, usato in alcune parti dell'app)
+    tasks.push(remove(ref(this.db, `privacyConsents/${userId}`)));
+
     await Promise.all(tasks);
   }
 

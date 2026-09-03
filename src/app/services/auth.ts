@@ -14,7 +14,10 @@ import {
   signInAnonymously,
   RecaptchaVerifier,
   signInWithPhoneNumber,
-  ConfirmationResult
+  ConfirmationResult,
+  sendEmailVerification,
+  sendPasswordResetEmail,
+  reload
 } from 'firebase/auth';
 
 @Injectable({ providedIn: 'root' })
@@ -65,8 +68,67 @@ export class AuthService {
     if (res.user) {
       await updateProfile(res.user, { displayName: name });
       await this.firebaseService.upsertUserProfile(res.user);
+      await sendEmailVerification(res.user);
     }
     return res;
+  }
+
+  /** Invia l'email di reset password. */
+  async requestPasswordReset(email: string): Promise<void> {
+    const normalized = email.trim().toLowerCase();
+    if (!normalized) {
+      throw new Error('Inserisci un indirizzo email valido.');
+    }
+    try {
+      await sendPasswordResetEmail(this.firebaseService.auth, normalized);
+    } catch (error: any) {
+      // Non rilanciamo per 'utente non trovato': rivelarlo permetterebbe di
+      // scoprire quali email sono registrate. Solo i problemi di formato/rete
+      // vanno mostrati davvero all'utente.
+      const revealable = ['auth/invalid-email', 'auth/too-many-requests', 'auth/network-request-failed'];
+      if (revealable.includes(error?.code)) {
+        throw new Error(this.mapAuthError(error));
+      }
+    }
+  }
+
+  /** Rimanda l'email di verifica all'utente attualmente loggato. */
+  async resendVerificationEmail(): Promise<void> {
+    const currentUser = this.firebaseService.auth.currentUser;
+    if (!currentUser) {
+      throw new Error('Devi effettuare il login per verificare la tua email.');
+    }
+    if (currentUser.emailVerified) {
+      return;
+    }
+    try {
+      await sendEmailVerification(currentUser);
+    } catch (error: any) {
+      throw new Error(this.mapAuthError(error));
+    }
+  }
+
+  /** Ricontrolla lo stato di verifica dell'email dopo che l'utente ha cliccato il link. */
+  async refreshEmailVerified(): Promise<boolean> {
+    const currentUser = this.firebaseService.auth.currentUser;
+    if (!currentUser) {
+      return false;
+    }
+    await reload(currentUser);
+    return currentUser.emailVerified;
+  }
+
+  private mapAuthError(error: any): string {
+    switch (error?.code) {
+      case 'auth/invalid-email':
+        return 'Email non valida. Controlla l\'indirizzo inserito.';
+      case 'auth/too-many-requests':
+        return 'Troppi tentativi. Riprova tra qualche minuto.';
+      case 'auth/network-request-failed':
+        return 'Problema di connessione. Controlla la tua rete e riprova.';
+      default:
+        return "Si e' verificato un errore. Riprova piu' tardi.";
+    }
   }
 
   async logout() {

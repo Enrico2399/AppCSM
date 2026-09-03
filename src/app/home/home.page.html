@@ -29,6 +29,9 @@
               <ion-input type="password" placeholder="Password" [ngModel]="password()" (ngModelChange)="password.set($event)"></ion-input>
             </ion-item>
             <button class="btn-primary" (click)="handleEmailLogin()">Accedi</button>
+            <p class="toggle-auth forgot-password-link">
+              <a routerLink="/forgot-password">Password dimenticata?</a>
+            </p>
           </div>
 
           <div *ngIf="isRegistering()">
