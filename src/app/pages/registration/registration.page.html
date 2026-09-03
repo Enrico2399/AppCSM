@@ -67,7 +67,7 @@
           type="button"
           [attr.aria-label]="showPassword() ? 'Nascondi password' : 'Mostra password'"
         >
-          <ion-icon [name]="showPassword() ? 'eye-off' : 'eye'"></ion-icon>
+          <ion-icon [name]="showPassword() ? 'eye-off' : 'eye'" aria-hidden="true"></ion-icon>
         </ion-button>
         <ion-note slot="error" *ngIf="passwordControl?.invalid && passwordControl?.touched">
           <span *ngIf="passwordControl?.errors?.['required']">La password è obbligatoria</span>
@@ -108,7 +108,7 @@
           type="button"
           [attr.aria-label]="showConfirmPassword() ? 'Nascondi conferma password' : 'Mostra conferma password'"
         >
-          <ion-icon [name]="showConfirmPassword() ? 'eye-off' : 'eye'"></ion-icon>
+          <ion-icon [name]="showConfirmPassword() ? 'eye-off' : 'eye'" aria-hidden="true"></ion-icon>
         </ion-button>
         <ion-note slot="error" *ngIf="confirmPasswordControl?.invalid && confirmPasswordControl?.touched">
           <span *ngIf="confirmPasswordControl?.errors?.['required']">Conferma la password</span>
@@ -121,6 +121,7 @@
         <ion-checkbox 
           formControlName="termsAccepted"
           id="terms-checkbox"
+          aria-label="Accetto i Termini e Condizioni e la Privacy Policy"
         ></ion-checkbox>
         <ion-label for="terms-checkbox" class="terms-label">
           Accetto i 

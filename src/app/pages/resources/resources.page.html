@@ -6,7 +6,7 @@
     <ion-title>Risorse e Aiuto</ion-title>
     <ion-buttons slot="end">
       <ion-button (click)="refreshLocation()" fill="clear" aria-label="Aggiorna posizione">
-        <ion-icon name="refresh-outline"></ion-icon>
+        <ion-icon name="refresh-outline" aria-hidden="true"></ion-icon>
       </ion-button>
     </ion-buttons>
   </ion-toolbar>
@@ -50,7 +50,7 @@
 
   <!-- Location Status -->
   <div *ngIf="userPosition()" class="location-status">
-    <ion-icon name="location-outline"></ion-icon>
+    <ion-icon name="location-outline" aria-hidden="true"></ion-icon>
     <span>Risorse ordinate per distanza</span>
   </div>
 
@@ -103,12 +103,12 @@
 
         <div class="resource-details">
           <div class="detail-row" *ngIf="resource.hours">
-            <ion-icon name="time-outline"></ion-icon>
+            <ion-icon name="time-outline" aria-hidden="true"></ion-icon>
             <span>{{resource.hours}}</span>
           </div>
 
           <div class="detail-row" *ngIf="resource.address">
-            <ion-icon name="location-outline"></ion-icon>
+            <ion-icon name="location-outline" aria-hidden="true"></ion-icon>
             <span>{{resource.address}}</span>
           </div>
         </div>
@@ -129,7 +129,7 @@
             size="small"
             (click)="callPhone(resource.phone)"
             color="danger">
-            <ion-icon name="call-outline" slot="start"></ion-icon>
+            <ion-icon name="call-outline" slot="start" aria-hidden="true"></ion-icon>
             Chiama
           </ion-button>
 
@@ -139,7 +139,7 @@
             size="small"
             (click)="openWebsite(resource.website)"
             color="secondary">
-            <ion-icon name="globe-outline" slot="start"></ion-icon>
+            <ion-icon name="globe-outline" slot="start" aria-hidden="true"></ion-icon>
             Sito Web
           </ion-button>
 
@@ -149,7 +149,7 @@
             size="small"
             (click)="openEmail(resource.email)"
             color="tertiary">
-            <ion-icon name="mail-outline" slot="start"></ion-icon>
+            <ion-icon name="mail-outline" slot="start" aria-hidden="true"></ion-icon>
             Email
           </ion-button>
 
@@ -159,7 +159,7 @@
             size="small"
             (click)="openMaps(resource)"
             color="primary">
-            <ion-icon name="map-outline" slot="start"></ion-icon>
+            <ion-icon name="map-outline" slot="start" aria-hidden="true"></ion-icon>
             Mappa
           </ion-button>
         </div>
@@ -190,7 +190,7 @@
           color="danger"
           (click)="callPhone('112')"
           class="emergency-btn">
-          <ion-icon name="call-outline" slot="start"></ion-icon>
+          <ion-icon name="call-outline" slot="start" aria-hidden="true"></ion-icon>
           Chiama 112 - Emergenze
         </ion-button>
         
@@ -200,7 +200,7 @@
           color="danger"
           (click)="callPhone('199 284 284')"
           class="emergency-btn">
-          <ion-icon name="heart-outline" slot="start"></ion-icon>
+          <ion-icon name="heart-outline" slot="start" aria-hidden="true"></ion-icon>
           Telefono Amico Italia
         </ion-button>
       </div>

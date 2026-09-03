@@ -78,17 +78,17 @@
 
         <ion-item>
           <ion-label>Notifiche Promemoria Stati d'Animo</ion-label>
-          <ion-toggle [(ngModel)]="moodReminders"></ion-toggle>
+          <ion-toggle [(ngModel)]="moodReminders" aria-label="Notifiche Promemoria Stati d'Animo"></ion-toggle>
         </ion-item>
 
         <ion-item>
           <ion-label>Aggiornamenti Community</ion-label>
-          <ion-toggle [(ngModel)]="communityUpdates"></ion-toggle>
+          <ion-toggle [(ngModel)]="communityUpdates" aria-label="Aggiornamenti Community"></ion-toggle>
         </ion-item>
 
         <ion-item>
           <ion-label>Report Settimanali</ion-label>
-          <ion-toggle [(ngModel)]="weeklyReports"></ion-toggle>
+          <ion-toggle [(ngModel)]="weeklyReports" aria-label="Report Settimanali"></ion-toggle>
         </ion-item>
       </ion-card-content>
     </ion-card>
@@ -124,12 +124,12 @@
 
         <ion-item>
           <ion-label>Condividi dati con terapeuta</ion-label>
-          <ion-toggle [(ngModel)]="shareWithTherapist"></ion-toggle>
+          <ion-toggle [(ngModel)]="shareWithTherapist" aria-label="Condividi dati con terapeuta"></ion-toggle>
         </ion-item>
 
         <ion-item>
           <ion-label>Consenti analisi anonime</ion-label>
-          <ion-toggle [(ngModel)]="analyticsConsent"></ion-toggle>
+          <ion-toggle [(ngModel)]="analyticsConsent" aria-label="Consenti analisi anonime"></ion-toggle>
         </ion-item>
       </ion-card-content>
     </ion-card>
@@ -145,7 +145,7 @@
           fill="outline" 
           (click)="exportData()"
           class="data-action-btn">
-          <ion-icon name="download-outline" slot="start"></ion-icon>
+          <ion-icon name="download-outline" slot="start" aria-hidden="true"></ion-icon>
           Esporta i Tuoi Dati
         </ion-button>
 
@@ -155,7 +155,7 @@
           color="warning"
           (click)="clearMoodHistory()"
           class="data-action-btn">
-          <ion-icon name="trash-outline" slot="start"></ion-icon>
+          <ion-icon name="trash-outline" slot="start" aria-hidden="true"></ion-icon>
           Cancella Cronologia Emozionale
         </ion-button>
 
@@ -165,7 +165,7 @@
           color="danger"
           (click)="deleteAccount()"
           class="data-action-btn delete-btn">
-          <ion-icon name="warning-outline" slot="start"></ion-icon>
+          <ion-icon name="warning-outline" slot="start" aria-hidden="true"></ion-icon>
           Elimina Account
         </ion-button>
       </ion-card-content>

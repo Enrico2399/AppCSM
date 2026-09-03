@@ -26,7 +26,11 @@
   
   p {
     margin: 5px 0;
-    color: var(--ion-color-warning);
+    // Testo scuro invece del colore --ion-color-warning (giallo chiaro): su questo
+    // sfondo chiaro il contrasto misurato con axe-core era 1.3, ben sotto la
+    // soglia minima WCAG AA di 4.5:1 per un testo che avvisa della cancellazione
+    // automatica dei dati - doveva essere leggibile piu' di chiunque altro.
+    color: #7a5900;
     font-size: 0.9rem;
     
     &:first-child {
