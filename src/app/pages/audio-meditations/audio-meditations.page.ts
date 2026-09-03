@@ -209,7 +209,6 @@ export class AudioMeditationsPage implements OnInit, OnDestroy {
 
     try {
       // Download logic for offline use
-      console.log('Download for offline:', meditation.title);
     } catch (error) {
       console.error('Error downloading:', error);
     }

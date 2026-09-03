@@ -166,10 +166,8 @@ export class PresentationCarouselComponent implements OnInit, OnDestroy, AfterVi
         on: {
           slideChange: (swiper: Swiper) => {
             this.currentSlide = swiper.realIndex;
-            console.log('Slide changed to:', this.currentSlide);
           },
           init: (swiper: Swiper) => {
-            console.log('Swiper initialized with', swiper.slides.length, 'slides');
             // Forza il caricamento di tutte le slide
             setTimeout(() => {
               swiper.update();

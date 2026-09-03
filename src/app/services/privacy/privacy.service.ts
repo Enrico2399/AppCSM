@@ -86,7 +86,6 @@ export class PrivacyService {
   async anonymizeUserData(userId: string): Promise<void> {
     // This would anonymize community messages and other user data
     // Implementation depends on specific requirements
-    console.log('Anonymizing user data for:', userId);
   }
 
   async updateUserProfile(userId: string, profile: Partial<UserProfile>): Promise<void> {

@@ -182,11 +182,9 @@ export class AnonymousSessionService {
       // Cancella sessioni scadute
       for (const uid of expiredSessions) {
         await remove(ref(this.firebaseService.getDatabase(), `anonymousSessions/${uid}`));
-        console.log(`Sessione anonima Firebase scaduta cancellata: ${uid}`);
       }
 
       if (expiredSessions.length > 0) {
-        console.log(`Cleanup Firebase completato: ${expiredSessions.length} sessioni anonime cancellate`);
       }
 
     } catch (error) {

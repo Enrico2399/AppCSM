@@ -167,7 +167,6 @@ export class ResourcesPage implements OnInit, OnDestroy {
       this.userPosition.set(position);
       this.calculateDistances();
     } catch (error) {
-      console.log('Geolocation not available or denied:', error);
       // Continue without location
     }
   }

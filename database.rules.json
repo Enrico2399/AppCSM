@@ -1,56 +1,95 @@
 {
   "rules": {
-    ".read": true,
+    ".read": false,
     ".write": false,
-    
-    "moodHistory": {
-      "$uid": {
-        ".read": "auth.uid === $uid",
-        ".write": "auth.uid === $uid && auth.uid !== null"
-      }
-    },
-    
-    "anonymousSessions": {
-      "$uid": {
-        ".read": "auth.uid === $uid",
-        ".write": "auth.uid === $uid && auth.uid !== null"
-      }
-    },
-    
-    "helpPlans": {
-      "$uid": {
-        ".read": "auth.uid === $uid",
-        ".write": "auth.uid === $uid && auth.uid !== null"
-      }
-    },
-    
-    "votes": {
-      ".read": true,
-      ".write": "auth.uid !== null"
-    },
-    
+
     "users": {
       "$uid": {
-        ".read": "auth.uid === $uid",
-        ".write": "auth.uid === $uid && auth.uid !== null"
+        ".read": "auth != null && ($uid === auth.uid || root.child('users').child(auth.uid).child('role').val() === 'admin')",
+        ".write": "auth != null && ($uid === auth.uid || root.child('users').child(auth.uid).child('role').val() === 'admin')"
       }
     },
-    
+
+    "moodHistory": {
+      "$uid": {
+        ".read": "auth != null && ($uid === auth.uid || root.child('users').child(auth.uid).child('role').val() === 'admin')",
+        ".write": "auth != null && $uid === auth.uid"
+      }
+    },
+
+    "archetypeProfiles": {
+      "$uid": {
+        ".read": "auth != null && ($uid === auth.uid || root.child('users').child(auth.uid).child('role').val() === 'admin')",
+        ".write": "auth != null && $uid === auth.uid"
+      }
+    },
+
+    "privacyConsents": {
+      "$uid": {
+        ".read": "auth != null && $uid === auth.uid",
+        ".write": "auth != null && $uid === auth.uid"
+      }
+    },
+
     "consents": {
       "$uid": {
-        ".read": "auth.uid === $uid",
-        ".write": "auth.uid === $uid && auth.uid !== null"
+        ".read": "auth != null && $uid === auth.uid",
+        ".write": "auth != null && $uid === auth.uid"
       }
     },
-    
+
+    "anonymousSessions": {
+      "$uid": {
+        ".read": "auth != null && $uid === auth.uid",
+        ".write": "auth != null && $uid === auth.uid"
+      }
+    },
+
+    "groundingSessions": {
+      "$sessionId": {
+        ".read": "auth != null && (data.child('userId').val() === auth.uid || root.child('users').child(auth.uid).child('role').val() === 'admin')",
+        ".write": "auth != null && (data.exists() ? data.child('userId').val() === auth.uid : newData.child('userId').val() === auth.uid)"
+      }
+    },
+
+    "communityMessages": {
+      ".read": "auth != null",
+      ".write": "auth != null"
+    },
+
+    "votes": {
+      ".read": true,
+      ".write": "auth != null"
+    },
+
+    "mapReports": {
+      ".read": "auth != null",
+      ".write": "auth != null"
+    },
+
+    "analytics": {
+      ".read": "auth != null && root.child('users').child(auth.uid).child('role').val() === 'admin'",
+      ".write": "auth != null"
+    },
+
+    "errorLogs": {
+      ".read": "auth != null && root.child('users').child(auth.uid).child('role').val() === 'admin'",
+      ".write": "auth != null"
+    },
+
+    "logs": {
+      ".read": "auth != null && root.child('users').child(auth.uid).child('role').val() === 'admin'",
+      ".write": "auth != null"
+    },
+
     "userActions": {
       ".read": false,
-      ".write": "auth.uid !== null"
+      ".write": "auth != null"
     },
-    
+
     "performanceMetrics": {
-      ".read": false,
-      ".write": "auth.uid !== null"
+      ".read": "auth != null && root.child('users').child(auth.uid).child('role').val() === 'admin'",
+      ".write": "auth != null"
     }
   }
 }

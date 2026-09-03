@@ -336,7 +336,6 @@ export class HelpPage {
       };
 
       const planId = await this.profileService.saveHelpPlan(plan);
-      console.log('Help plan saved with ID:', planId);
     } catch (error) {
       console.error('Error saving help plan:', error);
     }

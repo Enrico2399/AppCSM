@@ -60,19 +60,16 @@ export class NotificationService {
   private setupNotificationListeners() {
     // Listen for incoming push notifications
     PushNotifications.addListener('pushNotificationReceived', (notification) => {
-      console.log('Push notification received:', notification);
       this.handleIncomingNotification(notification);
     });
 
     // Listen for notification tap
     PushNotifications.addListener('pushNotificationActionPerformed', (notification) => {
-      console.log('Push notification tapped:', notification);
       this.handleNotificationTap(notification);
     });
 
     // Listen for local notification tap
     LocalNotifications.addListener('localNotificationActionPerformed', (notification) => {
-      console.log('Local notification tapped:', notification);
       this.handleLocalNotificationTap(notification);
     });
   }
