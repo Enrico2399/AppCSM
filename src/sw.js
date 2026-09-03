@@ -3,13 +3,17 @@ const CACHE_NAME = 'csm-app-v1';
 const STATIC_CACHE = 'csm-static-v1';
 const DYNAMIC_CACHE = 'csm-dynamic-v1';
 
+// Percorso base dell'app (es. '/' su Firebase Hosting, '/AppCSM/' su GitHub Pages),
+// calcolato dallo scope di registrazione invece di essere hardcoded.
+const BASE_PATH = new URL(self.registration.scope).pathname;
+
 // Static assets to cache
 const STATIC_ASSETS = [
-  '/',
-  '/index.html',
-  '/manifest.json',
-  '/assets/icons/icon-192x192.png',
-  '/assets/icons/icon-512x512.png',
+  BASE_PATH,
+  BASE_PATH + 'index.html',
+  BASE_PATH + 'manifest.json',
+  BASE_PATH + 'assets/icons/icon-192x192.png',
+  BASE_PATH + 'assets/icons/icon-512x512.png',
   // Add other static assets as needed
 ];
 
@@ -145,7 +149,7 @@ self.addEventListener('fetch', (event) => {
               
               // Return offline page for navigation requests
               if (request.mode === 'navigate') {
-                return caches.match('/index.html');
+                return caches.match(BASE_PATH + 'index.html');
               }
               
               // Return offline fallback
@@ -171,8 +175,8 @@ self.addEventListener('sync', (event) => {
 self.addEventListener('push', (event) => {
   const options = {
     body: event.data ? event.data.text() : 'Nuova notifica da CSM',
-    icon: '/assets/icons/icon-192x192.png',
-    badge: '/assets/icons/icon-72x72.png',
+    icon: BASE_PATH + 'assets/icons/icon-192x192.png',
+    badge: BASE_PATH + 'assets/icons/icon-72x72.png',
     vibrate: [100, 50, 100],
     data: {
       dateOfArrival: Date.now(),
@@ -182,12 +186,12 @@ self.addEventListener('push', (event) => {
       {
         action: 'explore',
         title: 'Apri CSM',
-        icon: '/assets/icons/icon-192x192.png'
+        icon: BASE_PATH + 'assets/icons/icon-192x192.png'
       },
       {
         action: 'close',
         title: 'Chiudi',
-        icon: '/assets/icons/icon-192x192.png'
+        icon: BASE_PATH + 'assets/icons/icon-192x192.png'
       }
     ]
   };
@@ -203,7 +207,7 @@ self.addEventListener('notificationclick', (event) => {
 
   if (event.action === 'explore') {
     event.waitUntil(
-      clients.openWindow('/')
+      clients.openWindow(BASE_PATH)
     );
   }
 });
@@ -234,7 +238,7 @@ self.addEventListener('periodicsync', (event) => {
     event.waitUntil(
       self.registration.showNotification('Promemoria Umore', {
         body: 'Come ti senti oggi? Registra il tuo stato d\'animo.',
-        icon: '/assets/icons/icon-192x192.png',
+        icon: BASE_PATH + 'assets/icons/icon-192x192.png',
         tag: 'mood-reminder'
       })
     );

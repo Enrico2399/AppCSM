@@ -33,6 +33,16 @@
                 "glob": "**/*",
                 "input": "src/assets",
                 "output": "assets"
+              },
+              {
+                "glob": "sw.js",
+                "input": "src",
+                "output": "/"
+              },
+              {
+                "glob": "manifest.json",
+                "input": "src",
+                "output": "/"
               }
             ],
             "styles": [
