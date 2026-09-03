@@ -1,0 +1,18 @@
+<div class="privacy-banner" *ngIf="visible()">
+  <div class="privacy-banner__content">
+    <h2>Privacy e cookie</h2>
+    <p>
+      Usiamo solo i dati tecnici necessari al funzionamento dell'app. Con il tuo consenso possiamo
+      usare i dati in forma aggregata per migliorare l'esperienza e le funzioni di supporto.
+    </p>
+    <div class="privacy-banner__actions">
+      <ion-button fill="outline" size="small" (click)="acceptNecessaryOnly()">
+        Solo necessari
+      </ion-button>
+      <ion-button size="small" (click)="acceptAll()">
+        Accetta tutti
+      </ion-button>
+      <a routerLink="/privacy" class="privacy-banner__link">Leggi l'informativa</a>
+    </div>
+  </div>
+</div>

@@ -1,0 +1,40 @@
+.privacy-banner {
+  position: fixed;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  z-index: 9999;
+  padding: 16px;
+  background: var(--ion-color-step-50, #1e1e1e);
+  border-top: 1px solid var(--ion-color-step-150, #333);
+  box-shadow: 0 -2px 12px rgba(0, 0, 0, 0.25);
+
+  &__content {
+    max-width: 720px;
+    margin: 0 auto;
+
+    h2 {
+      font-size: 1rem;
+      margin: 0 0 6px;
+    }
+
+    p {
+      font-size: 0.85rem;
+      margin: 0 0 12px;
+      opacity: 0.85;
+    }
+  }
+
+  &__actions {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    flex-wrap: wrap;
+  }
+
+  &__link {
+    font-size: 0.8rem;
+    text-decoration: underline;
+    opacity: 0.8;
+  }
+}
