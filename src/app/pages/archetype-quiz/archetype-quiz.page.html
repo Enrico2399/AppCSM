@@ -34,16 +34,11 @@
         <ion-list>
           <ion-item *ngFor="let option of getCurrentQuestion().options" 
                     [class.selected]="isOptionSelected(getCurrentQuestion().id, option.id)"
-                    (click)="onAnswerChange(getCurrentQuestion().id, option.id)"
-                    button
-                    role="checkbox"
-                    [attr.aria-checked]="isOptionSelected(getCurrentQuestion().id, option.id)"
-                    [attr.aria-label]="option.text">
+                    (click)="onAnswerChange(getCurrentQuestion().id, option.id)">
             <ion-label>{{option.text}}</ion-label>
             <ion-checkbox 
               slot="end"
-              aria-hidden="true"
-              tabindex="-1"
+              [attr.aria-label]="option.text"
               [checked]="isOptionSelected(getCurrentQuestion().id, option.id)">
             </ion-checkbox>
           </ion-item>
