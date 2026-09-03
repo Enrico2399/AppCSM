@@ -1,4 +1,4 @@
-import { Component, inject, signal } from '@angular/core';
+import { Component, inject, signal, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { IonicModule, NavController } from '@ionic/angular';
@@ -36,7 +36,7 @@ interface Crisis {
   standalone: true,
   imports: [IonicModule, CommonModule, FormsModule]
 })
-export class HelpPage {
+export class HelpPage implements OnInit {
 
   selectedIssue: string = '';
   helpMode: 'wa' | 'self' = 'wa';
@@ -82,7 +82,22 @@ export class HelpPage {
   private navCtrl = inject(NavController);
   private firebaseService = inject(FirebaseService);
 
+  ngOnInit() {
+    // Chiamato qui e non solo in ionViewWillEnter: verificato dal vivo (pagina
+    // /history, stesso pattern) che ionViewWillEnter non scatta sempre in modo
+    // affidabile - su questa pagina significherebbe che numero SOS, componenti
+    // anonimi e scheda di crisi da Firebase potrebbero non caricarsi affatto,
+    // un rischio in una pagina di aiuto/sicurezza. loadHelpData() e' idempotente.
+    this.loadHelpData();
+  }
+
+  // Ionic lifecycle hook per aggiornare i dati rientrando nella pagina. Il
+  // caricamento iniziale e' gia' garantito da ngOnInit sopra.
   ionViewWillEnter() {
+    this.loadHelpData();
+  }
+
+  private loadHelpData() {
     // Load from localStorage (old method)
     const savedPhone = this.storageService.getSosPhone();
     if (savedPhone) {

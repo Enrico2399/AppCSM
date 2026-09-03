@@ -47,7 +47,8 @@
       </div>
       <ion-progress-bar 
         [value]="getProgressPercentage()" 
-        color="primary">
+        color="primary"
+        aria-label="Avanzamento esercizio di grounding">
       </ion-progress-bar>
     </div>
 
@@ -57,7 +58,8 @@
         <ion-icon 
           [name]="getStepIcon()" 
           [color]="getStepColor()"
-          class="step-icon">
+          class="step-icon"
+          aria-hidden="true">
         </ion-icon>
         <h3>{{getCurrentStep().prompt}}</h3>
         <p class="step-hint">

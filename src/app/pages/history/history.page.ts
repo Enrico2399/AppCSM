@@ -235,9 +235,19 @@ export class HistoryPage implements OnInit, AfterViewInit, OnDestroy {
 
   ngOnInit() {
     window.addEventListener('themeChanged', () => this.initChart());
+    // Chiamato qui e non solo in ionViewWillEnter: verificato dal vivo che su un
+    // ingresso diretto alla pagina (link esterno, refresh, o - inspiegabilmente -
+    // anche una normale navigazione interna in alcuni casi) ionViewWillEnter non
+    // scattava mai, lasciando la pagina bloccata sullo spinner di caricamento a
+    // tempo indeterminato (il timeout di sicurezza di 10s sotto non serve a nulla
+    // se il metodo che lo imposta non viene proprio chiamato). loadData() e' gia'
+    // sicura da richiamare piu' volte (ripulisce la subscription precedente).
+    this.loadData();
   }
 
-  // Ionic lifecycle hook for refresh on entry
+  // Ionic lifecycle hook per aggiornare i dati rientrando nella pagina (es. dopo
+  // aver registrato un nuovo umore e tornato indietro). Il caricamento iniziale
+  // e' garantito da ngOnInit sopra, non da questo hook.
   ionViewWillEnter() {
     this.loadData();
   }
