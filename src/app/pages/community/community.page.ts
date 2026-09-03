@@ -7,7 +7,7 @@ import { FirebaseService } from '../../services/firebase/firebase';
 import { AuthService } from '../../services/auth';
 import { take } from 'rxjs';
 import { addIcons } from 'ionicons';
-import { closeOutline } from 'ionicons/icons';
+import { closeOutline, send } from 'ionicons/icons';
 import { PopupService } from '../../services/popup/popup.service';
 
 interface CommunityMessage {
@@ -31,7 +31,7 @@ export class CommunityPage implements OnInit, OnDestroy {
   public popupService = inject(PopupService);
 
   constructor() {
-    addIcons({ closeOutline });
+    addIcons({ closeOutline, send });
   }
 
   messages = signal<CommunityMessage[]>([]);

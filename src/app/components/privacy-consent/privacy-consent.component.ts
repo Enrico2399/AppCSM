@@ -7,7 +7,7 @@ import { FirebaseService } from '../../services/firebase/firebase';
 import { AuthService } from '../../services/auth';
 import { StorageService } from '../../services/storage/storage';
 import { addIcons } from 'ionicons';
-import { checkmarkCircle, closeCircle, documentText, refresh, trash } from 'ionicons/icons';
+import { checkmarkCircle, closeCircle, documentText, refresh, trash, alertCircle, chevronUp, chevronDown } from 'ionicons/icons';
 
 export interface PrivacyConsent {
   analytics: boolean;
@@ -43,7 +43,7 @@ export class PrivacyConsentComponent {
   hasConsented = signal(false);
 
   constructor() {
-    addIcons({ checkmarkCircle, closeCircle, documentText, refresh, trash });
+    addIcons({ checkmarkCircle, closeCircle, documentText, refresh, trash, alertCircle, chevronUp, chevronDown });
     this.consentForm = this.formBuilder.group({
       analytics: [false],
       dataProcessing: [false, Validators.requiredTrue],

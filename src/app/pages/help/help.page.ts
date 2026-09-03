@@ -12,9 +12,9 @@ import { signOut } from 'firebase/auth';
 import { doc, setDoc, deleteDoc, collection, getDocs, query, orderBy, serverTimestamp } from 'firebase/firestore';
 import { ref, get, set, remove } from 'firebase/database';
 import { addIcons } from 'ionicons';
-import { logoWhatsapp, call, exit, logOutOutline, closeOutline } from 'ionicons/icons';
+import { logoWhatsapp, call, exit, logOutOutline, closeOutline, send } from 'ionicons/icons';
 
-addIcons({ logoWhatsapp, call, exit, logOutOutline, closeOutline });
+addIcons({ logoWhatsapp, call, exit, logOutOutline, closeOutline, send });
 
 interface Comment {
   text: string;

@@ -10,7 +10,7 @@ import { AnonymousSessionService } from '../services/anonymous-session/anonymous
 import { StorageService } from '../services/storage/storage';
 import { PopupService } from '../services/popup/popup.service';
 import { addIcons } from 'ionicons';
-import { heartOutline, heartDislikeOutline, timeOutline, checkmarkCircle, alertCircle, logoGoogle, logOutOutline, closeOutline } from 'ionicons/icons';
+import { heartOutline, heartDislikeOutline, timeOutline, checkmarkCircle, alertCircle, logoGoogle, logOutOutline, closeOutline, personCircleOutline } from 'ionicons/icons';
 import { take, firstValueFrom } from 'rxjs';
 import { User, ConfirmationResult } from '@firebase/auth';
 
@@ -68,7 +68,7 @@ export class HomePage implements OnInit {
     private anonymousSessionService: AnonymousSessionService
   ) {
     this.moods.set(this.moodService.getMoods());
-    addIcons({ logoGoogle, logOutOutline, closeOutline });
+    addIcons({ logoGoogle, logOutOutline, closeOutline, personCircleOutline });
   }
 
   ngOnInit() {

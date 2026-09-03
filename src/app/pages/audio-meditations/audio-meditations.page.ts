@@ -4,7 +4,7 @@ import { FormsModule } from '@angular/forms';
 import { IonicModule } from '@ionic/angular';
 import { AudioMeditationService, AudioMeditation } from '../../services/audio-meditation/audio-meditation.service';
 import { addIcons } from 'ionicons';
-import { close, diamond, downloadOutline, heartOutline, musicalNotes, play, time } from 'ionicons/icons';
+import { close, diamond, downloadOutline, heartOutline, musicalNotes, play, time, pause, volumeMute, volumeHigh, apps, cloudOutline, flowerOutline, leaf, moon, heart } from 'ionicons/icons';
 import { RouterModule } from '@angular/router';
 
 @Component({
@@ -36,15 +36,15 @@ export class AudioMeditationsPage implements OnInit, OnDestroy {
   // Categories
   categories = [
     { id: 'all', name: 'Tutte', icon: 'apps' },
-    { id: 'breathing', name: 'Respirazione', icon: 'air' },
-    { id: 'mindfulness', name: 'Mindfulness', icon: 'brain' },
+    { id: 'breathing', name: 'Respirazione', icon: 'cloud-outline' },
+    { id: 'mindfulness', name: 'Mindfulness', icon: 'flower-outline' },
     { id: 'grounding', name: 'Grounding', icon: 'leaf' },
     { id: 'sleep', name: 'Sonno', icon: 'moon' },
     { id: 'stress', name: 'Stress', icon: 'heart' }
   ];
 
   constructor() {
-    addIcons({ close, diamond, downloadOutline, heartOutline, musicalNotes, play, time });
+    addIcons({ close, diamond, downloadOutline, heartOutline, musicalNotes, play, time, pause, volumeMute, volumeHigh, apps, cloudOutline, flowerOutline, leaf, moon, heart });
   }
 
   ngOnInit() {

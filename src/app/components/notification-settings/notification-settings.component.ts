@@ -4,7 +4,7 @@ import { FormsModule, ReactiveFormsModule, FormBuilder, FormGroup, Validators } 
 import { IonicModule, AlertController, ToastController } from '@ionic/angular';
 import { NotificationService, NotificationSettings } from '../../services/notifications/notifications.service';
 import { addIcons } from 'ionicons';
-import { notifications, trash } from 'ionicons/icons';
+import { notifications, trash, checkmarkCircle, alertCircle, colorPalette, people, barChart, leaf } from 'ionicons/icons';
 
 @Component({
   selector: 'app-notification-settings',
@@ -26,7 +26,7 @@ export class NotificationSettingsComponent {
   scheduledNotifications = signal<any[]>([]);
 
   constructor() {
-    addIcons({ notifications, trash });
+    addIcons({ notifications, trash, checkmarkCircle, alertCircle, colorPalette, people, barChart, leaf });
     this.settingsForm = this.formBuilder.group({
       moodReminders: [true],
       communityUpdates: [false],
