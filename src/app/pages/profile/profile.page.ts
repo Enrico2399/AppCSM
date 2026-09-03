@@ -9,6 +9,8 @@ import { PrivacyService, UserProfile, UserPreferences } from '../../services/pri
 import { StorageService } from '../../services/storage/storage';
 import { AnonymousSessionService } from '../../services/anonymous-session/anonymous-session.service';
 import { Chart, ChartConfiguration, ChartType, registerables } from 'chart.js/auto';
+import { addIcons } from 'ionicons';
+import { downloadOutline, trashOutline, warningOutline } from 'ionicons/icons';
 
 // Registra Chart.js components
 Chart.register(...registerables);
@@ -61,6 +63,7 @@ export class ProfilePage implements OnInit, OnDestroy {
     private formBuilder: FormBuilder,
     private authService: AuthService
   ) {
+    addIcons({ downloadOutline, trashOutline, warningOutline });
     // Inizializzo il form di modifica profilo
     this.editForm = this.formBuilder.group({
       displayName: ['', [Validators.required, Validators.minLength(2)]],

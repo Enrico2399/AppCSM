@@ -4,6 +4,8 @@ import { FormsModule } from '@angular/forms';
 import { IonicModule, NavController, AlertController, LoadingController } from '@ionic/angular';
 import { FirebaseService } from '../../services/firebase/firebase';
 import { Auth } from '@firebase/auth';
+import { addIcons } from 'ionicons';
+import { chevronBackOutline, chevronForwardOutline, homeOutline, refreshOutline, starOutline } from 'ionicons/icons';
 
 export interface QuizQuestion {
   id: string;
@@ -114,7 +116,9 @@ export class ArchetypeQuizPage implements OnInit, OnDestroy {
     private alertCtrl: AlertController,
     private loadingCtrl: LoadingController,
     private firebaseService: FirebaseService
-  ) {}
+  ) {
+    addIcons({ chevronBackOutline, chevronForwardOutline, homeOutline, refreshOutline, starOutline });
+  }
 
   ngOnInit() {
     this.loadExistingProfile();

@@ -3,6 +3,8 @@ import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { IonicModule } from '@ionic/angular';
 import { AudioMeditationService, AudioMeditation } from '../../services/audio-meditation/audio-meditation.service';
+import { addIcons } from 'ionicons';
+import { close, diamond, downloadOutline, heartOutline, musicalNotes, play, time } from 'ionicons/icons';
 import { RouterModule } from '@angular/router';
 
 @Component({
@@ -40,6 +42,10 @@ export class AudioMeditationsPage implements OnInit, OnDestroy {
     { id: 'sleep', name: 'Sonno', icon: 'moon' },
     { id: 'stress', name: 'Stress', icon: 'heart' }
   ];
+
+  constructor() {
+    addIcons({ close, diamond, downloadOutline, heartOutline, musicalNotes, play, time });
+  }
 
   ngOnInit() {
     this.loadMeditations();

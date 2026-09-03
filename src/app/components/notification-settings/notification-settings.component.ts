@@ -3,6 +3,8 @@ import { CommonModule } from '@angular/common';
 import { FormsModule, ReactiveFormsModule, FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { IonicModule, AlertController, ToastController } from '@ionic/angular';
 import { NotificationService, NotificationSettings } from '../../services/notifications/notifications.service';
+import { addIcons } from 'ionicons';
+import { notifications, trash } from 'ionicons/icons';
 
 @Component({
   selector: 'app-notification-settings',
@@ -24,6 +26,7 @@ export class NotificationSettingsComponent {
   scheduledNotifications = signal<any[]>([]);
 
   constructor() {
+    addIcons({ notifications, trash });
     this.settingsForm = this.formBuilder.group({
       moodReminders: [true],
       communityUpdates: [false],

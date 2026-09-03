@@ -4,6 +4,8 @@ import { FormsModule } from '@angular/forms';
 import { IonicModule, NavController, AlertController } from '@ionic/angular';
 import { FirebaseService } from '../../services/firebase/firebase';
 import { Auth } from '@firebase/auth';
+import { addIcons } from 'ionicons';
+import { arrowForwardOutline, checkmarkCircleOutline, homeOutline, leafOutline, refreshOutline } from 'ionicons/icons';
 
 export interface GroundingStep {
   type: 'see' | 'touch' | 'hear' | 'smell' | 'taste';
@@ -76,7 +78,9 @@ export class GroundingPage implements OnInit, OnDestroy {
     private navCtrl: NavController,
     private alertCtrl: AlertController,
     private firebaseService: FirebaseService
-  ) {}
+  ) {
+    addIcons({ arrowForwardOutline, checkmarkCircleOutline, homeOutline, leafOutline, refreshOutline });
+  }
 
   ngOnInit() {
     this.initializeSession();

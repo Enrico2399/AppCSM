@@ -6,6 +6,8 @@ import { Router } from '@angular/router';
 import { AuthService } from '../../services/auth';
 import { FirebaseService } from '../../services/firebase/firebase';
 import { PopupService } from '../../services/popup/popup.service';
+import { addIcons } from 'ionicons';
+import { eye, eyeOff } from 'ionicons/icons';
 
 @Component({
   selector: 'app-registration',
@@ -30,6 +32,7 @@ export class RegistrationPage {
   passwordStrength = signal<'weak' | 'medium' | 'strong' | null>(null);
 
   constructor() {
+    addIcons({ eye, eyeOff });
     this.registrationForm = this.formBuilder.group({
       name: ['', [Validators.required, Validators.minLength(2), Validators.maxLength(50)]],
       email: ['', [Validators.required, Validators.email]],

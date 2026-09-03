@@ -2,6 +2,8 @@ import { Component, OnInit, OnDestroy } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { IonicModule } from '@ionic/angular';
 import { Router } from '@angular/router';
+import { addIcons } from 'ionicons';
+import { shieldCheckmarkOutline } from 'ionicons/icons';
 
 @Component({
   selector: 'app-panic-button',
@@ -16,7 +18,9 @@ export class PanicButtonComponent implements OnInit, OnDestroy {
   private pressTimer: any = null;
   private originalTitle = '';
 
-  constructor(private router: Router) {}
+  constructor(private router: Router) {
+    addIcons({ shieldCheckmarkOutline });
+  }
 
   ngOnInit() {
     this.originalTitle = document.title;

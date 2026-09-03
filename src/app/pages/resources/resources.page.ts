@@ -4,6 +4,8 @@ import { FormsModule } from '@angular/forms';
 import { IonicModule, NavController, AlertController, LoadingController } from '@ionic/angular';
 import { Geolocation, Position } from '@capacitor/geolocation';
 import { FirebaseService } from '../../services/firebase/firebase';
+import { addIcons } from 'ionicons';
+import { callOutline, globeOutline, heartOutline, locationOutline, mailOutline, mapOutline, refreshOutline, searchOutline, timeOutline, warningOutline } from 'ionicons/icons';
 
 export interface Resource {
   id: string;
@@ -117,7 +119,9 @@ export class ResourcesPage implements OnInit, OnDestroy {
     private alertCtrl: AlertController,
     private loadingCtrl: LoadingController,
     private firebaseService: FirebaseService
-  ) {}
+  ) {
+    addIcons({ callOutline, globeOutline, heartOutline, locationOutline, mailOutline, mapOutline, refreshOutline, searchOutline, timeOutline, warningOutline });
+  }
 
   ngOnInit() {
     this.loadResources();

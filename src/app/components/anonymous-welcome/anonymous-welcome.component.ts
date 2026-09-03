@@ -3,6 +3,8 @@ import { CommonModule } from '@angular/common';
 import { IonicModule } from '@ionic/angular';
 import { Router } from '@angular/router';
 import { AnonymousSessionService } from '../../services/anonymous-session/anonymous-session.service';
+import { addIcons } from 'ionicons';
+import { personAddOutline, shieldCheckmarkOutline, timeOutline } from 'ionicons/icons';
 
 @Component({
   selector: 'app-anonymous-welcome',
@@ -35,7 +37,9 @@ export class AnonymousWelcomeComponent implements OnInit, OnDestroy {
     }
   });
 
-  constructor(private anonymousSessionService: AnonymousSessionService, private router: Router) {}
+  constructor(private anonymousSessionService: AnonymousSessionService, private router: Router) {
+    addIcons({ personAddOutline, shieldCheckmarkOutline, timeOutline });
+  }
 
   ngOnInit() {
     this.session.set(this.anonymousSessionService.getCurrentSession());
