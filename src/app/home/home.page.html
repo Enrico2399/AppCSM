@@ -105,17 +105,17 @@
           [attr.aria-label]="'Seleziona umore ' + mood.title">
           
           <div class="slice-content" [style.transform]="getContentTransform(i)">
+            <span aria-hidden="true">{{ mood.icon }}</span>
           </div>
         </div>
       </div>
 
       <div class="header-section">
         <button class="btn-history" routerLink="/history">Vai alla tua Cronologia</button>
-        
-        <div class="wip-badge">
-          <button routerLink="/roadmap">Work in Progress</button>
-        </div>
-        
+
+        <!-- Il pulsante "Work in Progress" -> /roadmap e' stato rimosso: duplicava
+             il link "Nuovi Sviluppi" gia' presente nella barra di navigazione. -->
+
         <!-- HOME VIEW LEGEND -->
         <div class="home-legend">
           <div class="legend-scroll">
