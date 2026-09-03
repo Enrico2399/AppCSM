@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component, OnDestroy, inject, signal, effect } from '@angular/core';
+import { Component, OnInit, OnDestroy, inject, signal, effect } from '@angular/core';
 import { AuthService } from '../../services/auth';
 import { FirebaseService } from '../../services/firebase/firebase';
 import { Router } from '@angular/router';
@@ -27,7 +27,7 @@ interface MapReport {
     IonButton, IonContent, IonFab, IonFabButton, IonIcon
   ]
 })
-export class MapPage implements OnDestroy {
+export class MapPage implements OnInit, OnDestroy {
   map!: L.Map;
   markerGroup = L.layerGroup();
   
@@ -52,6 +52,16 @@ export class MapPage implements OnDestroy {
         this.renderMarkers();
       }
     });
+  }
+
+  ngOnInit() {
+    // Chiamato qui e non solo in ionViewDidEnter: stesso pattern gia' verificato
+    // dal vivo su /history e /help, dove il rispettivo hook Ionic non scattava
+    // sempre in modo affidabile. Sicuro da richiamare da entrambi gli hook: initMap
+    // ha gia' una guardia (if (this.map) return) e loadReports ripulisce sempre la
+    // subscription precedente prima di ricrearla.
+    this.initMap();
+    this.loadReports();
   }
 
   ionViewDidEnter() {
