@@ -149,12 +149,19 @@ export class FirebaseService {
   listenToMoodHistory(userId: string, callback: (history: any) => void): Unsubscribe {
     return onValue(ref(this.db, 'moodHistory/' + userId), (snapshot) => {
       callback(snapshot.val());
+    }, (error) => {
+      // Senza questo callback, un permesso negato dalle regole del database
+      // avrebbe lasciato la pagina in attesa per sempre senza nessun errore in
+      // console: la callback di successo non viene mai chiamata in quel caso.
+      console.error('Errore nel caricamento dello storico umore:', error);
     });
   }
 
   listenToVotes(callback: (votes: any) => void): Unsubscribe {
     return onValue(ref(this.db, 'votes'), (snapshot) => {
       callback(snapshot.val());
+    }, (error) => {
+      console.error('Errore nel caricamento dei voti:', error);
     });
   }
 
@@ -173,6 +180,8 @@ export class FirebaseService {
     const messagesRef = query(ref(this.db, 'communityMessages'), limitToLast(20));
     return onValue(messagesRef, (snapshot) => {
       callback(snapshot.val());
+    }, (error) => {
+      console.error('Errore nel caricamento dei messaggi della community:', error);
     });
   }
 
@@ -188,6 +197,8 @@ export class FirebaseService {
     const reportsRef = ref(this.db, 'mapReports');
     return onValue(reportsRef, (snapshot) => {
       callback(snapshot.val());
+    }, (error) => {
+      console.error('Errore nel caricamento delle segnalazioni sulla mappa:', error);
     });
   }
 
