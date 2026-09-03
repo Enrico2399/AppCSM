@@ -1,7 +1,13 @@
 // PWA Service Worker for CSM App
-const CACHE_NAME = 'csm-app-v1';
-const STATIC_CACHE = 'csm-static-v1';
-const DYNAMIC_CACHE = 'csm-dynamic-v1';
+// Alza il numero di versione ('v2', 'v3', ...) a ogni deploy che cambia i file
+// serviti dall'app. I nomi dei chunk JS cambiano a ogni build (contengono un
+// hash del contenuto): senza cambiare anche questi nomi, la cache puo' restare
+// con riferimenti a chunk della build precedente che non esistono piu', dando
+// errori 'Failed to fetch dynamically imported module' a chi ha gia' visitato
+// il sito prima dell'aggiornamento.
+const CACHE_NAME = 'csm-app-v2';
+const STATIC_CACHE = 'csm-static-v2';
+const DYNAMIC_CACHE = 'csm-dynamic-v2';
 
 // Percorso base dell'app (es. '/' su Firebase Hosting, '/AppCSM/' su GitHub Pages),
 // calcolato dallo scope di registrazione invece di essere hardcoded.
