@@ -16,16 +16,39 @@
   z-index: 1000;
   border-bottom: 1px solid var(--border);
   padding: 0 20px;
+  // ALTEZZA FISSA (60px) + testo che poteva andare a capo su più righe
+  // (flex-wrap: wrap, introdotto in un giro precedente quando i link erano
+  // solo 4) sono due cose incompatibili: con 8 link, su schermi stretti
+  // il contenuto andato a capo debordava dalla barra invece di restare
+  // dentro, sovrapponendosi al contenuto della pagina sotto — bug serio,
+  // ancora più probabile ora che ho aggiunto altri 4 link nel giro
+  // precedente. Sostituito con una barra sempre alta uguale, che scorre
+  // in orizzontale quando i link non ci stanno tutti (pattern comune
+  // nelle app mobile, es. le tab bar di X/Twitter o Instagram).
   height: 60px;
-  
+  overflow: hidden;
+
   .nav-links {
     display: flex;
-    flex-wrap: wrap;
-    justify-content: center;
+    flex-wrap: nowrap;
     align-items: center;
     flex: 1;
-    gap: 4px 6px;
-    row-gap: 8px;
+    gap: 6px;
+    overflow-x: auto;
+    overflow-y: hidden;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: none; // Firefox
+    &::-webkit-scrollbar { display: none; } // Chrome/Safari/iOS
+
+    // Su schermi larghi (dove gli 8 link entrano comodamente in una riga
+    // sola) restano centrati com'erano prima; sotto, restano allineati a
+    // sinistra: e' la convenzione per un contenuto scorrevole, altrimenti
+    // il centraggio taglierebbe fuori l'inizio della lista finche' non si
+    // scorre "all'indietro" per raggiungerlo.
+    justify-content: flex-start;
+    @media (min-width: 960px) {
+      justify-content: center;
+    }
   }
 
   a {
@@ -37,6 +60,8 @@
     font-size: 0.8rem;
     letter-spacing: 0.01em;
     cursor: pointer;
+    white-space: nowrap;
+    flex: none; // non farsi schiacciare dal contenitore che scorre
     transition: color var(--transition-fast), background var(--transition-fast);
 
     &:hover {
@@ -55,6 +80,7 @@
 
   .theme-icon {
     font-size: 1.2rem;
+    flex: none;
   }
 }
 
