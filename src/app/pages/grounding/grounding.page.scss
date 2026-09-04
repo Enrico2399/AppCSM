@@ -9,7 +9,7 @@
 .welcome-card {
   text-align: center;
   max-width: 500px;
-  background: var(--ion-color-light);
+  background: var(--bg-elevated);
   border-radius: 16px;
   padding: 32px;
   box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
@@ -22,20 +22,20 @@
 }
 
 .welcome-card h2 {
-  color: var(--ion-color-dark);
+  color: var(--text-light);
   margin-bottom: 16px;
   font-size: 1.5rem;
 }
 
 .welcome-card p {
-  color: var(--ion-color-medium);
+  color: var(--text-muted);
   margin-bottom: 24px;
   line-height: 1.6;
 }
 
 .instructions {
   text-align: left;
-  background: var(--ion-color-light-tint);
+  background: var(--card-bg);
   border-radius: 8px;
   padding: 20px;
   margin: 24px 0;
@@ -54,7 +54,7 @@
 
 .instructions li {
   padding: 8px 0;
-  border-bottom: 1px solid var(--ion-color-light-shade);
+  border-bottom: 1px solid var(--border);
   display: flex;
   align-items: center;
 }
@@ -93,11 +93,11 @@
   align-items: center;
   margin-bottom: 8px;
   font-size: 0.9rem;
-  color: var(--ion-color-medium);
+  color: var(--text-muted);
 }
 
 .step-container {
-  background: var(--ion-card-background);
+  background: var(--bg-elevated);
   border-radius: 16px;
   padding: 24px;
   margin-bottom: 24px;
@@ -116,14 +116,14 @@
 }
 
 .step-header h3 {
-  color: var(--ion-color-dark);
+  color: var(--text-light);
   margin-bottom: 8px;
   font-size: 1.3rem;
   line-height: 1.4;
 }
 
 .step-hint {
-  color: var(--ion-color-medium);
+  color: var(--text-muted);
   font-size: 0.9rem;
   margin: 0;
 }
@@ -134,7 +134,7 @@
 }
 
 .step-input {
-  --background: var(--ion-color-light);
+  --background: var(--bg-elevated);
   --border-radius: 12px;
   --padding-start: 16px;
   --padding-end: 16px;
@@ -142,7 +142,7 @@
   --padding-bottom: 16px;
   font-size: 1rem;
   line-height: 1.5;
-  border: 2px solid var(--ion-color-light-shade);
+  border: 2px solid var(--border);
   transition: border-color 0.3s ease;
 }
 
@@ -155,7 +155,7 @@
   bottom: 12px;
   right: 16px;
   font-size: 0.8rem;
-  color: var(--ion-color-medium);
+  color: var(--text-muted);
 }
 
 .input-counter .valid {
@@ -164,7 +164,7 @@
 }
 
 .suggestions {
-  background: var(--ion-color-light-tint);
+  background: var(--card-bg);
   border-radius: 12px;
   padding: 16px;
   margin-top: 16px;
@@ -172,7 +172,7 @@
 
 .suggestions-title {
   font-size: 0.9rem;
-  color: var(--ion-color-medium);
+  color: var(--text-muted);
   margin: 0 0 12px 0;
   font-weight: 500;
 }
@@ -200,8 +200,8 @@ ion-chip:hover {
 }
 
 .skip-btn {
-  --border-color: var(--ion-color-medium);
-  --color: var(--ion-color-medium);
+  --border-color: var(--text-muted);
+  --color: var(--text-muted);
 }
 
 .next-btn {
@@ -212,7 +212,7 @@ ion-chip:hover {
 }
 
 .next-btn:disabled {
-  --background: var(--ion-color-medium);
+  --background: var(--text-muted);
   --box-shadow: none;
 }
 
@@ -228,7 +228,7 @@ ion-chip:hover {
 .completion-card {
   text-align: center;
   max-width: 500px;
-  background: var(--ion-color-light);
+  background: var(--bg-elevated);
   border-radius: 16px;
   padding: 32px;
   box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
@@ -241,19 +241,19 @@ ion-chip:hover {
 }
 
 .completion-card h2 {
-  color: var(--ion-color-dark);
+  color: var(--text-light);
   margin-bottom: 16px;
   font-size: 1.5rem;
 }
 
 .completion-card p {
-  color: var(--ion-color-medium);
+  color: var(--text-muted);
   margin-bottom: 16px;
   line-height: 1.6;
 }
 
 .completion-stats {
-  background: var(--ion-color-light-tint);
+  background: var(--card-bg);
   border-radius: 8px;
   padding: 16px;
   margin: 24px 0;
@@ -279,34 +279,6 @@ ion-chip:hover {
 .home-btn {
   height: 50px;
   font-weight: 600;
-}
-
-// Dark mode adjustments
-@media (prefers-color-scheme: dark) {
-  .welcome-card,
-  .step-container,
-  .completion-card {
-    background: var(--ion-color-dark);
-    color: var(--ion-color-light);
-  }
-  
-  .welcome-card h2,
-  .step-header h3,
-  .completion-card h2 {
-    color: var(--ion-color-light);
-  }
-  
-  .instructions {
-    background: var(--ion-color-dark-tint);
-  }
-  
-  .suggestions {
-    background: var(--ion-color-dark-tint);
-  }
-  
-  .completion-stats {
-    background: var(--ion-color-dark-tint);
-  }
 }
 
 // Responsive design
