@@ -124,6 +124,18 @@ ion-content {
   display: flex;
   align-items: center;
   justify-content: space-between;
+  // 3 elementi (link "Provalo", conteggio voti, bottone "Mi serve") in una
+  // sola riga senza possibilita' di andare a capo: su schermo stretto non
+  // ci stavano, e senza flex-wrap i pillottoni si schiacciavano l'uno
+  // sull'altro invece di scendere su piu' righe. Sotto i 480px passano a
+  // una colonna centrata, piu' comoda da leggere e toccare col dito.
+  flex-wrap: wrap;
+  gap: 14px;
+
+  @media (max-width: 480px) {
+    flex-direction: column;
+    align-items: stretch;
+  }
 }
 
 .try-link {
@@ -134,8 +146,11 @@ ion-content {
   padding: 10px 20px;
   border-radius: 50px;
   transition: 0.3s;
+  text-align: center;
 
   &:hover { background: var(--wa-green); color: #000; }
+
+  @media (max-width: 480px) { order: 1; }
 }
 
 .like-btn {
@@ -155,9 +170,23 @@ ion-content {
     background: var(--accent-blue);
     color: #000;
   }
+
+  @media (max-width: 480px) {
+    order: 3;
+    justify-content: center;
+  }
 }
 
-.vote-count { font-size: 1.2rem; font-weight: bold; color: var(--accent-blue); }
+.vote-count {
+  font-size: 1.2rem;
+  font-weight: bold;
+  color: var(--accent-blue);
+
+  @media (max-width: 480px) {
+    order: 2;
+    text-align: center;
+  }
+}
 
 .pitch-container {
   margin-top: 80px;
