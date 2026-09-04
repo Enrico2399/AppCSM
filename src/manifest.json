@@ -4,8 +4,8 @@
   "description": "App per il benessere mentale e supporto psicologico basata su archetipi junghiani",
   "start_url": ".",
   "display": "standalone",
-  "background_color": "#1a1a2e",
-  "theme_color": "#16213e",
+  "background_color": "#0E1013",
+  "theme_color": "#0E1013",
   "orientation": "portrait",
   "scope": ".",
   "lang": "it",
@@ -88,26 +88,6 @@
           "sizes": "192x192"
         }
       ]
-    }
-  ],
-  "screenshots": [
-    {
-      "src": "assets/screenshots/home.png",
-      "sizes": "375x667",
-      "type": "image/png",
-      "form_factor": "narrow"
-    },
-    {
-      "src": "assets/screenshots/mood.png",
-      "sizes": "375x667",
-      "type": "image/png",
-      "form_factor": "narrow"
-    },
-    {
-      "src": "assets/screenshots/help.png",
-      "sizes": "375x667",
-      "type": "image/png",
-      "form_factor": "narrow"
     }
   ],
   "related_applications": [],
