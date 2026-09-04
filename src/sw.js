@@ -18,8 +18,8 @@ const STATIC_ASSETS = [
   BASE_PATH,
   BASE_PATH + 'index.html',
   BASE_PATH + 'manifest.json',
-  BASE_PATH + 'assets/icons/icon-192x192.png',
-  BASE_PATH + 'assets/icons/icon-512x512.png',
+  BASE_PATH + 'assets/icons/icon-192.webp',
+  BASE_PATH + 'assets/icons/icon-512.webp',
   // Add other static assets as needed
 ];
 
@@ -181,8 +181,8 @@ self.addEventListener('sync', (event) => {
 self.addEventListener('push', (event) => {
   const options = {
     body: event.data ? event.data.text() : 'Nuova notifica da CSM',
-    icon: BASE_PATH + 'assets/icons/icon-192x192.png',
-    badge: BASE_PATH + 'assets/icons/icon-72x72.png',
+    icon: BASE_PATH + 'assets/icons/icon-192.webp',
+    badge: BASE_PATH + 'assets/icons/icon-72.webp',
     vibrate: [100, 50, 100],
     data: {
       dateOfArrival: Date.now(),
@@ -192,12 +192,12 @@ self.addEventListener('push', (event) => {
       {
         action: 'explore',
         title: 'Apri CSM',
-        icon: BASE_PATH + 'assets/icons/icon-192x192.png'
+        icon: BASE_PATH + 'assets/icons/icon-192.webp'
       },
       {
         action: 'close',
         title: 'Chiudi',
-        icon: BASE_PATH + 'assets/icons/icon-192x192.png'
+        icon: BASE_PATH + 'assets/icons/icon-192.webp'
       }
     ]
   };
@@ -244,7 +244,7 @@ self.addEventListener('periodicsync', (event) => {
     event.waitUntil(
       self.registration.showNotification('Promemoria Umore', {
         body: 'Come ti senti oggi? Registra il tuo stato d\'animo.',
-        icon: BASE_PATH + 'assets/icons/icon-192x192.png',
+        icon: BASE_PATH + 'assets/icons/icon-192.webp',
         tag: 'mood-reminder'
       })
     );
