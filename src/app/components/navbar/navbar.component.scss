@@ -4,6 +4,10 @@
   left: 0;
   width: 100%;
   z-index: 10000; /* Higher than anything else */
+  // Spazio per la tacca/Dynamic Island su iPhone e simili (richiede
+  // viewport-fit=cover in index.html, gia' presente). env() torna 0 sui
+  // dispositivi senza notch, quindi qui non cambia nulla.
+  padding-top: env(safe-area-inset-top);
 }
 
 .navbar {

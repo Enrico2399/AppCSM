@@ -5,6 +5,8 @@
   bottom: 0;
   z-index: 9999;
   padding: 16px;
+  // I pulsanti di consenso non devono finire sotto la barra home di iPhone.
+  padding-bottom: calc(16px + env(safe-area-inset-bottom));
   background: var(--ion-color-step-50, #1e1e1e);
   border-top: 1px solid var(--ion-color-step-150, #333);
   box-shadow: 0 -2px 12px rgba(0, 0, 0, 0.25);

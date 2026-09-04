@@ -235,6 +235,8 @@
   background: var(--ion-color-light);
   border-top: 1px solid var(--ion-color-light-shade);
   padding: 16px;
+  // I controlli di riproduzione non devono finire sotto la barra home di iPhone.
+  padding-bottom: calc(16px + env(safe-area-inset-bottom));
   z-index: 1000;
   box-shadow: 0 -4px 12px rgba(0, 0, 0, 0.1);
 }

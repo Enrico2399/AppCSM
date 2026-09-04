@@ -1,7 +1,10 @@
 .panic-button-container {
   position: fixed;
-  bottom: 20px;
-  right: 20px;
+  // Pulsante di emergenza: deve restare sempre raggiungibile, anche sopra
+  // la barra home di iPhone (senza questo, l'area sicura toglierebbe
+  // margine di tocco a un controllo critico).
+  bottom: calc(20px + env(safe-area-inset-bottom));
+  right: calc(20px + env(safe-area-inset-right));
   z-index: 9999;
   cursor: pointer;
   user-select: none;
