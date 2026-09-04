@@ -9,6 +9,11 @@
  * https://ionicframework.com/docs/layout/global-stylesheets
  */
 
+/* Font moderno per tutta l'app: prima non c'era alcun font custom, solo il
+ * default di sistema del browser. Plus Jakarta Sans e' un sans-serif geometrico
+ * ma caldo, pensato per interfacce contemporanee. */
+@import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap');
+
 /* Core CSS required for Ionic components to work properly */
 @import "@ionic/angular/css/core.css";
 
@@ -46,35 +51,86 @@
 @import '@ionic/angular/css/palettes/dark.class.css';
 
 :root {
-  --bg-dark: #121212;
-  --text-light: #f4f4f4;
-  --accent: #ffffff;
-  --accent-blue: #4da6ff;
-  --accent-purple: #a855f7;
-  --danger: #ff4d4d;
-  --card-bg: rgba(255, 255, 255, 0.08);
-  --border-color: rgba(255, 255, 255, 0.1);
+  /* Font */
+  --font-sans: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+
+  /* Palette — rifatta per "svecchiare" l'app: nero puro e blu/viola generici
+   * sostituiti con toni piu' morbidi e coerenti tra loro, stessi NOMI di
+   * variabile di prima (per non dover toccare decine di file), solo valori
+   * nuovi. */
+  --bg-dark: #0E1013;
+  --bg-elevated: #171A1F;
+  --text-light: #F2F3F5;
+  --text-muted: #9AA0AC;
+  --accent: #8B7CF6;
+  --accent-blue: #5B9DF8;
+  --accent-purple: #8B5CF6;
+  --danger: #FF5C5C;
+  --card-bg: rgba(255, 255, 255, 0.06);
+  --border-color: rgba(255, 255, 255, 0.10);
   --input-bg: rgba(255, 255, 255, 0.05);
-  --border: rgba(255, 255, 255, 0.1);
+  --border: rgba(255, 255, 255, 0.10);
   --wa-green: #25D366;
-  
-  /* Modern Transitions */
+
+  --ion-background-color: var(--bg-dark);
+  --ion-text-color: var(--text-light);
+
+  /* Raggio degli angoli, unico per tutta l'app */
+  --radius-sm: 8px;
+  --radius-md: 14px;
+  --radius-lg: 20px;
+  --radius-pill: 999px;
+
+  /* Transizioni (gia' definite prima ma mai usate in nessun file: ora
+   * applicate davvero qui sotto, sulle classi condivise) */
   --transition-fast: 0.2s ease-in-out;
   --transition-slow: 0.4s cubic-bezier(0.4, 0, 0.2, 1);
-  
-  /* Elevation */
-  --shadow-sm: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
-  --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+
+  /* Ombre piu' morbide e meno "piatte" di prima */
+  --shadow-sm: 0 2px 8px rgba(0, 0, 0, 0.25);
+  --shadow-md: 0 8px 24px rgba(0, 0, 0, 0.32);
+  --shadow-lg: 0 20px 48px rgba(0, 0, 0, 0.42);
 }
+
+html, body {
+  font-family: var(--font-sans);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* :where() ha specificita' zero: qualunque titolo con uno stile gia' definito
+ * pagina per pagina continua a vincere su questa regola, che serve solo da
+ * default per i titoli che non hanno ancora un font-weight/letter-spacing
+ * proprio. */
+:where(h1, h2, h3) {
+  font-family: var(--font-sans);
+  letter-spacing: -0.01em;
+  font-weight: 700;
+}
+
+/* Scrollbar sottile e coerente col tema, solo dove il browser la supporta */
+::-webkit-scrollbar { width: 10px; height: 10px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb {
+  background: rgba(255, 255, 255, 0.15);
+  border-radius: var(--radius-pill);
+  border: 2px solid transparent;
+  background-clip: content-box;
+}
+::-webkit-scrollbar-thumb:hover { background: rgba(255, 255, 255, 0.25); background-clip: content-box; }
+body.light-theme ::-webkit-scrollbar-thumb { background: rgba(0, 0, 0, 0.15); background-clip: content-box; }
+body.light-theme ::-webkit-scrollbar-thumb:hover { background: rgba(0, 0, 0, 0.25); background-clip: content-box; }
 
 /* Light Theme Variables */
 body.light-theme {
-  --bg-dark: #f5f6fa;
-  --text-light: #2f3640;
-  --accent: #2f3640;
-  --accent-blue: #0984e3;
-  --accent-purple: #8c7ae6;
-  --danger: #e84118;
+  --bg-dark: #F6F6F9;
+  --bg-elevated: #FFFFFF;
+  --text-light: #1C1E26;
+  --text-muted: #6B7280;
+  --accent: #5B4FE0;
+  --accent-blue: #0B5FC4;
+  --accent-purple: #5F3FD6;
+  --danger: #BE3324;
   --card-bg: rgba(0, 0, 0, 0.05);
   --border-color: rgba(0, 0, 0, 0.1);
   --input-bg: rgba(0, 0, 0, 0.03);
@@ -86,18 +142,23 @@ body.light-theme {
   /* Shared Light Adjustments */
   a { color: var(--accent-blue); }
 
-  /* Navbar adjustments for Light Mode */
+  /* Navbar adjustments for Light Mode: prima solo un bordo sottile e un
+   * grigio scuro anche per lo stato attivo (quasi indistinguibile dal testo
+   * normale); ora un'ombra morbida per staccarla dal contenuto e lo stato
+   * attivo nel colore del brand, molto piu' leggibile a colpo d'occhio. */
   .global-header .navbar {
-    background: rgba(255, 255, 255, 0.95);
-    border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+    background: rgba(255, 255, 255, 0.92);
+    border-bottom: none;
+    box-shadow: var(--shadow-sm);
   }
 
   .global-header .navbar a {
-    color: #2f3640;
+    color: var(--text-light);
   }
   
   .global-header .navbar a.active {
-    border-bottom-color: #2f3640;
+    color: var(--accent);
+    border-bottom-color: var(--accent);
   }
 
   .roadmap-nav a.active {
@@ -106,37 +167,40 @@ body.light-theme {
 
   /* Modals */
   .modal-content {
-    background: #ffffff;
-    color: #2f3640;
-    border-color: rgba(0,0,0,0.1);
+    background: var(--bg-elevated);
+    color: var(--text-light);
+    border-color: var(--border);
+    box-shadow: var(--shadow-lg);
   }
 
   .name-input {
-    background: rgba(0,0,0,0.05) !important;
-    color: #2f3640 !important;
-    border-color: rgba(0,0,0,0.2) !important;
+    background: rgba(0,0,0,0.04) !important;
+    color: var(--text-light) !important;
+    border-color: var(--border-color) !important;
   }
   
   .save-btn {
-    background: #2f3640 !important;
+    background: var(--accent) !important;
     color: white !important;
   }
   
-  hr { border-top-color: rgba(0,0,0,0.1); }
+  hr { border-top-color: var(--border); }
 
-  /* Other components overrides */
-  .btn-action { color: #121212 !important; box-shadow: 0 4px 15px rgba(0,0,0,0.05) !important; }
-  .btn-add, .btn-send { background: #2f3640 !important; color: white !important; }
+  /* Other components overrides: bottoni ed elementi che in scuro usavano gia'
+   * i token, ma in chiaro erano rimasti su un grigio ardesia generico (poco
+   * "brand") invece del colore d'accento della app. */
+  .btn-action { color: var(--text-light) !important; box-shadow: var(--shadow-sm) !important; }
+  .btn-add, .btn-send { background: var(--accent) !important; color: white !important; }
   textarea, input[type="text"], select { color: var(--text-light) !important; background: var(--card-bg) !important; border-color: var(--border-color) !important; }
-  .advice-box, #dynamic-description-area { background: rgba(0,0,0,0.03); border-color: rgba(0,0,0,0.1); color: var(--text-light); }
-  .archetype-card.selected { background: rgba(0,0,0,0.1); border-color: var(--accent); box-shadow: 0 0 10px rgba(0,0,0,0.1); }
-  .detail-container { background: rgba(255,255,255,0.9); border: 1px solid rgba(0,0,0,0.1); color: var(--text-light); }
+  .advice-box, #dynamic-description-area { background: var(--bg-elevated); border-color: var(--border); color: var(--text-light); box-shadow: var(--shadow-sm); }
+  .archetype-card.selected { background: rgba(91, 79, 224, 0.08); border-color: var(--accent); box-shadow: 0 0 0 2px var(--accent); }
+  .detail-container { background: var(--bg-elevated); border: 1px solid var(--border); color: var(--text-light); box-shadow: var(--shadow-md); }
   .btn-back { background: var(--accent); color: white; }
   .wip-badge { color: white; }
-  .community-list li { background: rgba(0,0,0,0.05); }
-  .pitch-container { background: linear-gradient(145deg, #ffffff, #f0f0f0); border-color: rgba(0,0,0,0.1); }
+  .community-list li { background: var(--bg-elevated); box-shadow: var(--shadow-sm); }
+  .pitch-container { background: var(--bg-elevated); border-color: var(--border); box-shadow: var(--shadow-md); }
   .mode-btn { color: var(--text-light); }
-  input[name="help-mode"]:checked + .mode-btn { background: rgba(0,0,0,0.05); color: var(--text-light); border-color: var(--text-light); }
+  input[name="help-mode"]:checked + .mode-btn { background: rgba(91, 79, 224, 0.08); color: var(--accent); border-color: var(--accent); }
 }
 
 /* SHARED AUTH STYLES */
@@ -146,7 +210,7 @@ body.light-theme {
   left: 0;
   width: 100%;
   height: 100%;
-  background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+  background: radial-gradient(120% 120% at 20% 0%, #201a35 0%, var(--bg-dark) 55%);
   display: flex;
   justify-content: center;
   align-items: flex-start;
@@ -156,7 +220,7 @@ body.light-theme {
   -webkit-overflow-scrolling: touch;
   
   body.light-theme & {
-    background: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%);
+    background: radial-gradient(120% 120% at 20% 0%, #eee9ff 0%, var(--bg-dark) 55%);
   }
 }
 
@@ -164,18 +228,18 @@ body.light-theme {
   background: rgba(255, 255, 255, 0.05);
   backdrop-filter: blur(20px);
   padding: 40px;
-  border-radius: 30px;
+  border-radius: var(--radius-lg);
   width: 100%;
   max-width: 400px;
-  box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
-  border: 1px solid rgba(255, 255, 255, 0.1);
+  box-shadow: var(--shadow-lg);
+  border: 1px solid var(--border);
   text-align: center;
   position: relative;
   
   body.light-theme & {
     background: rgba(255, 255, 255, 0.95);
     box-shadow: 0 15px 35px rgba(0, 0, 0, 0.1);
-    border: 1px solid rgba(0, 0, 0, 0.05);
+    border: 1px solid var(--border);
   }
 }
 
@@ -185,74 +249,69 @@ body.light-theme {
   right: 20px;
   font-size: 1.5rem;
   cursor: pointer;
-  transition: transform 0.3s;
-  color: white;
+  transition: transform var(--transition-fast);
+  color: var(--text-light);
   &:hover { transform: scale(1.2); }
-  body.light-theme & { color: #1e293b; }
 }
 
 .auth-header {
-  h1 { font-size: 2rem; margin-bottom: 10px; color: white; body.light-theme & { color: #1e293b; } }
-  p { color: #94a3b8; margin-bottom: 30px; body.light-theme & { color: #64748b; } }
+  h1 { font-family: var(--font-sans); font-size: 2rem; font-weight: 700; margin-bottom: 10px; color: var(--text-light); }
+  p { color: var(--text-muted); margin-bottom: 30px; }
 }
 
 .auth-input {
   --background: rgba(255, 255, 255, 0.1);
-  --border-radius: 12px;
+  --border-radius: var(--radius-md);
   margin-bottom: 15px;
-  color: white;
+  color: var(--text-light);
   --padding-start: 15px;
   
   body.light-theme & {
     --background: rgba(0, 0, 0, 0.05);
-    color: #1e293b;
-    --placeholder-color: #64748b;
+    --placeholder-color: var(--text-muted);
   }
 }
 
 .btn-primary {
-  width: 100%; padding: 15px; border-radius: 12px; background: #3b82f6; color: white;
-  border: none; font-weight: bold; font-size: 1rem; cursor: pointer; transition: 0.3s; margin-top: 10px;
-  &:hover { background: #2563eb; transform: translateY(-2px); }
+  width: 100%; padding: 15px; border-radius: var(--radius-md); background: var(--accent); color: white;
+  border: none; font-weight: 700; font-size: 1rem; cursor: pointer;
+  transition: transform var(--transition-fast), filter var(--transition-fast), box-shadow var(--transition-fast);
+  margin-top: 10px; box-shadow: 0 8px 20px -8px var(--accent);
+  &:hover { filter: brightness(1.08); transform: translateY(-2px); box-shadow: 0 12px 28px -8px var(--accent); }
 }
 
 .divider {
-  display: flex; align-items: center; text-align: center; margin: 25px 0; color: #64748b;
-  &::before, &::after { content: ''; flex: 1; border-bottom: 1px solid rgba(255, 255, 255, 0.1); }
+  display: flex; align-items: center; text-align: center; margin: 25px 0; color: var(--text-muted);
+  &::before, &::after { content: ''; flex: 1; border-bottom: 1px solid var(--border); }
   span { padding: 0 10px; font-size: 0.8rem; text-transform: uppercase; }
-  body.light-theme & {
-     color: #94a3b8;
-     &::before, &::after { border-bottom: 1px solid rgba(0, 0, 0, 0.1); }
-  }
 }
 
 .btn-google, .btn-ghost {
-  width: 100%; padding: 15px; border-radius: 12px; background: white; color: #334155;
-  border: none; font-weight: bold; display: flex; align-items: center; justify-content: center;
-  gap: 10px; cursor: pointer; transition: 0.3s;
+  width: 100%; padding: 15px; border-radius: var(--radius-md); background: white; color: #334155;
+  border: none; font-weight: 700; display: flex; align-items: center; justify-content: center;
+  gap: 10px; cursor: pointer; transition: transform var(--transition-fast), background var(--transition-fast);
   &:hover { background: #f8fafc; transform: translateY(-2px); }
   ion-icon { font-size: 1.2rem; }
   body.light-theme & { border: 1px solid #e2e8f0; }
 }
 
 .btn-google ion-icon { color: #4285F4; }
-.btn-ghost { margin-top: 10px; ion-icon { color: #64748b; } }
+.btn-ghost { margin-top: 10px; ion-icon { color: var(--text-muted); } }
 
 .toggle-auth {
-  margin-top: 25px; font-size: 0.9rem; color: #94a3b8;
-  a { color: #3b82f6; text-decoration: none; font-weight: bold; cursor: pointer; margin-left: 5px; }
-  body.light-theme & { color: #64748b; }
+  margin-top: 25px; font-size: 0.9rem; color: var(--text-muted);
+  a { color: var(--accent); text-decoration: none; font-weight: 700; cursor: pointer; margin-left: 5px; }
 }
 
 .auth-methods-tab {
   display: flex; gap: 10px; margin-bottom: 20px; justify-content: center;
   .tab-btn {
-    flex: 1; padding: 8px; background: rgba(255, 255, 255, 0.05); border: 1px solid rgba(255, 255, 255, 0.1);
-    color: white; border-radius: 8px; font-size: 0.8rem; cursor: pointer;
-    &.active { background: white; color: black; font-weight: bold; }
+    flex: 1; padding: 8px; background: rgba(255, 255, 255, 0.05); border: 1px solid var(--border);
+    color: var(--text-light); border-radius: var(--radius-sm); font-size: 0.8rem; cursor: pointer;
+    transition: background var(--transition-fast), color var(--transition-fast);
+    &.active { background: var(--accent); color: white; font-weight: 700; border-color: transparent; }
     body.light-theme & {
-      background: rgba(0, 0, 0, 0.05); border: 1px solid rgba(0, 0, 0, 0.05); color: #64748b;
-      &.active { background: #3b82f6; color: white; }
+      background: rgba(0, 0, 0, 0.05); border: 1px solid rgba(0, 0, 0, 0.05); color: var(--text-muted);
     }
   }
 }
@@ -260,26 +319,26 @@ body.light-theme {
 /* SHARED MODAL STYLES */
 .rectangular-modal {
   --width: 90%; --max-width: 400px; --height: auto; --max-height: 250px;
-  --border-radius: 15px; --background: transparent;
+  --border-radius: var(--radius-lg); --background: transparent;
   align-items: center; justify-content: center;
 }
 
 .modal-window {
-  background: rgba(255, 255, 255, 0.95); padding: 25px; border-radius: 15px;
-  box-shadow: 0 30px 60px rgba(0,0,0,0.5); color: #222;
-  body.light-theme & { background: white; color: #1e293b; }
+  background: var(--bg-elevated); padding: 25px; border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-lg); color: var(--text-light); border: 1px solid var(--border);
+  body.light-theme & { background: white; }
 }
 
 .modal-header {
   display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;
-  border-bottom: 1px solid rgba(0,0,0,0.1); padding-bottom: 10px;
-  h3 { margin: 0; font-size: 1.3rem; font-weight: bold; }
+  border-bottom: 1px solid var(--border); padding-bottom: 10px;
+  h3 { margin: 0; font-size: 1.3rem; font-weight: 700; }
 }
 
 .close-icon-btn {
-  background: none; border: none; font-size: 1.5rem; cursor: pointer; color: #666;
-  display: flex; align-items: center; justify-content: center; transition: color 0.2s;
-  &:hover { color: #000; }
+  background: none; border: none; font-size: 1.5rem; cursor: pointer; color: var(--text-muted);
+  display: flex; align-items: center; justify-content: center; transition: color var(--transition-fast);
+  &:hover { color: var(--text-light); }
 }
 
 .modal-body {

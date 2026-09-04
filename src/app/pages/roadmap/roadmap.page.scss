@@ -24,6 +24,16 @@ ion-content {
   font-size: 0.8rem;
   margin-bottom: 15px;
   font-weight: bold;
+
+  // --accent-purple e' pensato per leggersi come TESTO su sfondo scuro (dove
+  // ha abbastanza contrasto): usato invece come SFONDO qui, il testo chiaro
+  // dell'app sopra non raggiungerebbe un contrasto sufficiente (verificato:
+  // 2.45:1, sotto la soglia AA di 4.5:1). :host-context esclude esplicitamente
+  // il tema chiaro (che gia' imposta "color: white" con un risultato diverso
+  // e corretto) invece di affidarsi all'ordine di caricamento dei CSS.
+  :host-context(body:not(.light-theme)) & {
+    color: #0A0713;
+  }
 }
 
 .intro-box {

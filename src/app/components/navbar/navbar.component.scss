@@ -8,12 +8,13 @@
 
 .navbar {
   width: 100%;
-  background: rgba(0, 0, 0, 0.9);
-  backdrop-filter: blur(10px);
+  background: rgba(14, 16, 19, 0.82);
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
   display: flex;
   align-items: center;
   z-index: 1000;
-  border-bottom: none;
+  border-bottom: 1px solid var(--border);
   padding: 0 20px;
   height: 60px;
   
@@ -23,23 +24,29 @@
     justify-content: center;
     align-items: center;
     flex: 1;
-    gap: 10px 20px;
+    gap: 4px 6px;
     row-gap: 8px;
   }
 
   a {
-    color: white; 
+    color: var(--text-muted);
     text-decoration: none;
-    padding: 10px 5px; 
-    font-weight: bold; 
-    text-transform: uppercase;
-    font-size: 0.75rem; 
-    letter-spacing: 0.5px;
+    padding: 8px 12px;
+    border-radius: var(--radius-pill);
+    font-weight: 600;
+    font-size: 0.8rem;
+    letter-spacing: 0.01em;
     cursor: pointer;
-    transition: 0.3s;
+    transition: color var(--transition-fast), background var(--transition-fast);
+
+    &:hover {
+      color: var(--text-light);
+      background: rgba(255, 255, 255, 0.06);
+    }
 
     &.active {
-      color: #3b82f6;
+      color: var(--text-light);
+      background: var(--accent);
     }
   }
 
@@ -52,18 +59,18 @@
   display: flex;
   align-items: center;
   gap: 10px;
-  background: rgba(255, 255, 255, 0.1);
+  background: rgba(255, 255, 255, 0.08);
   padding: 5px 12px;
-  border-radius: 20px;
+  border-radius: var(--radius-pill);
   cursor: pointer;
-  transition: 0.3s;
+  transition: background var(--transition-fast);
 
   &:hover {
-    background: rgba(255, 255, 255, 0.2);
+    background: rgba(255, 255, 255, 0.16);
   }
 
   .user-name {
-    color: white;
+    color: var(--text-light);
     font-size: 0.85rem;
     font-weight: 500;
   }
@@ -74,28 +81,39 @@
   }
 }
 
+// Il tema chiaro era rimasto quello meno curato: bordo grigio piatto, stato
+// attivo praticamente indistinguibile dal testo normale (stesso grigio scuro
+// di sempre, solo un filo piu' scuro). Rifatto con una barra "vetro" bianca
+// sospesa (ombra invece di bordo netto) e uno stato attivo pieno nel colore
+// del brand, per essere leggibile a colpo d'occhio.
 :host-context(.light-theme) {
-  .user-name { color: #555 !important; }
-  .navbar { border-bottom: 1px solid #ccc; background: rgba(255,255,255,0.9); }
-  .navbar a { color: #555; }
-  .navbar a.active { color: #3b82f6; }
-  .user-chip { background: rgba(0,0,0,0.05); }
-  .roadmap-nav { background: rgba(240,240,240,0.9); }
+  .user-name { color: var(--text-light) !important; }
+  .navbar {
+    border-bottom: none;
+    background: rgba(255, 255, 255, 0.9);
+    box-shadow: var(--shadow-sm);
+  }
+  .navbar a { color: var(--text-muted); }
+  .navbar a:hover { color: var(--text-light); background: rgba(0, 0, 0, 0.05); }
+  .navbar a.active { color: white; background: var(--accent); }
+  .user-chip { background: rgba(0, 0, 0, 0.05); }
+  .user-chip:hover { background: rgba(0, 0, 0, 0.09); }
+  .roadmap-nav { background: rgba(255, 255, 255, 0.85); box-shadow: var(--shadow-sm); }
 }
 
 .roadmap-nav {
   height: 50px;
-  background: rgba(0, 0, 0, 0.85);
+  background: rgba(14, 16, 19, 0.75);
   border-top: none;
   border-bottom: none;
 
   .nav-links {
-    gap: 30px;
+    gap: 20px;
   }
 
   a {
-    font-size: 0.7rem;
-    padding: 5px;
+    font-size: 0.72rem;
+    padding: 5px 10px;
   }
   
   .theme-icon {
@@ -106,93 +124,89 @@
 
 /* Modal styles */
 .modal-content {
-  background: #121212;
+  background: var(--bg-elevated);
   padding: 30px;
-  border-radius: 20px;
-  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: var(--radius-lg);
+  border: 1px solid var(--border);
+  box-shadow: var(--shadow-lg);
   text-align: center;
-  color: #f4f4f4;
+  color: var(--text-light);
   height: 100%;
   display: flex;
   flex-direction: column;
   justify-content: center;
 
   .profile-header h3 { margin: 10px 0 5px; }
-  .profile-header p { margin: 0; font-size: 0.9rem; }
+  .profile-header p { margin: 0; font-size: 0.9rem; color: var(--text-muted); }
 
   .logout-btn {
     width: 100%; 
     padding: 12px; 
-    border-radius: 10px; 
+    border-radius: var(--radius-md); 
     border: none; 
-    background: #ffffff; 
-    color: black; 
+    background: var(--text-light); 
+    color: var(--bg-dark); 
     cursor: pointer; 
-    font-weight: bold; 
+    font-weight: 700;
+    transition: transform var(--transition-fast);
+    &:hover { transform: translateY(-1px); }
   }
 
   .full-profile-link {
     display: block;
     width: 100%;
     padding: 12px;
-    border-radius: 10px;
-    border: 1px solid rgba(255, 255, 255, 0.3);
+    border-radius: var(--radius-md);
+    border: 1px solid var(--border);
     background: transparent;
-    color: white;
+    color: var(--text-light);
     cursor: pointer;
-    font-weight: bold;
+    font-weight: 700;
     text-decoration: none;
     box-sizing: border-box;
     margin-top: 16px;
+    transition: background var(--transition-fast), border-color var(--transition-fast);
+    &:hover { background: rgba(255, 255, 255, 0.06); border-color: var(--accent); }
   }
 
   hr {
     border: 0; 
-    border-top: 1px solid rgba(255, 255, 255, 0.1); 
+    border-top: 1px solid var(--border); 
     margin: 20px 0;
     width: 100%;
   }
 
   .danger-label {
     font-size: 0.8rem; 
-    opacity: 0.7;
+    color: var(--text-muted);
     margin-bottom: 10px;
   }
 
   .danger-btn {
     width: 100%; 
     padding: 10px; 
-    border-radius: 10px; 
-    border: 1px solid #ff4d4d; 
+    border-radius: var(--radius-md); 
+    border: 1px solid var(--danger); 
     background: transparent; 
-    color: #ff4d4d; 
+    color: var(--danger); 
     cursor: pointer;
+    transition: background var(--transition-fast);
+    &:hover { background: rgba(255, 92, 92, 0.1); }
   }
 
   .close-txt {
     margin-top: 20px; 
     cursor: pointer; 
-    opacity: 0.8; 
+    color: var(--text-muted);
     font-size: 0.9rem;
     background: none;
     border: none;
-    color: white;
-  }
-}
-
-:host-context(.light-theme) {
-  .modal-content {
-    background: #fff;
-    color: #333;
-    .profile-header p { color: #666; }
-    .close-txt { color: #666 !important; opacity: 1; }
-    .logout-btn { background: #eee; color: #333; border: 1px solid #ccc; }
-    .full-profile-link { color: #333; border-color: rgba(0, 0, 0, 0.2); }
-    hr { border-top: 1px solid #eee; }
+    transition: color var(--transition-fast);
+    &:hover { color: var(--text-light); }
   }
 }
 
 /* Global fallback for modal text colors in light mode */
 ::ng-deep .light-theme .profile-modal .close-txt {
-  color: #666 !important;
+  color: var(--text-muted) !important;
 }
