@@ -70,17 +70,22 @@ export class NotificationSettingsComponent {
     this.isLoading.set(true);
     
     try {
-      // Re-initialize notifications to request permission
+      // Richiede di nuovo i permessi. NotificationService.requestPermissions()
+      // prova prima il push (che sul web fallisce sempre, gia' gestito li') e
+      // poi le notifiche locali in modo indipendente: qui controlliamo
+      // isInitialized(), che riflette le notifiche locali - quelle davvero
+      // utilizzabili in questa pagina - non hasPermission(), che riflette solo
+      // il push e su web resterebbe false anche a permesso locale concesso.
       await this.notificationService.requestPermissions();
-      
+
       this.hasPermission.set(this.notificationService.hasPermission());
       this.isInitialized.set(this.notificationService.isInitialized());
-      
-      if (this.hasPermission()) {
-        await this.showToast('Permessi notifiche concessi!', 'success');
+
+      if (this.isInitialized()) {
+        await this.showToast('Notifiche attivate!', 'success');
         await this.loadSettings();
       } else {
-        await this.showToast('Permessi notifiche negati. Attivali dalle impostazioni del dispositivo.', 'warning');
+        await this.showToast('Permesso negato. Attivalo dalle impostazioni del browser/dispositivo.', 'warning');
       }
     } catch (error) {
       console.error('Error requesting permission:', error);
@@ -96,7 +101,7 @@ export class NotificationSettingsComponent {
       return;
     }
 
-    if (!this.hasPermission()) {
+    if (!this.isInitialized()) {
       await this.showToast('Concedi prima i permessi per le notifiche', 'warning');
       return;
     }
@@ -120,7 +125,7 @@ export class NotificationSettingsComponent {
   }
 
   async testNotification() {
-    if (!this.hasPermission()) {
+    if (!this.isInitialized()) {
       await this.showToast('Concedi prima i permessi per le notifiche', 'warning');
       return;
     }

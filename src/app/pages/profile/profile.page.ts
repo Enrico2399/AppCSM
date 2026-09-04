@@ -540,4 +540,12 @@ export class ProfilePage implements OnInit, OnDestroy {
   goBack() {
     this.navCtrl.back();
   }
+
+  // I 3 toggle qui sopra salvano solo la preferenza su Firebase: servono da
+  // default per la pagina Notifiche vera e propria (che li rilegge), ma da
+  // soli non programmano alcun promemoria reale. Il link porta alla pagina
+  // che invece parla con NotificationService e attiva davvero le notifiche.
+  goToNotificationSettings() {
+    this.navCtrl.navigateForward('/notification-settings');
+  }
 }

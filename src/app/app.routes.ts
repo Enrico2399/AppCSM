@@ -160,6 +160,16 @@ export const routes: Routes = [
 
   {
 
+    path: 'notification-settings',
+
+    loadComponent: () => import('./components/notification-settings/notification-settings.component').then(m => m.NotificationSettingsComponent),
+
+    canActivate: [AuthGuard]
+
+  },
+
+  {
+
     path: '**',
 
     redirectTo: 'home'

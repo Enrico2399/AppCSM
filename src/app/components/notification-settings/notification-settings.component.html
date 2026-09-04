@@ -9,15 +9,17 @@
 
 <ion-content [fullscreen]="true" class="ion-padding">
   <div class="notification-container">
-    <!-- Stato permessi -->
-    <div class="permission-status" [class.has-permission]="hasPermission()">
-      <ion-icon [name]="hasPermission() ? 'checkmark-circle' : 'alert-circle'"></ion-icon>
+    <!-- Stato permessi. Riflette isInitialized() (notifiche locali, le sole
+         che possono funzionare su questa webapp senza un backend push) e non
+         hasPermission() (solo push, su web resta sempre false). -->
+    <div class="permission-status" [class.has-permission]="isInitialized()">
+      <ion-icon [name]="isInitialized() ? 'checkmark-circle' : 'alert-circle'"></ion-icon>
       <div class="status-text">
-        <h3>{{ hasPermission() ? 'Notifiche Abilitate' : 'Notifiche Disabilitate' }}</h3>
-        <p>{{ hasPermission() ? 'Riceverai promemoria e aggiornamenti' : 'Concedi i permessi per attivare le notifiche' }}</p>
+        <h3>{{ isInitialized() ? 'Notifiche Abilitate' : 'Notifiche Disabilitate' }}</h3>
+        <p>{{ isInitialized() ? 'Riceverai promemoria e aggiornamenti' : 'Concedi i permessi per attivare le notifiche' }}</p>
       </div>
       <ion-button 
-        *ngIf="!hasPermission()"
+        *ngIf="!isInitialized()"
         fill="outline" 
         (click)="requestPermission()"
         [disabled]="isLoading()"
@@ -28,7 +30,7 @@
     </div>
 
     <!-- Impostazioni notifiche -->
-    <div class="settings-section" *ngIf="hasPermission()">
+    <div class="settings-section" *ngIf="isInitialized()">
       <h3>🔔 Impostazioni Promemoria</h3>
       
       <form [formGroup]="settingsForm" class="settings-form">
@@ -116,7 +118,7 @@
             <ion-button
               fill="outline"
               (click)="testNotification()"
-              [disabled]="!hasPermission()"
+              [disabled]="!isInitialized()"
               class="test-button"
             >
               <ion-icon name="notifications"></ion-icon>
@@ -139,7 +141,7 @@
     </div>
 
     <!-- Notifiche programmate -->
-    <div class="scheduled-section" *ngIf="hasPermission() && scheduledNotifications().length > 0">
+    <div class="scheduled-section" *ngIf="isInitialized() && scheduledNotifications().length > 0">
       <h3>📅 Notifiche Programmate</h3>
       
       <div class="scheduled-list">
@@ -187,6 +189,7 @@
             <li>Le notifiche rispettano i fusi orari del tuo dispositivo</li>
             <li>Puoi testare le notifiche per verificare che funzionino</li>
             <li>Le notifiche possono essere disattivate dalle impostazioni del dispositivo</li>
+            <li><strong>Su questa webapp i promemoria programmati (es. domani alle 9) arrivano solo se questa scheda del browser resta aperta</strong>: chiudendola o riavviando il dispositivo, i promemoria non ancora scaduti vengono persi. Il pulsante "Test Notifica" invece funziona sempre, perché arriva subito.</li>
           </ul>
         </div>
 

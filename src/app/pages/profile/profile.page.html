@@ -90,6 +90,13 @@
           <ion-label>Report Settimanali</ion-label>
           <ion-toggle [(ngModel)]="weeklyReports" aria-label="Report Settimanali"></ion-toggle>
         </ion-item>
+
+        <ion-item button detail="true" lines="none" (click)="goToNotificationSettings()">
+          <ion-label>
+            <strong>Gestisci Notifiche</strong>
+            <p>Attiva davvero i promemoria e scegli orari ed esercizi</p>
+          </ion-label>
+        </ion-item>
       </ion-card-content>
     </ion-card>
 
