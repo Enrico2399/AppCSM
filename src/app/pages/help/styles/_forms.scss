@@ -119,6 +119,15 @@ textarea#comfort-resource {
     border-color: var(--accent);
     background: rgba(255, 255, 255, 0.1);
     color: white;
+
+    // Prima: nessun adattamento al chiaro. La modalita' selezionata
+    // (l'unico segnale visivo di quale opzione e' attiva, non solo
+    // decorativo) diventava testo bianco su sfondo quasi trasparente,
+    // illeggibile su pagina chiara.
+    :host-context(.light-theme) & {
+      background: rgba(91, 79, 224, 0.12);
+      color: var(--accent);
+    }
   }
 }
 

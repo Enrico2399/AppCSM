@@ -17,6 +17,6 @@ ion-content {
 
 // Opzionale: stile per il pulsante flottante
 ion-fab-button {
-  --background: #3880ff;
+  --background: var(--ion-color-primary); // prima il blu di default di Ionic, mai il colore della app
   --color: white;
 }
