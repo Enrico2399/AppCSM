@@ -75,6 +75,30 @@
   --ion-background-color: var(--bg-dark);
   --ion-text-color: var(--text-light);
 
+  /* Colore "primary"/"danger" di Ionic: prima MAI definito in tutto il
+   * repository (verificato con una ricerca su tutto src/), quindi ogni
+   * pulsante/focus/badge Ionic in decine di pagine (Grounding, Community,
+   * Registrazione, Risorse, Guida SOS, Cronologia, Profilo, ...) mostrava
+   * ancora il blu di default di Ionic, mai il colore della app. Impostato
+   * qui una volta sola per "svecchiare" tutte quelle pagine in un colpo
+   * solo, coerente con --accent ma scelto apposta un po' piu' scuro: serve
+   * da sfondo pieno con testo bianco sopra (contrasto verificato >=4.5:1),
+   * mentre --accent resta per testo/bordi su sfondo scuro (dove un tono
+   * cosi' scuro sarebbe invece troppo poco leggibile). */
+  --ion-color-primary: #7C55F1;
+  --ion-color-primary-rgb: 124, 85, 241;
+  --ion-color-primary-contrast: #ffffff;
+  --ion-color-primary-contrast-rgb: 255, 255, 255;
+  --ion-color-primary-shade: #6D4BD4;
+  --ion-color-primary-tint: #8966F2;
+
+  --ion-color-danger: #D32417;
+  --ion-color-danger-rgb: 211, 36, 23;
+  --ion-color-danger-contrast: #ffffff;
+  --ion-color-danger-contrast-rgb: 255, 255, 255;
+  --ion-color-danger-shade: #BA2014;
+  --ion-color-danger-tint: #D73A2E;
+
   /* Raggio degli angoli, unico per tutta l'app */
   --radius-sm: 8px;
   --radius-md: 14px;
@@ -138,6 +162,20 @@ body.light-theme {
   
   --ion-background-color: var(--bg-dark);
   --ion-text-color: var(--text-light);
+
+  --ion-color-primary: #5B4FE0;
+  --ion-color-primary-rgb: 91, 79, 224;
+  --ion-color-primary-contrast: #ffffff;
+  --ion-color-primary-contrast-rgb: 255, 255, 255;
+  --ion-color-primary-shade: #5046C5;
+  --ion-color-primary-tint: #6B61E3;
+
+  --ion-color-danger: #BE3324;
+  --ion-color-danger-rgb: 190, 51, 36;
+  --ion-color-danger-contrast: #ffffff;
+  --ion-color-danger-contrast-rgb: 255, 255, 255;
+  --ion-color-danger-shade: #A72D20;
+  --ion-color-danger-tint: #C4473A;
 
   /* Shared Light Adjustments */
   a { color: var(--accent-blue); }
@@ -273,11 +311,11 @@ body.light-theme {
 }
 
 .btn-primary {
-  width: 100%; padding: 15px; border-radius: var(--radius-md); background: var(--accent); color: white;
+  width: 100%; padding: 15px; border-radius: var(--radius-md); background: var(--ion-color-primary); color: white;
   border: none; font-weight: 700; font-size: 1rem; cursor: pointer;
   transition: transform var(--transition-fast), filter var(--transition-fast), box-shadow var(--transition-fast);
-  margin-top: 10px; box-shadow: 0 8px 20px -8px var(--accent);
-  &:hover { filter: brightness(1.08); transform: translateY(-2px); box-shadow: 0 12px 28px -8px var(--accent); }
+  margin-top: 10px; box-shadow: 0 8px 20px -8px var(--ion-color-primary);
+  &:hover { filter: brightness(1.08); transform: translateY(-2px); box-shadow: 0 12px 28px -8px var(--ion-color-primary); }
 }
 
 .divider {
@@ -309,7 +347,7 @@ body.light-theme {
     flex: 1; padding: 8px; background: rgba(255, 255, 255, 0.05); border: 1px solid var(--border);
     color: var(--text-light); border-radius: var(--radius-sm); font-size: 0.8rem; cursor: pointer;
     transition: background var(--transition-fast), color var(--transition-fast);
-    &.active { background: var(--accent); color: white; font-weight: 700; border-color: transparent; }
+    &.active { background: var(--ion-color-primary); color: white; font-weight: 700; border-color: transparent; }
     body.light-theme & {
       background: rgba(0, 0, 0, 0.05); border: 1px solid rgba(0, 0, 0, 0.05); color: var(--text-muted);
     }

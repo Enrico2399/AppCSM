@@ -45,8 +45,11 @@
     }
 
     &.active {
-      color: var(--text-light);
-      background: var(--accent);
+      // Testo quasi bianco su --accent: 3.33:1, sotto la soglia AA di 4.5:1
+      // per testo normale. --ion-color-primary e' la stessa famiglia di
+      // colore ma scelta apposta piu' scura per reggere testo bianco sopra.
+      color: white;
+      background: var(--ion-color-primary);
     }
   }
 

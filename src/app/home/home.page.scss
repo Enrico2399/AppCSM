@@ -86,16 +86,25 @@ h1, p {
   margin: 0 auto;
   background: rgba(0,0,0,0.7);
   padding: 20px;
-  border-radius: 20px;
+  border-radius: var(--radius-lg);
   backdrop-filter: blur(10px);
   box-sizing: border-box; /* Explicitly ensure padding doesn't add to width */
+  box-shadow: var(--shadow-md);
+
+  // Prima: sfondo scuro semi-trasparente fisso. In chiaro restava scuro
+  // anche lui invece di diventare una card chiara come il resto della
+  // pagina — la stessa card sembrava "appartenere" al tema sbagliato.
+  :host-context(.light-theme) & {
+    background: var(--bg-elevated);
+    border: 1px solid var(--border);
+  }
 }
 
 .header-mood {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  border-bottom: 1px solid rgba(255,255,255,0.2);
+  border-bottom: 1px solid var(--border);
   padding-bottom: 20px;
 }
 
@@ -112,7 +121,11 @@ h1, p {
 .section-box {
   background: rgba(255,255,255,0.1);
   padding: 20px;
-  border-radius: 15px;
+  border-radius: var(--radius-lg);
+
+  :host-context(.light-theme) & {
+    background: rgba(0, 0, 0, 0.03);
+  }
 }
 
 .btn-back {
@@ -120,13 +133,20 @@ h1, p {
   color: black;
   border: none;
   padding: 10px 20px;
-  border-radius: 20px;
+  border-radius: var(--radius-pill);
   cursor: pointer;
   font-weight: bold;
   margin-top: 20px;
   margin-bottom: 20px;
   position: relative;
   z-index: 100;
+  transition: filter var(--transition-fast);
+  &:hover { filter: brightness(0.95); }
+
+  :host-context(.light-theme) & {
+    background: var(--ion-color-primary);
+    color: white;
+  }
 }
 
 .vote-btn {
@@ -150,19 +170,24 @@ h1, p {
 }
 
 .btn-history {
-  background: white;
-  color: black;
+  // Prima: sfondo bianco fisso. In chiaro, su uno sfondo pagina ormai quasi
+  // bianco anche lui, il bottone si "confondeva" restando visibile solo
+  // grazie all'ombra. Ora un bottone pieno nel colore del brand, ben
+  // distinguibile in entrambi i temi.
+  background: var(--ion-color-primary);
+  color: white;
   border: none;
   padding: 12px 25px;
-  border-radius: 25px;
-  font-weight: bold;
+  border-radius: var(--radius-pill);
+  font-weight: 700;
   cursor: pointer;
-  transition: transform 0.3s, background 0.3s;
-  box-shadow: 0 4px 15px rgba(255, 255, 255, 0.2);
+  transition: transform var(--transition-fast), filter var(--transition-fast), box-shadow var(--transition-fast);
+  box-shadow: 0 8px 20px -8px var(--ion-color-primary);
   margin-bottom: 5px;
 
   &:hover {
     transform: scale(1.05);
+    filter: brightness(1.08);
   }
 }
 
@@ -173,15 +198,18 @@ h1, p {
     gap: 15px;
 
     input {
+      // Prima: sfondo e testo bianchi fissi, mai adattati al tema chiaro.
+      // In chiaro il testo bianco su questo sfondo quasi trasparente
+      // risultava praticamente illeggibile (bug reale, non solo estetico).
       width: 100%;
-      background: rgba(255, 255, 255, 0.08);
-      border: 1px solid rgba(255, 255, 255, 0.2);
+      background: var(--card-bg);
+      border: 1px solid var(--border);
       padding: 15px;
-      border-radius: 12px;
-      color: white;
+      border-radius: var(--radius-md);
+      color: var(--text-light);
       font-size: 1rem;
       outline: none;
-      transition: border-color 0.3s;
+      transition: border-color var(--transition-fast);
 
       &:focus {
         border-color: var(--ion-color-primary);
@@ -255,7 +283,13 @@ h1, p {
   box-sizing: border-box;
   .legend-chip {
     padding: 6px 12px;
-    background: rgba(255, 255, 255, 0.03);
+    // Prima: sfondo quasi trasparente (0.03 di opacita'), che in chiaro
+    // spariva del tutto contro uno sfondo pagina ormai anche lui quasi
+    // bianco (bordo/sfondo del chip praticamente invisibili). Il resto
+    // dello stile (sfondo/bordo/ombra base) arriva gia' dalla regola
+    // .legend-chip piu' sotto: qui si toglie solo il background che lo
+    // sovrascriveva rendendolo invisibile, si tiene solo il padding piu'
+    // compatto voluto per questa variante.
     .chip-text { font-size: 0.75rem; }
   }
 }
@@ -268,7 +302,7 @@ h1, p {
   input {
     flex: 1;
     padding: 10px; 
-    border-radius: 5px; 
+    border-radius: var(--radius-sm); 
     border: none;
     background: white;
     color: black;
@@ -276,9 +310,9 @@ h1, p {
   
   button {
     padding: 10px;
-    background: #4da6ff;
+    background: var(--accent-blue);
     border: none;
-    border-radius: 5px;
+    border-radius: var(--radius-sm);
     color: white;
     font-weight: bold;
   }
@@ -305,7 +339,15 @@ h1, p {
     align-items: center;
     background: rgba(0,0,0,0.3);
     padding: 8px 12px;
-    border-radius: 8px;
+    border-radius: var(--radius-sm);
+
+    // Prima: nessun adattamento al tema chiaro (restava lo stesso overlay
+    // scuro semi-trasparente anche su sfondo chiaro, leggibile ma stonato
+    // rispetto alle altre card ormai bianche con ombra morbida).
+    :host-context(.light-theme) & {
+      background: var(--bg-elevated);
+      box-shadow: var(--shadow-sm);
+    }
   }
 }
 
@@ -339,10 +381,10 @@ h1, p {
   gap: 8px;
   background: rgba(255, 255, 255, 0.1);
   padding: 10px 20px;
-  border-radius: 25px;
+  border-radius: var(--radius-pill);
   border: 1px solid rgba(255, 255, 255, 0.2);
   cursor: pointer;
-  transition: all 0.3s;
+  transition: all var(--transition-fast);
   box-shadow: 0 4px 10px rgba(0,0,0,0.2);
 
   &.active {
@@ -355,6 +397,27 @@ h1, p {
     background: rgba(255, 255, 255, 0.2);
     transform: translateY(-2px);
     box-shadow: 0 6px 15px rgba(0,0,0,0.3);
+  }
+
+  // Prima: sfondo/bordo bianco semi-trasparente e stato attivo bianco pieno,
+  // mai adattati al chiaro — su uno sfondo pagina ormai anch'esso quasi
+  // bianco, il chip restava visibile solo grazie all'ombra e lo stato
+  // "selezionato" era praticamente indistinguibile da quello normale.
+  :host-context(.light-theme) & {
+    background: rgba(0, 0, 0, 0.04);
+    border-color: var(--border);
+    box-shadow: none;
+
+    &.active {
+      background: rgba(91, 79, 224, 0.12);
+      border-color: var(--accent);
+      box-shadow: 0 0 0 1px var(--accent) inset;
+    }
+
+    &:hover {
+      background: rgba(0, 0, 0, 0.07);
+      box-shadow: none;
+    }
   }
 }
 
