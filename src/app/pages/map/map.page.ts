@@ -67,6 +67,16 @@ export class MapPage implements OnInit, OnDestroy {
   ionViewDidEnter() {
     this.initMap();
     this.loadReports();
+    // Leaflet misura le dimensioni del container al momento della creazione
+    // della mappa (initMap, chiamato da ngOnInit prima che la transizione di
+    // pagina di Ionic sia completata: il container puo' essere ancora a
+    // dimensione zero o errata). Il guard "if (this.map) return" dentro
+    // initMap impedisce pero' che questa seconda chiamata (qui, quando la
+    // pagina e' ormai visibile e a dimensione definitiva) corregga la
+    // misura. Senza invalidateSize la mappa resta quindi tagliata,
+    // disallineata o non interattiva: e' il fix standard di Leaflet per
+    // questo scenario, innocuo (no-op) se la dimensione era gia' corretta.
+    setTimeout(() => this.map?.invalidateSize(), 100);
   }
 
   loadReports() {
