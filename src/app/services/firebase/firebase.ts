@@ -1,4 +1,4 @@
-import { Injectable } from '@angular/core';
+import { Injectable, inject } from '@angular/core';
 import { initializeApp, FirebaseApp, getApps } from 'firebase/app';
 import { 
   getDatabase, 
@@ -15,6 +15,7 @@ import {
 } from 'firebase/database';
 import { getAuth, Auth, User } from 'firebase/auth';
 import { getFirestore } from 'firebase/firestore';
+import { OfflineQueueService } from '../offline-queue/offline-queue.service';
 
 @Injectable({
   providedIn: 'root',
@@ -23,6 +24,7 @@ export class FirebaseService {
   private app: FirebaseApp;
   private db: Database;
   public auth: Auth;
+  private offlineQueue = inject(OfflineQueueService);
 
   getDatabase(): Database {
     return this.db;
@@ -42,10 +44,16 @@ export class FirebaseService {
     this.app = initializeApp(firebaseConfig);
     this.db = getDatabase(this.app);
     this.auth = getAuth(this.app);
+
+    // Collega la coda offline a questa istanza Database: da qui in poi le
+    // scritture "cieche" (diario umore, community, ecc.) passano da
+    // this.offlineQueue.writeOrQueue e vengono accodate in automatico se il
+    // dispositivo e' offline, invece di andare semplicemente perse.
+    this.offlineQueue.registerDatabase(this.db);
   }
 
   async setUserConsent(userId: string, consent: boolean): Promise<void> {
-    await set(ref(this.db, `consents/${userId}`), {
+    await this.offlineQueue.writeOrQueue(this.db, `consents/${userId}`, {
       consent,
       updatedAt: new Date().toISOString()
     });
@@ -136,8 +144,16 @@ export class FirebaseService {
   }
 
   logMood(userId: string, moodKey: string, moodTitle: string, icon: string, thought: string = "") {
-    const userMoodsRef = push(ref(this.db, 'moodHistory/' + userId));
-    set(userMoodsRef, {
+    // La chiave viene generata subito, in locale: push() non richiede rete
+    // per crearla, solo per inviare poi il valore. Cosi' anche offline la
+    // voce del diario ha subito un percorso definitivo su cui la coda
+    // offline potra' scrivere quando torna la connessione.
+    const key = push(ref(this.db, 'moodHistory/' + userId)).key;
+    if (!key) {
+      console.error('Impossibile generare la chiave per la nuova voce del diario umore');
+      return;
+    }
+    this.offlineQueue.writeOrQueue(this.db, `moodHistory/${userId}/${key}`, {
       moodKey,
       moodTitle,
       icon,
@@ -166,8 +182,12 @@ export class FirebaseService {
   }
 
   sendCommunityMessage(userId: string, userName: string, moodKey: string, message: string) {
-    const messagesRef = push(ref(this.db, 'communityMessages'));
-    set(messagesRef, {
+    const key = push(ref(this.db, 'communityMessages')).key;
+    if (!key) {
+      console.error('Impossibile generare la chiave per il nuovo messaggio community');
+      return;
+    }
+    this.offlineQueue.writeOrQueue(this.db, `communityMessages/${key}`, {
       userId,
       userName,
       moodKey,
@@ -186,8 +206,12 @@ export class FirebaseService {
   }
 
   sendMapReport(report: any) {
-    const reportsRef = push(ref(this.db, 'mapReports'));
-    return set(reportsRef, {
+    const key = push(ref(this.db, 'mapReports')).key;
+    if (!key) {
+      console.error('Impossibile generare la chiave per la nuova segnalazione mappa');
+      return Promise.resolve();
+    }
+    return this.offlineQueue.writeOrQueue(this.db, `mapReports/${key}`, {
       ...report,
       timestamp: new Date().toISOString()
     });
@@ -204,7 +228,7 @@ export class FirebaseService {
 
   // Archetype Quiz Methods
   async saveArchetypeProfile(userId: string, profile: any): Promise<void> {
-    await set(ref(this.db, `archetypeProfiles/${userId}`), {
+    await this.offlineQueue.writeOrQueue(this.db, `archetypeProfiles/${userId}`, {
       ...profile,
       updatedAt: new Date().toISOString()
     });
@@ -230,13 +254,12 @@ export class FirebaseService {
   }
 
   async saveGroundingSession(session: any): Promise<void> {
-    const sessionRef = ref(this.db, `groundingSessions/${session.id}`);
-    await set(sessionRef, session);
+    await this.offlineQueue.writeOrQueue(this.db, `groundingSessions/${session.id}`, session);
   }
 
   // Privacy Service Methods
   async setPrivacyConsent(userId: string, consent: any): Promise<void> {
-    await set(ref(this.db, `privacyConsents/${userId}`), {
+    await this.offlineQueue.writeOrQueue(this.db, `privacyConsents/${userId}`, {
       ...consent,
       updatedAt: new Date().toISOString()
     });

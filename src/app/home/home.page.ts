@@ -147,7 +147,11 @@ export class HomePage implements OnInit {
         }
         
         this.firebaseService.logMood(user.uid, mood.key, mood.title, mood.icon, note);
-        this.showStatus("Registrato", "Stato d'animo registrato nella tua cronologia!");
+        if (navigator.onLine) {
+          this.showStatus("Registrato", "Stato d'animo registrato nella tua cronologia!");
+        } else {
+          this.showStatus("Salvato offline", "Nessuna connessione: la voce è salvata sul dispositivo e verrà sincronizzata automaticamente quando torni online.");
+        }
         this.moodNote.set('');
       } else {
         this.showStatus("Errore", "Devi essere loggato per salvare nel diario.");
@@ -171,7 +175,11 @@ export class HomePage implements OnInit {
         }
         
         this.firebaseService.logMood(user.uid, mood.key, mood.title, mood.icon, "");
-        this.showStatus("Registrato", "Emozione registrata istantaneamente!");
+        if (navigator.onLine) {
+          this.showStatus("Registrato", "Emozione registrata istantaneamente!");
+        } else {
+          this.showStatus("Salvato offline", "Nessuna connessione: l'emozione è salvata sul dispositivo e verrà sincronizzata automaticamente quando torni online.");
+        }
       } else {
         this.showStatus("Errore", "Devi essere loggato per registrare le emozioni.");
       }
