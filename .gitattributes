@@ -1,0 +1,21 @@
+# Fine riga coerenti in tutto il repository.
+# Il contenuto gia' committato (HEAD) e' LF ovunque: questo file impedisce che un
+# editor o un tool locale che normalizza a CRLF (causa delle modifiche spurie
+# viste piu' volte in questa sessione, vedi tracker voce g6) finisca per essere
+# committato per sbaglio con un git add -A/-u.
+* text=auto eol=lf
+
+# Binari noti: mai toccare i fine riga, indipendentemente dall'auto-detect.
+*.png binary
+*.jpg binary
+*.jpeg binary
+*.gif binary
+*.ico binary
+*.jar binary
+*.woff binary
+*.woff2 binary
+*.ttf binary
+*.eot binary
+*.mp3 binary
+*.wav binary
+*.pdf binary
