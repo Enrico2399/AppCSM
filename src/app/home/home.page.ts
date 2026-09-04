@@ -2,13 +2,14 @@ import { MoodService, Mood } from '../services/mood/mood.service';
 import { Component, signal, inject, OnInit, computed } from '@angular/core';
 import { CommonModule, AsyncPipe } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { IonicModule } from '@ionic/angular';
+import { IonicModule, ModalController } from '@ionic/angular';
 import { RouterModule } from '@angular/router';
 import { FirebaseService } from '../services/firebase/firebase';
 import { AuthService } from '../services/auth';
 import { AnonymousSessionService } from '../services/anonymous-session/anonymous-session.service';
 import { StorageService } from '../services/storage/storage';
 import { PopupService } from '../services/popup/popup.service';
+import { AnonymousWelcomeComponent } from '../components/anonymous-welcome/anonymous-welcome.component';
 import { addIcons } from 'ionicons';
 import { heartOutline, heartDislikeOutline, timeOutline, checkmarkCircle, alertCircle, logoGoogle, logOutOutline, closeOutline, personCircleOutline } from 'ionicons/icons';
 import { take, firstValueFrom } from 'rxjs';
@@ -65,7 +66,8 @@ export class HomePage implements OnInit {
     public authService: AuthService,
     private firebaseService: FirebaseService,
     public popupService: PopupService,
-    private anonymousSessionService: AnonymousSessionService
+    private anonymousSessionService: AnonymousSessionService,
+    private modalCtrl: ModalController
   ) {
     this.moods.set(this.moodService.getMoods());
     addIcons({ logoGoogle, logOutOutline, closeOutline, personCircleOutline });
@@ -324,11 +326,14 @@ export class HomePage implements OnInit {
     }
   }
 
-  showAnonymousWelcome() {
-    this.popupService.showStatus(
-      "Sessione Anonima", 
-      "I tuoi dati saranno cancellati dopo 24 ore, poiché sei in anonimo."
-    );
+  async showAnonymousWelcome() {
+    // C'era già un componente dedicato (AnonymousWelcomeComponent) con
+    // conto alla rovescia della sessione, pulsante per estenderla e invito a
+    // creare un account - completo ma mai presentato da nessuna parte:
+    // questo metodo mostrava invece solo un avviso generico via PopupService.
+    // Ora presenta il componente vero come modale Ionic.
+    const modal = await this.modalCtrl.create({ component: AnonymousWelcomeComponent });
+    await modal.present();
     this.anonymousSessionService.markWelcomeSeen();
   }
 

@@ -1,6 +1,6 @@
-import { Component, OnInit, OnDestroy, signal, computed, inject } from '@angular/core';
+import { Component, OnInit, OnDestroy, signal, computed } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { IonicModule } from '@ionic/angular';
+import { IonicModule, ModalController } from '@ionic/angular';
 import { Router } from '@angular/router';
 import { AnonymousSessionService } from '../../services/anonymous-session/anonymous-session.service';
 import { addIcons } from 'ionicons';
@@ -14,9 +14,14 @@ import { personAddOutline, shieldCheckmarkOutline, timeOutline } from 'ionicons/
   imports: [CommonModule, IonicModule]
 })
 export class AnonymousWelcomeComponent implements OnInit, OnDestroy {
-  isOpen = signal<boolean>(false);
+  // Prima questo componente teneva un proprio stato isOpen mai letto dal
+  // template (nessun *ngIf lo usava): non aveva alcun effetto visivo, e non
+  // era comunque mai stato presentato da nessuna parte dell'app - restava
+  // scritto ma invisibile. Ora la visibilità è quella standard di un
+  // ModalController: chi lo presenta decide quando, e closeWelcome() lo
+  // chiude davvero con modalCtrl.dismiss() invece di un signal senza effetto.
   session = signal<any>(null);
-  
+
   timeRemaining = computed(() => {
     const sess = this.session();
     if (!sess) return '';
@@ -37,17 +42,23 @@ export class AnonymousWelcomeComponent implements OnInit, OnDestroy {
     }
   });
 
-  constructor(private anonymousSessionService: AnonymousSessionService, private router: Router) {
+  constructor(
+    private anonymousSessionService: AnonymousSessionService,
+    private router: Router,
+    private modalCtrl: ModalController
+  ) {
     addIcons({ personAddOutline, shieldCheckmarkOutline, timeOutline });
   }
 
   ngOnInit() {
-    this.session.set(this.anonymousSessionService.getCurrentSession());
-    
-    // Mostra popup se è la prima volta
-    if (this.anonymousSessionService.shouldShowWelcome()) {
-      this.isOpen.set(true);
-    }
+    // getCurrentSession() del servizio restituisce il Signal stesso, non il
+    // suo valore (stesso pattern, con doppia chiamata, già usato correttamente
+    // in help.page.ts): chiamarlo una sola volta qui avrebbe messo dentro
+    // this.session il Signal invece dei dati della sessione, con
+    // sess.expiresAt sempre undefined - "NaNh NaNm" mostrato all'utente al
+    // posto del tempo rimanente, trovato leggendo il codice prima di
+    // collegare questo componente per la prima volta.
+    this.session.set(this.anonymousSessionService.getCurrentSession()());
   }
 
   ngOnDestroy() {
@@ -55,8 +66,8 @@ export class AnonymousWelcomeComponent implements OnInit, OnDestroy {
   }
 
   closeWelcome() {
-    this.isOpen.set(false);
     this.anonymousSessionService.markWelcomeSeen();
+    this.modalCtrl.dismiss();
   }
 
   extendSession() {
@@ -77,7 +88,8 @@ export class AnonymousWelcomeComponent implements OnInit, OnDestroy {
   }
 
   createAccount() {
+    this.anonymousSessionService.markWelcomeSeen();
+    this.modalCtrl.dismiss();
     this.router.navigate(['/registration']);
-    this.closeWelcome();
   }
 }
