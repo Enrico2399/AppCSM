@@ -103,11 +103,15 @@
           role="button"
           tabindex="0"
           [attr.aria-label]="'Seleziona umore ' + mood.title">
-          
-          <div class="slice-content" [style.transform]="getContentTransform(i)">
-            <span aria-hidden="true">{{ mood.icon }}</span>
-          </div>
         </div>
+        <!-- Le icone vivono fuori dallo slice, che e' skewato per formare lo
+             spicchio: da dentro ereditavano lo skew del genitore ed apparivano
+             distorte (verificato dal vivo sul sito pubblicato). -->
+        <div 
+          class="slice-icon" 
+          *ngFor="let mood of moods(); let i = index"
+          [style.transform]="getIconTransform(i)"
+          aria-hidden="true">{{ mood.icon }}</div>
       </div>
 
       <div class="header-section">

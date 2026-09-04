@@ -103,9 +103,18 @@ export class HomePage implements OnInit {
     return `rotate(${angle}deg) skewY(${90 - this.angleStep()}deg)`;
   }
 
-  getContentTransform(index: number): string {
-    const angle = index * this.angleStep();
-    return `rotate(-${angle}deg) skewY(-${90 - this.angleStep()}deg) translate(100px, 100px)`;
+  getIconTransform(index: number): string {
+    // Le icone sono ora fuori dal div .slice (che resta skewato per formare lo
+    // spicchio colorato): da dentro ereditavano lo skew del genitore ed
+    // apparivano visibilmente distorte sul disco pubblicato (bug segnalato
+    // dall'utente, riprodotto e confermato dal vivo). Placement standard
+    // "ruota, trasla, ri-ruota" per disporle in cerchio restando dritte -
+    // verificato dal vivo sul sito pubblicato prima di scriverlo qui: ogni
+    // icona si sovrappone esattamente al colore giusto solo con l'offset di
+    // mezzo spicchio in QUESTA direzione (l'altro verso, provato per primo,
+    // sfasava tutte le icone di uno spicchio intero rispetto al loro colore).
+    const angle = index * this.angleStep() - this.angleStep() / 2;
+    return `rotate(${angle}deg) translate(0, -100px) rotate(${-angle}deg) translate(-50%, -50%)`;
   }
 
   selectMood(mood: Mood) {

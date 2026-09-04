@@ -55,13 +55,17 @@ h1, p {
   &:hover {
     filter: brightness(1.2);
   }
+}
 
-  .slice-content {
-    font-size: 1.5rem;
-    position: absolute;
-    right: 30px;
-    bottom: 30px;
-  }
+// Icona di ogni spicchio: vive fuori da .slice apposta, perche' .slice resta
+// skewato per formare la forma a spicchio e qualunque contenuto al suo
+// interno erediterebbe quello skew (causa della distorsione corretta qui).
+.slice-icon {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  font-size: 1.5rem;
+  pointer-events: none;
 }
 
 /* Colori specifici */
