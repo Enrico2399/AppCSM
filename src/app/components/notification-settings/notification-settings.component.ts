@@ -71,7 +71,7 @@ export class NotificationSettingsComponent {
     
     try {
       // Re-initialize notifications to request permission
-      await this.notificationService.initializeNotifications();
+      await this.notificationService.requestPermissions();
       
       this.hasPermission.set(this.notificationService.hasPermission());
       this.isInitialized.set(this.notificationService.isInitialized());
@@ -211,7 +211,7 @@ export class NotificationSettingsComponent {
     return `${minutes}m`;
   }
 
-  private async showToast(message: string, color: 'success' | 'warning' | 'danger' = 'primary') {
+  private async showToast(message: string, color: 'success' | 'warning' | 'danger' = 'success') {
     const toast = await this.toastCtrl.create({
       message,
       duration: 3000,

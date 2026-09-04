@@ -37,8 +37,15 @@ export class NotificationService {
   }
 
   private async initializeNotifications() {
+    // Notifiche push e notifiche locali sono indipendenti: richiedono permessi
+    // diversi e passano da API diverse. Prima erano nello stesso try/catch, per
+    // cui se PushNotifications.requestPermissions() falliva - cosa che succede
+    // sempre sul web, dove il plugin push di Capacitor non ha un'implementazione
+    // browser - l'eccezione interrompeva l'esecuzione PRIMA di arrivare a
+    // LocalNotifications.requestPermissions(): i promemoria locali (umore,
+    // grounding), gli unici che possono funzionare senza un backend push, non
+    // venivano mai nemmeno richiesti all'utente.
     try {
-      // Request permission for push notifications
       const permissionResult = await PushNotifications.requestPermissions();
       this.hasPermission.set(permissionResult.receive === 'granted');
 
@@ -47,14 +54,24 @@ export class NotificationService {
         this.setupNotificationListeners();
         this.isInitialized.set(true);
       }
-
-      // Initialize local notifications
-      await LocalNotifications.requestPermissions();
-
     } catch (error) {
-      console.error('Error initializing notifications:', error);
-      this.isInitialized.set(false);
+      console.warn('Notifiche push non disponibili (normale sul web, senza un backend push configurato):', error);
     }
+
+    try {
+      // Le notifiche locali non dipendono dal permesso push: l'app puo' gia'
+      // programmare promemoria anche se il push sopra non e' disponibile.
+      await LocalNotifications.requestPermissions();
+      this.isInitialized.set(true);
+    } catch (error) {
+      console.error('Error initializing local notifications:', error);
+    }
+  }
+
+  /** Wrapper pubblico: la pagina impostazioni notifiche lo usa per far
+   *  richiedere di nuovo i permessi all'utente dopo un primo rifiuto. */
+  async requestPermissions(): Promise<void> {
+    await this.initializeNotifications();
   }
 
   private setupNotificationListeners() {
