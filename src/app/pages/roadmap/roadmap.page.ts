@@ -2,6 +2,7 @@ import { Component, OnInit, OnDestroy, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { IonicModule } from '@ionic/angular';
+import { RouterModule } from '@angular/router';
 import { FirebaseService } from '../../services/firebase/firebase';
 import { StorageService } from '../../services/storage/storage';
 
@@ -11,6 +12,13 @@ interface RoadmapFeature {
   descAdd: string;
   descWhyLabel: string;
   descWhy: string;
+  // Stato reale della funzione (verificato leggendo il codice, non solo la
+  // descrizione qui sotto, che e' rimasta quella originale della proposta):
+  // 'done' = gia' disponibile e usabile oggi; 'partial' = in parte disponibile;
+  // undefined = non ancora iniziata. statusNote spiega cosa manca per 'partial'.
+  status?: 'done' | 'partial';
+  statusNote?: string;
+  route?: string;
 }
 
 interface PitchItem {
@@ -23,7 +31,7 @@ interface PitchItem {
   templateUrl: './roadmap.page.html',
   styleUrls: ['./roadmap.page.scss'],
   standalone: true,
-  imports: [IonicModule, CommonModule, FormsModule]
+  imports: [IonicModule, CommonModule, FormsModule, RouterModule]
 })
 export class RoadmapPage implements OnInit, OnDestroy {
   // ... existing fields ...
@@ -35,35 +43,46 @@ export class RoadmapPage implements OnInit, OnDestroy {
       title: '1. Diario Emozionale (Mood Tracker)',
       descAdd: 'Una sezione "Cronologia" dove all\'utente vengono salvate le selezioni fatte sulla ruota.',
       descWhyLabel: 'Perché',
-      descWhy: 'Permette all\'utente e al terapeuta di vedere pattern ricorrenti (es. "Sei stato spesso sul blu questa settimana").'
+      descWhy: 'Permette all\'utente e al terapeuta di vedere pattern ricorrenti (es. "Sei stato spesso sul blu questa settimana").',
+      status: 'done',
+      route: '/history'
     },
     {
       id: 'grounding',
       title: '2. Grounding Exercises (Radicamento)',
       descAdd: 'Una funzione SOS che guida l\'utente nella tecnica del 5-4-3-2-1 (identificare 5 cose che vedi, 4 che senti, ecc.).',
       descWhyLabel: 'Implementazione',
-      descWhy: 'Una sequenza di slide interattive.'
+      descWhy: 'Una sequenza di slide interattive.',
+      status: 'done',
+      route: '/grounding'
     },
     {
       id: 'panic',
       title: '3. Panic Button (Privacy)',
       descAdd: 'Un tasto rapido (icona "Esc") che nasconde i contenuti o reindirizza a una pagina neutra (Google/Meteo).',
       descWhyLabel: 'Perché',
-      descWhy: 'Aumenta il senso di sicurezza per chi teme il giudizio degli altri mentre usa l\'app.'
+      descWhy: 'Aumenta il senso di sicurezza per chi teme il giudizio degli altri mentre usa l\'app.',
+      status: 'done',
+      statusNote: 'Il pulsante è già attivo: lo trovi in basso a destra in ogni pagina dell\'app.'
     },
     {
       id: 'resources',
       title: '4. Risorse e Geocalizzazione',
       descAdd: 'Link diretti ai numeri verdi nazionali e una mappa dei centri di igiene mentale più vicini.',
       descWhyLabel: 'Perché',
-      descWhy: 'Dimostra che l\'app è un ponte verso il mondo reale delle cure professionali.'
+      descWhy: 'Dimostra che l\'app è un ponte verso il mondo reale delle cure professionali.',
+      status: 'done',
+      route: '/resources'
     },
     {
       id: 'pantheon',
       title: '5. Raffinatezza (Il Pantheon)',
       descAdd: 'Un mini-questionario di 5 domande per assegnare i punti agli archetipi in automatico.',
       descWhyLabel: 'Audio-Meditazioni',
-      descWhy: 'Player audio per rumore bianco o guide vocali diverse per ogni archetipo dominante.'
+      descWhy: 'Player audio per rumore bianco o guide vocali diverse per ogni archetipo dominante.',
+      status: 'partial',
+      statusNote: 'Il quiz è già disponibile e funzionante. Il player audio è costruito ma senza registrazioni vere: servono meditazioni audio professionali prima di attivarlo per gli utenti.',
+      route: '/archetype-quiz'
     }
   ];
 

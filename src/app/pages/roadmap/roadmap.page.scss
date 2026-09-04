@@ -61,6 +61,27 @@ ion-content {
   }
 }
 
+.status-badge {
+  display: inline-block;
+  padding: 4px 14px;
+  border-radius: 20px;
+  font-size: 0.85rem;
+  font-weight: bold;
+  margin-bottom: 15px;
+
+  &.done {
+    background: rgba(37, 211, 102, 0.15);
+    color: var(--wa-green);
+    border: 1px solid rgba(37, 211, 102, 0.4);
+  }
+
+  &.partial {
+    background: rgba(255, 167, 38, 0.15);
+    color: #ffa726;
+    border: 1px solid rgba(255, 167, 38, 0.4);
+  }
+}
+
 .feature-content {
   display: grid;
   grid-template-columns: 1fr;
@@ -79,6 +100,13 @@ ion-content {
   strong { color: var(--accent-purple); display: block; margin-bottom: 5px; }
 }
 
+// Nota di stato per le funzioni gia' (parzialmente) disponibili: stesso stile
+// di .sub-area ma con un bordo sinistro per distinguerla a colpo d'occhio.
+.status-note {
+  grid-column: 1 / -1;
+  border-left: 3px solid #ffa726;
+}
+
 .vote-footer {
   margin-top: 25px;
   padding-top: 20px;
@@ -86,6 +114,18 @@ ion-content {
   display: flex;
   align-items: center;
   justify-content: space-between;
+}
+
+.try-link {
+  color: var(--wa-green);
+  font-weight: bold;
+  text-decoration: none;
+  border: 2px solid var(--wa-green);
+  padding: 10px 20px;
+  border-radius: 50px;
+  transition: 0.3s;
+
+  &:hover { background: var(--wa-green); color: #000; }
 }
 
 .like-btn {

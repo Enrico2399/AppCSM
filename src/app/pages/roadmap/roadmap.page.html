@@ -14,6 +14,9 @@
     <div id="roadmap-items">
       <section class="feature-section" *ngFor="let feature of features">
         <h2 class="feature-title">{{feature.title}}</h2>
+        <div class="status-badge" *ngIf="feature.status" [ngClass]="feature.status">
+          {{ feature.status === 'done' ? '✅ Già disponibile' : '🔶 Parzialmente disponibile' }}
+        </div>
         <div class="feature-content">
           <div class="sub-area">
             <strong>Cosa aggiungere:</strong>
@@ -23,8 +26,13 @@
             <strong>{{feature.descWhyLabel}}:</strong>
             {{feature.descWhy}}
           </div>
+          <div class="sub-area status-note" *ngIf="feature.statusNote">
+            <strong>Stato attuale:</strong>
+            {{feature.statusNote}}
+          </div>
         </div>
         <div class="vote-footer">
+          <a *ngIf="feature.route" class="try-link" [routerLink]="feature.route">Provalo →</a>
           <span class="vote-count">{{votes()[feature.id] || 0}} voti</span>
           <button 
             class="like-btn" 
