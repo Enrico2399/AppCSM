@@ -38,6 +38,7 @@ export class NavbarComponent implements OnInit {
   isProfileOpen = false;
   userName = '';
   isLightMode = false;
+  isMobileMenuOpen = false;
 
   constructor() {
     addIcons({ logOutOutline, moon, sunny, personOutline, personCircleOutline });
@@ -51,6 +52,21 @@ export class NavbarComponent implements OnInit {
         this.userName = user.displayName || '';
       }
     });
+
+    // Chiude il menu a comparsa mobile ad ogni cambio pagina: senza questo
+    // resterebbe aperto sopra la nuova pagina dopo aver toccato un link.
+    this.router.events.subscribe(() => this.closeMobileMenu());
+  }
+
+  toggleMobileMenu() {
+    this.isMobileMenuOpen = !this.isMobileMenuOpen;
+    document.body.classList.toggle('mobile-menu-open', this.isMobileMenuOpen);
+  }
+
+  closeMobileMenu() {
+    if (!this.isMobileMenuOpen) return;
+    this.isMobileMenuOpen = false;
+    document.body.classList.remove('mobile-menu-open');
   }
 
   toggleTheme() {

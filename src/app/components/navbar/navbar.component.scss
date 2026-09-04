@@ -10,6 +10,151 @@
   padding-top: env(safe-area-inset-top);
 }
 
+// --- MENU MOBILE ---
+// Sotto i 960px la doppia riga di link a scroll orizzontale era scomoda da
+// usare col dito (bisognava scorrere per raggiungere Grounding/Risorse/SOS
+// Help). Sostituita da una barra compatta con hamburger + un pannello
+// laterale a comparsa con tutti i link in verticale, senza scorrimento.
+.mobile-bar {
+  display: none; // riattivata sotto i 960px dalla media query in fondo al file
+  width: 100%;
+  height: 56px;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  padding: 0 8px 0 4px;
+  background: rgba(14, 16, 19, 0.82);
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
+  border-bottom: 1px solid var(--border);
+
+  .hamburger-btn {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    gap: 4px;
+    width: 44px;
+    height: 44px;
+    background: transparent;
+    border: none;
+    cursor: pointer;
+    flex: none;
+
+    span {
+      display: block;
+      width: 20px;
+      height: 2px;
+      border-radius: 2px;
+      background: var(--text-light);
+    }
+  }
+
+  .mobile-logo {
+    flex: 1;
+    text-align: center;
+    color: var(--text-light);
+    font-weight: 700;
+    font-size: 0.95rem;
+    text-decoration: none;
+    cursor: pointer;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  .mobile-actions {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    flex: none;
+  }
+
+  .theme-icon {
+    font-size: 1.15rem;
+  }
+}
+
+.mobile-drawer-backdrop {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.5);
+  z-index: 10998; // sotto al drawer, sopra a tutto il resto
+}
+
+.mobile-drawer {
+  position: fixed;
+  top: 0;
+  left: 0;
+  height: 100%;
+  width: min(78vw, 300px);
+  z-index: 10999;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  overflow-y: auto;
+  background: var(--bg-elevated);
+  box-shadow: var(--shadow-lg);
+  // Fuori schermo di default: scorre dentro con una transizione quando si
+  // aggiunge .open (dallo stato isMobileMenuOpen del componente).
+  transform: translateX(-100%);
+  transition: transform var(--transition-fast, 0.2s ease);
+  padding: calc(20px + env(safe-area-inset-top)) 18px calc(20px + env(safe-area-inset-bottom));
+
+  &.open {
+    transform: translateX(0);
+  }
+
+  a {
+    color: var(--text-muted);
+    text-decoration: none;
+    padding: 13px 14px;
+    border-radius: var(--radius-md);
+    font-weight: 600;
+    font-size: 0.95rem;
+    cursor: pointer;
+
+    &:hover {
+      color: var(--text-light);
+      background: rgba(255, 255, 255, 0.06);
+    }
+
+    &.active {
+      color: white;
+      background: var(--ion-color-primary);
+    }
+  }
+
+  .roadmap-link {
+    color: violet;
+  }
+
+  hr {
+    border: 0;
+    border-top: 1px solid var(--border);
+    margin: 10px 0;
+  }
+}
+
+// Sotto i 960px: via lo scroll orizzontale desktop, dentro barra + drawer.
+@media (max-width: 959px) {
+  .mobile-bar {
+    display: flex;
+  }
+  .desktop-nav {
+    display: none;
+  }
+}
+
+// Da 960px in su: il drawer mobile non serve, resta sempre chiuso/nascosto
+// anche se isMobileMenuOpen fosse rimasto true cambiando orientamento/finestra.
+@media (min-width: 960px) {
+  .mobile-drawer,
+  .mobile-drawer-backdrop {
+    display: none;
+  }
+}
+
 .navbar {
   width: 100%;
   background: rgba(14, 16, 19, 0.82);
@@ -132,6 +277,17 @@
   .user-chip { background: rgba(0, 0, 0, 0.05); }
   .user-chip:hover { background: rgba(0, 0, 0, 0.09); }
   .roadmap-nav { background: rgba(255, 255, 255, 0.85); box-shadow: var(--shadow-sm); }
+
+  .mobile-bar {
+    background: rgba(255, 255, 255, 0.9);
+    box-shadow: var(--shadow-sm);
+    border-bottom: none;
+  }
+  .mobile-bar .mobile-logo { color: var(--text-light); }
+  .mobile-bar .hamburger-btn span { background: var(--text-light); }
+  .mobile-drawer a { color: var(--text-muted); }
+  .mobile-drawer a:hover { color: var(--text-light); background: rgba(0, 0, 0, 0.05); }
+  .mobile-drawer a.active { color: white; background: var(--accent); }
 }
 
 .roadmap-nav {

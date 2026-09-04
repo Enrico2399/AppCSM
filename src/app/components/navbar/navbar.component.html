@@ -1,33 +1,82 @@
 <header class="global-header" *ngIf="authService.user$ | async as user; else noAuth">
-  <!-- PRIMARY ROW: MAIN LINKS -->
-  <nav class="navbar" aria-label="Navigazione principale">
-    <div class="nav-links">
-      <a routerLinkActive="active" [routerLinkActiveOptions]="{exact: true}" (click)="goHome()" (keydown.enter)="goHome()" role="button" tabindex="0">Mood Wheel</a>
-      <a routerLink="/archetipi" routerLinkActive="active">Pantheon Archetipico</a>
-      <a routerLink="/community" routerLinkActive="active">Community</a>
-      <a routerLink="/history" routerLinkActive="active">Cronologia</a>
-      <a routerLink="/map" routerLinkActive="active">Mappa</a>
-      <a routerLink="/grounding" routerLinkActive="active">Grounding</a>
-      <a routerLink="/resources" routerLinkActive="active">Risorse</a>
-      <a routerLink="/help" routerLinkActive="active">SOS Help</a>
-    </div>
-  </nav>
+  <!-- BARRA MOBILE COMPATTA: sotto i 960px sostituisce lo scroll orizzontale
+       con un menu a comparsa laterale, per non dover scorrere in orizzontale
+       per raggiungere gli ultimi link. -->
+  <nav class="mobile-bar" aria-label="Navigazione mobile">
+    <button
+      type="button"
+      class="hamburger-btn"
+      (click)="toggleMobileMenu()"
+      [attr.aria-expanded]="isMobileMenuOpen"
+      aria-controls="mobile-drawer-nav"
+      aria-label="Apri il menu di navigazione"
+    >
+      <span></span><span></span><span></span>
+    </button>
 
-  <!-- SECONDARY ROW: ROADMAP + ACTIONS -->
-  <nav class="navbar roadmap-nav" aria-label="Navigazione secondaria">
-    <div class="nav-links">
-      <a routerLink="/roadmap" routerLinkActive="active" style="color: violet;">Nuovi Sviluppi</a>
-      
+    <a class="mobile-logo" (click)="goHome()" (keydown.enter)="goHome()" role="button" tabindex="0">CSM Digitale</a>
+
+    <div class="mobile-actions">
       <a (click)="toggleTheme()" (keydown.enter)="toggleTheme()" class="theme-icon" role="button" tabindex="0" aria-label="Cambia tema">
         {{ isLightMode ? '🌙' : '☀️' }}
       </a>
-      
       <div class="user-chip" (click)="openProfileModal()" role="button" tabindex="0" aria-label="Apri profilo utente">
-        <ion-icon name="person-circle-outline" style="font-size: 32px; color: var(--ion-color-medium);" aria-hidden="true"></ion-icon>
+        <ion-icon name="person-circle-outline" style="font-size: 28px; color: var(--ion-color-medium);" aria-hidden="true"></ion-icon>
       </div>
     </div>
   </nav>
+
+  <!-- NAVIGAZIONE DESKTOP: le due righe orizzontali di sempre, visibili solo
+       da 960px in su (sotto quella soglia usano lo scroll orizzontale scomodo
+       da cellulare: sostituite dalla barra + drawer mobile qui sopra). -->
+  <div class="desktop-nav">
+    <!-- PRIMARY ROW: MAIN LINKS -->
+    <nav class="navbar" aria-label="Navigazione principale">
+      <div class="nav-links">
+        <a routerLinkActive="active" [routerLinkActiveOptions]="{exact: true}" (click)="goHome()" (keydown.enter)="goHome()" role="button" tabindex="0">Mood Wheel</a>
+        <a routerLink="/archetipi" routerLinkActive="active">Pantheon Archetipico</a>
+        <a routerLink="/community" routerLinkActive="active">Community</a>
+        <a routerLink="/history" routerLinkActive="active">Cronologia</a>
+        <a routerLink="/map" routerLinkActive="active">Mappa</a>
+        <a routerLink="/grounding" routerLinkActive="active">Grounding</a>
+        <a routerLink="/resources" routerLinkActive="active">Risorse</a>
+        <a routerLink="/help" routerLinkActive="active">SOS Help</a>
+      </div>
+    </nav>
+
+    <!-- SECONDARY ROW: ROADMAP + ACTIONS -->
+    <nav class="navbar roadmap-nav" aria-label="Navigazione secondaria">
+      <div class="nav-links">
+        <a routerLink="/roadmap" routerLinkActive="active" style="color: violet;">Nuovi Sviluppi</a>
+
+        <a (click)="toggleTheme()" (keydown.enter)="toggleTheme()" class="theme-icon" role="button" tabindex="0" aria-label="Cambia tema">
+          {{ isLightMode ? '🌙' : '☀️' }}
+        </a>
+
+        <div class="user-chip" (click)="openProfileModal()" role="button" tabindex="0" aria-label="Apri profilo utente">
+          <ion-icon name="person-circle-outline" style="font-size: 32px; color: var(--ion-color-medium);" aria-hidden="true"></ion-icon>
+        </div>
+      </div>
+    </nav>
+  </div>
 </header>
+
+<!-- MENU MOBILE A COMPARSA: pannello laterale con tutti i link in verticale,
+     senza bisogno di scorrere. Fuori da <header> perche' deve stare sopra a
+     tutto il contenuto della pagina, non solo sotto la barra. -->
+<div class="mobile-drawer-backdrop" *ngIf="isMobileMenuOpen" (click)="closeMobileMenu()"></div>
+<nav id="mobile-drawer-nav" class="mobile-drawer" [class.open]="isMobileMenuOpen" aria-label="Menu di navigazione">
+  <a routerLinkActive="active" [routerLinkActiveOptions]="{exact: true}" (click)="goHome()" (keydown.enter)="goHome()" role="button" tabindex="0">Mood Wheel</a>
+  <a routerLink="/archetipi" routerLinkActive="active" (click)="closeMobileMenu()">Pantheon Archetipico</a>
+  <a routerLink="/community" routerLinkActive="active" (click)="closeMobileMenu()">Community</a>
+  <a routerLink="/history" routerLinkActive="active" (click)="closeMobileMenu()">Cronologia</a>
+  <a routerLink="/map" routerLinkActive="active" (click)="closeMobileMenu()">Mappa</a>
+  <a routerLink="/grounding" routerLinkActive="active" (click)="closeMobileMenu()">Grounding</a>
+  <a routerLink="/resources" routerLinkActive="active" (click)="closeMobileMenu()">Risorse</a>
+  <a routerLink="/help" routerLinkActive="active" (click)="closeMobileMenu()">SOS Help</a>
+  <hr>
+  <a routerLink="/roadmap" routerLinkActive="active" class="roadmap-link" (click)="closeMobileMenu()">Nuovi Sviluppi</a>
+</nav>
 
 <ng-template #noAuth></ng-template>
 

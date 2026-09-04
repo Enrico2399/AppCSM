@@ -382,3 +382,11 @@ body.light-theme {
 .modal-body {
   p { text-align: left; line-height: 1.5; margin: 0; }
 }
+
+
+/* Quando il menu mobile a comparsa (navbar) e' aperto, blocca lo scroll
+ * dietro al pannello: altrimenti si potevano scorrere insieme sia il drawer
+ * che la pagina sotto, con un effetto confuso su schermi piccoli. */
+body.mobile-menu-open {
+  overflow: hidden;
+}
