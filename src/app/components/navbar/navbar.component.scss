@@ -19,10 +19,12 @@
   
   .nav-links {
     display: flex;
+    flex-wrap: wrap;
     justify-content: center;
     align-items: center;
     flex: 1;
-    gap: 20px;
+    gap: 10px 20px;
+    row-gap: 8px;
   }
 
   a {
@@ -129,6 +131,21 @@
     font-weight: bold; 
   }
 
+  .full-profile-link {
+    display: block;
+    width: 100%;
+    padding: 12px;
+    border-radius: 10px;
+    border: 1px solid rgba(255, 255, 255, 0.3);
+    background: transparent;
+    color: white;
+    cursor: pointer;
+    font-weight: bold;
+    text-decoration: none;
+    box-sizing: border-box;
+    margin-top: 16px;
+  }
+
   hr {
     border: 0; 
     border-top: 1px solid rgba(255, 255, 255, 0.1); 
@@ -170,6 +187,7 @@
     .profile-header p { color: #666; }
     .close-txt { color: #666 !important; opacity: 1; }
     .logout-btn { background: #eee; color: #333; border: 1px solid #ccc; }
+    .full-profile-link { color: #333; border-color: rgba(0, 0, 0, 0.2); }
     hr { border-top: 1px solid #eee; }
   }
 }

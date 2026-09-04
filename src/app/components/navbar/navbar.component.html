@@ -5,6 +5,10 @@
       <a routerLinkActive="active" [routerLinkActiveOptions]="{exact: true}" (click)="goHome()" (keydown.enter)="goHome()" role="button" tabindex="0">Mood Wheel</a>
       <a routerLink="/archetipi" routerLinkActive="active">Pantheon Archetipico</a>
       <a routerLink="/community" routerLinkActive="active">Community</a>
+      <a routerLink="/history" routerLinkActive="active">Cronologia</a>
+      <a routerLink="/map" routerLinkActive="active">Mappa</a>
+      <a routerLink="/grounding" routerLinkActive="active">Grounding</a>
+      <a routerLink="/resources" routerLinkActive="active">Risorse</a>
       <a routerLink="/help" routerLinkActive="active">SOS Help</a>
     </div>
   </nav>
@@ -45,6 +49,10 @@
         </p>
       </div>
       
+      <a routerLink="/profile" (click)="closeProfileModal()" class="full-profile-link">
+        Profilo e Impostazioni
+      </a>
+
       <hr>
       
       <button (click)="logout()" class="logout-btn">Esci dall'account</button>

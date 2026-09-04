@@ -8,6 +8,7 @@ import { closeOutline } from 'ionicons/icons';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { IonicModule } from '@ionic/angular';
+import { RouterModule } from '@angular/router';
 import Chart from 'chart.js/auto';
 
 interface Archetype {
@@ -25,7 +26,7 @@ interface Archetype {
   templateUrl: './archetipi.page.html',
   styleUrls: ['./archetipi.page.scss'],
   standalone: true,
-  imports: [IonicModule, CommonModule, FormsModule]
+  imports: [IonicModule, CommonModule, FormsModule, RouterModule]
 })
 export class ArchetipiPage implements OnInit, AfterViewInit {
 
