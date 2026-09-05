@@ -1,9 +1,9 @@
 <ion-content [fullscreen]="true">
   <div class="container">
     <header>
-      <h1>Pantheon Archetipico</h1>
-      <p>Seleziona un'icona per scoprirne il significato e mappare i tuoi pensieri.</p>
-      <a routerLink="/archetype-quiz" class="quiz-cta-link">Non sai da dove iniziare? Fai il Quiz per scoprire il tuo Archetipo →</a>
+      <h1>{{ 'archetipi.heading' | translate }}</h1>
+      <p>{{ 'archetipi.subtitle' | translate }}</p>
+      <a routerLink="/archetype-quiz" class="quiz-cta-link">{{ 'archetipi.quizCta' | translate }}</a>
     </header>
 
     <div class="archetype-grid">
@@ -29,9 +29,9 @@
 
     <div class="dashboard">
       <div class="input-box">
-        <h3>{{ selectedArchetype() ? 'Pensiero per: ' + selectedArchetype()!.name : 'Clicca su un archetipo sopra' }}</h3>
-        <textarea [ngModel]="thoughtInput()" (ngModelChange)="thoughtInput.set($event)" rows="5" placeholder="Quale pensiero vuoi associare a questo archetipo?"></textarea>
-        <button class="btn-add" (click)="saveThought()">Registra nel Pantheon</button>
+        <h3>{{ selectedArchetype() ? i18n.t('archetipi.thoughtForLabel', {name: selectedArchetype()!.name}) : ('archetipi.clickArchetype' | translate) }}</h3>
+        <textarea [ngModel]="thoughtInput()" (ngModelChange)="thoughtInput.set($event)" rows="5" [placeholder]="'archetipi.thoughtPlaceholder' | translate"></textarea>
+        <button class="btn-add" (click)="saveThought()">{{ 'archetipi.registerBtn' | translate }}</button>
       </div>
 
       <div class="chart-container">

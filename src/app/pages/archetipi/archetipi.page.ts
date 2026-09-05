@@ -10,6 +10,8 @@ import { FormsModule } from '@angular/forms';
 import { IonicModule } from '@ionic/angular';
 import { RouterModule } from '@angular/router';
 import Chart from 'chart.js/auto';
+import { I18nService } from '../../services/i18n/i18n.service';
+import { TranslatePipe } from '../../pipes/translate.pipe';
 
 interface Archetype {
   key: string;
@@ -26,16 +28,17 @@ interface Archetype {
   templateUrl: './archetipi.page.html',
   styleUrls: ['./archetipi.page.scss'],
   standalone: true,
-  imports: [IonicModule, CommonModule, FormsModule, RouterModule]
+  imports: [IonicModule, CommonModule, FormsModule, RouterModule, TranslatePipe]
 })
 export class ArchetipiPage implements OnInit, AfterViewInit {
 
   public popupService = inject(PopupService);
+  public i18n = inject(I18nService);
   private moodService = inject(MoodService);
   private storageService = inject(StorageService);
   private chartService = inject(ChartService);
 
-  archetypes = signal<Archetype[]>([
+  private readonly ARCHETYPES_IT: Archetype[] = [
     { 
       key: "saggio", name: "Il Saggio", icon: "📚", 
       color: this.moodService.getMoodColor('blu'), // Sincronizzato con Blu
@@ -78,7 +81,54 @@ export class ArchetipiPage implements OnInit, AfterViewInit {
       highAdvice: "Il tuo spirito critico è acceso. Assicurati di distruggere solo ciò che vuoi davvero ricostruire meglio.<br>", 
       lowAdvice: "Chiediti: 'Quale regola inutile sto seguendo?' e prova a fare l'opposto per un giorno.<br>" 
     }
-  ]);
+  ];
+
+  private readonly ARCHETYPES_EN: Archetype[] = [
+    { 
+      key: "saggio", name: "The Sage", icon: "📚", 
+      color: this.moodService.getMoodColor('blu'),
+      description: "Seeks truth and objective understanding. It shows up when you analyze, study, or try to make logical sense of events.", 
+      highAdvice: "Your analytical side is strong, but be careful not to fall into 'analysis paralysis'.<br>", 
+      lowAdvice: "Feed your curiosity: try reading an essay or spending time on pure reflection.<br>" 
+    },
+    { 
+      key: "eroe", name: "The Hero", icon: "⚔️", 
+      color: this.moodService.getMoodColor('rosso'),
+      description: "Represents willpower and overcoming challenges. It emerges when you act with courage and determination toward a goal.", 
+      highAdvice: "You're in a phase of great action. Remember to choose your battles so you don't burn out.<br>", 
+      lowAdvice: "Take on a small challenge you've been putting off: action builds confidence.<br>" 
+    },
+    { 
+      key: "esploratore", name: "The Explorer", icon: "🗺️", 
+      color: this.moodService.getMoodColor('verde'),
+      description: "Pushes toward freedom and the discovery of new horizons. It's active when you seek independence or want to step out of your comfort zone.", 
+      highAdvice: "Your thirst for novelty is high. Make sure you're not running from responsibilities on your journey.<br>", 
+      lowAdvice: "Take a different way home or visit somewhere new: break the routine.<br>" 
+    },
+    { 
+      key: "creatore", name: "The Creator", icon: "🎨", 
+      color: this.moodService.getMoodColor('giallo'),
+      description: "The voice of imagination and personal expression. It activates when you give shape to something new, whether an idea, a project, or a work of art.", 
+      highAdvice: "Creativity is flowing strongly. Try to finish one project before starting ten more.<br>", 
+      lowAdvice: "Spend time on a hands-on or creative activity without judging yourself, just for the fun of doing it.<br>" 
+    },
+    { 
+      key: "sovrano", name: "The Ruler", icon: "👑", 
+      color: this.moodService.getMoodColor('viola'),
+      description: "Embodies control, order, and responsibility. It shows up when you organize your life, lead others, or create stability.", 
+      highAdvice: "You're in control of the situation. Be careful not to become too rigid or domineering with yourself.<br>", 
+      lowAdvice: "Take charge of a chaotic area of your life: organize your schedule or your spaces.<br>" 
+    },
+    { 
+      key: "ribelle", name: "The Rebel", icon: "⚡", 
+      color: this.moodService.getMoodColor('arancio'),
+      description: "Represents radical change and breaking outdated patterns. It emerges when you feel the need for transformation or to go against the grain.", 
+      highAdvice: "Your critical spirit is switched on. Make sure you only tear down what you truly want to rebuild better.<br>", 
+      lowAdvice: "Ask yourself: 'What pointless rule am I following?' and try doing the opposite for a day.<br>" 
+    }
+  ];
+
+  archetypes = computed(() => this.i18n.lang() === 'en' ? this.ARCHETYPES_EN : this.ARCHETYPES_IT);
 
   selectedKey = signal<string | null>(null);
   selectedArchetype = signal<Archetype | null>(null);
@@ -93,7 +143,7 @@ export class ArchetipiPage implements OnInit, AfterViewInit {
     const values = Object.values(store) as number[];
     const total = values.reduce((a, b) => a + b, 0);
 
-    if (total === 0) return "Seleziona gli archetipi e registra i tuoi pensieri per generare un'analisi personalizzata del tuo equilibrio interiore.";
+    if (total === 0) return this.i18n.t('archetipi.adviceEmpty');
 
     const maxVal = Math.max(...values);
     const minVal = Math.min(...values);
@@ -101,12 +151,12 @@ export class ArchetipiPage implements OnInit, AfterViewInit {
     const dominantArchs = this.archetypes().filter(a => store[a.key] === maxVal);
     const dormantArchs = this.archetypes().filter(a => store[a.key] === minVal);
 
-    let html = `<strong>Analisi del Pantheon:</strong><br>`;
+    let html = `<strong>${this.i18n.t('archetipi.analysisTitle')}</strong><br>`;
     
-    html += `<span class="advice-title">Dominante: ${dominantArchs.map(a => a.name).join(", ")}</span>`;
+    html += `<span class="advice-title">${this.i18n.t('archetipi.dominantLabel')} ${dominantArchs.map(a => a.name).join(", ")}</span>`;
     html += dominantArchs.map(a => a.highAdvice).join(" ") + "<br><br>";
 
-    html += `<span class="advice-title">Da Risvegliare: ${dormantArchs.map(a => a.name).join(", ")}</span>`;
+    html += `<span class="advice-title">${this.i18n.t('archetipi.toAwakenLabel')} ${dormantArchs.map(a => a.name).join(", ")}</span>`;
     html += dormantArchs.map(a => a.lowAdvice).join(" ");
 
     return html;
@@ -155,11 +205,11 @@ export class ArchetipiPage implements OnInit, AfterViewInit {
     const thought = this.thoughtInput().trim();
 
     if (!key) {
-      this.popupService.showStatus("Attenzione", "Seleziona un archetipo!"); // Uso del servizio
+      this.popupService.showStatus(this.i18n.t('archetipi.attentionTitle'), this.i18n.t('archetipi.selectArchetype')); // Uso del servizio
       return;
     }
     if (thought === "") {
-      this.showStatus("Attenzione", "Scrivi un pensiero!");
+      this.showStatus(this.i18n.t('archetipi.attentionTitle'), this.i18n.t('archetipi.writeThought'));
       return;
     }
 
@@ -170,8 +220,8 @@ export class ArchetipiPage implements OnInit, AfterViewInit {
     });
     
     this.thoughtInput.set("");
-    this.showStatus("Registrato", "Il tuo pensiero è stato aggiunto al Pantheon degli archetipi!");
-    this.popupService.showStatus("Registrato", "Il tuo pensiero è stato aggiunto...");
+    this.showStatus(this.i18n.t('archetipi.registeredTitle'), this.i18n.t('archetipi.registeredMsg'));
+    this.popupService.showStatus(this.i18n.t('archetipi.registeredTitle'), this.i18n.t('archetipi.registeredMsgShort'));
   }
 
   showStatus(title: string, message: string) {
