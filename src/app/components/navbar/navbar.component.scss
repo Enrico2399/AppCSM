@@ -73,6 +73,15 @@
   .theme-icon {
     font-size: 1.15rem;
   }
+
+  .lang-toggle {
+    font-size: 0.75rem;
+    font-weight: 700;
+    letter-spacing: 0.03em;
+    cursor: pointer;
+    opacity: 0.85;
+    color: var(--text-light);
+  }
 }
 
 .mobile-drawer-backdrop {
@@ -231,6 +240,16 @@
     font-size: 1.2rem;
     flex: none;
   }
+
+  .lang-toggle {
+    font-size: 0.8rem;
+    font-weight: 700;
+    letter-spacing: 0.03em;
+    cursor: pointer;
+    opacity: 0.85;
+    color: var(--text-light);
+    flex: none;
+  }
 }
 
 .user-chip {
@@ -308,6 +327,15 @@
   .theme-icon {
     font-size: 1.1rem;
     margin-top: -2px;
+  }
+
+  .lang-toggle {
+    font-size: 0.68rem;
+    font-weight: 700;
+    letter-spacing: 0.03em;
+    cursor: pointer;
+    opacity: 0.85;
+    color: var(--text-light);
   }
 }
 

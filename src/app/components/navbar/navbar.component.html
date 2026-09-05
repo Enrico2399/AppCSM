@@ -2,14 +2,14 @@
   <!-- BARRA MOBILE COMPATTA: sotto i 960px sostituisce lo scroll orizzontale
        con un menu a comparsa laterale, per non dover scorrere in orizzontale
        per raggiungere gli ultimi link. -->
-  <nav class="mobile-bar" aria-label="Navigazione mobile">
+  <nav class="mobile-bar" aria-label="{{ 'nav.ariaMobileNav' | translate }}">
     <button
       type="button"
       class="hamburger-btn"
       (click)="toggleMobileMenu()"
       [attr.aria-expanded]="isMobileMenuOpen"
       aria-controls="mobile-drawer-nav"
-      aria-label="Apri il menu di navigazione"
+      aria-label="{{ 'nav.ariaOpenMenu' | translate }}"
     >
       <span></span><span></span><span></span>
     </button>
@@ -17,10 +17,13 @@
     <a class="mobile-logo" (click)="goHome()" (keydown.enter)="goHome()" role="button" tabindex="0">CSM Digitale</a>
 
     <div class="mobile-actions">
-      <a (click)="toggleTheme()" (keydown.enter)="toggleTheme()" class="theme-icon" role="button" tabindex="0" aria-label="Cambia tema">
+      <a (click)="toggleLang()" (keydown.enter)="toggleLang()" class="lang-toggle" role="button" tabindex="0" [attr.aria-label]="'nav.ariaLang' | translate">
+        {{ i18n.lang() === 'it' ? 'EN' : 'IT' }}
+      </a>
+      <a (click)="toggleTheme()" (keydown.enter)="toggleTheme()" class="theme-icon" role="button" tabindex="0" [attr.aria-label]="'nav.ariaTheme' | translate">
         {{ isLightMode ? '🌙' : '☀️' }}
       </a>
-      <div class="user-chip" (click)="openProfileModal()" role="button" tabindex="0" aria-label="Apri profilo utente">
+      <div class="user-chip" (click)="openProfileModal()" role="button" tabindex="0" [attr.aria-label]="'nav.ariaProfile' | translate">
         <ion-icon name="person-circle-outline" style="font-size: 28px; color: var(--ion-color-medium);" aria-hidden="true"></ion-icon>
       </div>
     </div>
@@ -31,29 +34,33 @@
        da cellulare: sostituite dalla barra + drawer mobile qui sopra). -->
   <div class="desktop-nav">
     <!-- PRIMARY ROW: MAIN LINKS -->
-    <nav class="navbar" aria-label="Navigazione principale">
+    <nav class="navbar" aria-label="{{ 'nav.ariaMainNav' | translate }}">
       <div class="nav-links">
-        <a routerLinkActive="active" [routerLinkActiveOptions]="{exact: true}" (click)="goHome()" (keydown.enter)="goHome()" role="button" tabindex="0">Mood Wheel</a>
-        <a routerLink="/archetipi" routerLinkActive="active">Pantheon Archetipico</a>
-        <a routerLink="/community" routerLinkActive="active">Community</a>
-        <a routerLink="/history" routerLinkActive="active">Cronologia</a>
-        <a routerLink="/map" routerLinkActive="active">Mappa</a>
-        <a routerLink="/grounding" routerLinkActive="active">Grounding</a>
-        <a routerLink="/resources" routerLinkActive="active">Risorse</a>
-        <a routerLink="/help" routerLinkActive="active">SOS Help</a>
+        <a routerLinkActive="active" [routerLinkActiveOptions]="{exact: true}" (click)="goHome()" (keydown.enter)="goHome()" role="button" tabindex="0">{{ 'nav.moodWheel' | translate }}</a>
+        <a routerLink="/archetipi" routerLinkActive="active">{{ 'nav.archetipi' | translate }}</a>
+        <a routerLink="/community" routerLinkActive="active">{{ 'nav.community' | translate }}</a>
+        <a routerLink="/history" routerLinkActive="active">{{ 'nav.history' | translate }}</a>
+        <a routerLink="/map" routerLinkActive="active">{{ 'nav.map' | translate }}</a>
+        <a routerLink="/grounding" routerLinkActive="active">{{ 'nav.grounding' | translate }}</a>
+        <a routerLink="/resources" routerLinkActive="active">{{ 'nav.resources' | translate }}</a>
+        <a routerLink="/help" routerLinkActive="active">{{ 'nav.help' | translate }}</a>
       </div>
     </nav>
 
     <!-- SECONDARY ROW: ROADMAP + ACTIONS -->
-    <nav class="navbar roadmap-nav" aria-label="Navigazione secondaria">
+    <nav class="navbar roadmap-nav" aria-label="{{ 'nav.ariaSecondaryNav' | translate }}">
       <div class="nav-links">
-        <a routerLink="/roadmap" routerLinkActive="active" style="color: violet;">Nuovi Sviluppi</a>
+        <a routerLink="/roadmap" routerLinkActive="active" style="color: violet;">{{ 'nav.roadmap' | translate }}</a>
 
-        <a (click)="toggleTheme()" (keydown.enter)="toggleTheme()" class="theme-icon" role="button" tabindex="0" aria-label="Cambia tema">
+        <a (click)="toggleLang()" (keydown.enter)="toggleLang()" class="lang-toggle" role="button" tabindex="0" [attr.aria-label]="'nav.ariaLang' | translate">
+          {{ i18n.lang() === 'it' ? 'EN' : 'IT' }}
+        </a>
+
+        <a (click)="toggleTheme()" (keydown.enter)="toggleTheme()" class="theme-icon" role="button" tabindex="0" [attr.aria-label]="'nav.ariaTheme' | translate">
           {{ isLightMode ? '🌙' : '☀️' }}
         </a>
 
-        <div class="user-chip" (click)="openProfileModal()" role="button" tabindex="0" aria-label="Apri profilo utente">
+        <div class="user-chip" (click)="openProfileModal()" role="button" tabindex="0" [attr.aria-label]="'nav.ariaProfile' | translate">
           <ion-icon name="person-circle-outline" style="font-size: 32px; color: var(--ion-color-medium);" aria-hidden="true"></ion-icon>
         </div>
       </div>
@@ -65,17 +72,17 @@
      senza bisogno di scorrere. Fuori da <header> perche' deve stare sopra a
      tutto il contenuto della pagina, non solo sotto la barra. -->
 <div class="mobile-drawer-backdrop" *ngIf="isMobileMenuOpen" (click)="closeMobileMenu()"></div>
-<nav id="mobile-drawer-nav" class="mobile-drawer" [class.open]="isMobileMenuOpen" aria-label="Menu di navigazione">
-  <a routerLinkActive="active" [routerLinkActiveOptions]="{exact: true}" (click)="goHome()" (keydown.enter)="goHome()" role="button" tabindex="0">Mood Wheel</a>
-  <a routerLink="/archetipi" routerLinkActive="active" (click)="closeMobileMenu()">Pantheon Archetipico</a>
-  <a routerLink="/community" routerLinkActive="active" (click)="closeMobileMenu()">Community</a>
-  <a routerLink="/history" routerLinkActive="active" (click)="closeMobileMenu()">Cronologia</a>
-  <a routerLink="/map" routerLinkActive="active" (click)="closeMobileMenu()">Mappa</a>
-  <a routerLink="/grounding" routerLinkActive="active" (click)="closeMobileMenu()">Grounding</a>
-  <a routerLink="/resources" routerLinkActive="active" (click)="closeMobileMenu()">Risorse</a>
-  <a routerLink="/help" routerLinkActive="active" (click)="closeMobileMenu()">SOS Help</a>
+<nav id="mobile-drawer-nav" class="mobile-drawer" [class.open]="isMobileMenuOpen" aria-label="{{ 'nav.ariaDrawer' | translate }}">
+  <a routerLinkActive="active" [routerLinkActiveOptions]="{exact: true}" (click)="goHome()" (keydown.enter)="goHome()" role="button" tabindex="0">{{ 'nav.moodWheel' | translate }}</a>
+  <a routerLink="/archetipi" routerLinkActive="active" (click)="closeMobileMenu()">{{ 'nav.archetipi' | translate }}</a>
+  <a routerLink="/community" routerLinkActive="active" (click)="closeMobileMenu()">{{ 'nav.community' | translate }}</a>
+  <a routerLink="/history" routerLinkActive="active" (click)="closeMobileMenu()">{{ 'nav.history' | translate }}</a>
+  <a routerLink="/map" routerLinkActive="active" (click)="closeMobileMenu()">{{ 'nav.map' | translate }}</a>
+  <a routerLink="/grounding" routerLinkActive="active" (click)="closeMobileMenu()">{{ 'nav.grounding' | translate }}</a>
+  <a routerLink="/resources" routerLinkActive="active" (click)="closeMobileMenu()">{{ 'nav.resources' | translate }}</a>
+  <a routerLink="/help" routerLinkActive="active" (click)="closeMobileMenu()">{{ 'nav.help' | translate }}</a>
   <hr>
-  <a routerLink="/roadmap" routerLinkActive="active" class="roadmap-link" (click)="closeMobileMenu()">Nuovi Sviluppi</a>
+  <a routerLink="/roadmap" routerLinkActive="active" class="roadmap-link" (click)="closeMobileMenu()">{{ 'nav.roadmap' | translate }}</a>
 </nav>
 
 <ng-template #noAuth></ng-template>
@@ -91,34 +98,34 @@
         <p style="opacity: 0.7;">{{ user.email }}</p>
         
         <p *ngIf="user.isAnonymous" style="text-align: center; margin-top: 16px; font-size: 0.85rem; opacity: 0.9;">
-          <strong>Cancellazione automatica dei dati dopo 24 ore, fai il login non da anonimo se vuoi i tuoi dati mantenuti.</strong>
+          <strong>{{ 'nav.anonWarning' | translate }}</strong>
         </p>
         <p *ngIf="!user.isAnonymous" style="text-align: center; margin-top: 16px; font-size: 0.85rem; opacity: 0.9;">
-          Cancellazione automatica dei dati dopo 3 mesi di inattività
+          {{ 'nav.regWarning' | translate }}
         </p>
       </div>
       
       <a routerLink="/profile" (click)="closeProfileModal()" class="full-profile-link">
-        Profilo e Impostazioni
+        {{ 'nav.profileFull' | translate }}
       </a>
 
       <hr>
       
-      <button (click)="logout()" class="logout-btn">Esci dall'account</button>
+      <button (click)="logout()" class="logout-btn">{{ 'nav.logout' | translate }}</button>
       
       <hr>
       
-      <p class="danger-label">Gestione Dati:</p>
-      <button (click)="clearAllData()" class="danger-btn">Cancella dati locali sul dispositivo</button>
-      <button (click)="clearCloudData()" class="danger-btn">Cancella diario e consensi da CSM (cloud)</button>
+      <p class="danger-label">{{ 'nav.dataMgmt' | translate }}</p>
+      <button (click)="clearAllData()" class="danger-btn">{{ 'nav.clearLocal' | translate }}</button>
+      <button (click)="clearCloudData()" class="danger-btn">{{ 'nav.clearCloud' | translate }}</button>
       
       <p style="text-align: center; margin-top: 8px;">
         <a routerLink="/privacy" (click)="closeProfileModal()" style="font-size: 0.85rem;">
-          Informativa completa sulla privacy
+          {{ 'nav.privacyLink' | translate }}
         </a>
       </p>
       
-      <button (click)="closeProfileModal()" class="close-txt" aria-label="Chiudi profilo">Chiudi</button>
+      <button (click)="closeProfileModal()" class="close-txt" [attr.aria-label]="'nav.close' | translate">{{ 'nav.close' | translate }}</button>
     </div>
   </ng-template>
 </ion-modal>

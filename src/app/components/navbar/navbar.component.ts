@@ -8,10 +8,12 @@ import {
   IonModal
 } from '@ionic/angular/standalone';
 import { StorageService } from '../../services/storage/storage';
+import { I18nService } from '../../services/i18n/i18n.service';
+import { TranslatePipe } from '../../pipes/translate.pipe';
 import { AuthService } from '../../services/auth';
 import { FirebaseService } from '../../services/firebase/firebase';
 import { addIcons } from 'ionicons';
-import { logOutOutline, moon, sunny, personOutline, personCircleOutline } from 'ionicons/icons';
+import { logOutOutline, moon, sunny, personOutline, personCircleOutline, languageOutline } from 'ionicons/icons';
 import { take, firstValueFrom } from 'rxjs';
 
 @Component({
@@ -26,11 +28,13 @@ import { take, firstValueFrom } from 'rxjs';
     AsyncPipe,
     IonIcon, 
     IonAvatar, 
-    IonModal
+    IonModal,
+    TranslatePipe
   ]
 })
 export class NavbarComponent implements OnInit {
   public authService = inject(AuthService);
+  public i18n = inject(I18nService);
   private storageService = inject(StorageService);
   private router = inject(Router);
   private firebaseService = inject(FirebaseService);
@@ -41,7 +45,7 @@ export class NavbarComponent implements OnInit {
   isMobileMenuOpen = false;
 
   constructor() {
-    addIcons({ logOutOutline, moon, sunny, personOutline, personCircleOutline });
+    addIcons({ logOutOutline, moon, sunny, personOutline, personCircleOutline, languageOutline });
   }
 
   ngOnInit() {
@@ -67,6 +71,10 @@ export class NavbarComponent implements OnInit {
     if (!this.isMobileMenuOpen) return;
     this.isMobileMenuOpen = false;
     document.body.classList.remove('mobile-menu-open');
+  }
+
+  toggleLang() {
+    this.i18n.toggle();
   }
 
   toggleTheme() {
@@ -101,9 +109,9 @@ export class NavbarComponent implements OnInit {
   }
 
   clearAllData() {
-    if (confirm("Sei sicuro? Questa azione eliminerà tutti i salvataggi locali.")) {
+    if (confirm(this.i18n.t('nav.confirmClearLocal'))) {
       this.storageService.clearAllData();
-      alert("Dati eliminati. La pagina verrà ricaricata.");
+      alert(this.i18n.t('nav.clearedLocal'));
       window.location.reload();
     }
   }
@@ -111,23 +119,21 @@ export class NavbarComponent implements OnInit {
   async clearCloudData() {
     const user = await firstValueFrom(this.authService.user$.pipe(take(1)));
     if (!user) {
-      alert("Nessun utente autenticato. Accedi per gestire i tuoi dati.");
+      alert(this.i18n.t('nav.noAuthUser'));
       return;
     }
 
-    const confirmed = confirm(
-      "Sei sicuro? Verranno cancellati il tuo diario emozionale e i consensi associati al tuo account CSM."
-    );
+    const confirmed = confirm(this.i18n.t('nav.confirmClearCloud'));
     if (!confirmed) {
       return;
     }
 
     try {
       await this.firebaseService.deleteUserData(user.uid);
-      alert("I tuoi dati CSM (diario e consensi) sono stati cancellati dal cloud.");
+      alert(this.i18n.t('nav.clearedCloud'));
     } catch (err) {
       console.error("Errore cancellazione dati cloud", err);
-      alert("Si è verificato un errore durante la cancellazione dei dati. Riprova più tardi.");
+      alert(this.i18n.t('nav.errorClearCloud'));
     }
   }
 }
