@@ -13,12 +13,15 @@ import { doc, setDoc, deleteDoc, collection, getDocs, query, orderBy, serverTime
 import { ref, get, set, remove } from 'firebase/database';
 import { addIcons } from 'ionicons';
 import { logoWhatsapp, call, exit, logOutOutline, closeOutline, send } from 'ionicons/icons';
+import { I18nService } from '../../services/i18n/i18n.service';
+import { TranslatePipe } from '../../pipes/translate.pipe';
 
 addIcons({ logoWhatsapp, call, exit, logOutOutline, closeOutline, send });
 
 interface Comment {
   text: string;
   likes: number;
+  seedKey?: string;
 }
 
 interface Crisis {
@@ -34,15 +37,17 @@ interface Crisis {
   templateUrl: './help.page.html',
   styleUrls: ['./help.page.scss'],
   standalone: true,
-  imports: [IonicModule, CommonModule, FormsModule]
+  imports: [IonicModule, CommonModule, FormsModule, TranslatePipe]
 })
 export class HelpPage implements OnInit {
+
+  public i18n = inject(I18nService);
 
   selectedIssue: string = '';
   helpMode: 'wa' | 'self' = 'wa';
 
   trustPhone: string = '';
-  sosText: string = 'Ho bisogno di aiuto, per favore contattami.';
+  sosText: string = this.i18n.t('help.defaultSosText');
   comfortResource: string = '';
 
   // In help.page.ts — sostituisce generatedCards
@@ -58,8 +63,8 @@ export class HelpPage implements OnInit {
       title: "Pensieri Suicidi",
       action: "Non agire subito. Prometti a te stesso di aspettare 24 ore. La tua mente ti sta mentendo: il dolore può passare.",
       comments: [
-        { text: "Chiama il Telefono Amico, mi hanno salvato la vita.", likes: 45 },
-        { text: "Bagnati il viso con acqua gelata per resettare i sensi.", likes: 12 }
+        { text: "Chiama il Telefono Amico, mi hanno salvato la vita.", likes: 45, seedKey: 'tip1' },
+        { text: "Bagnati il viso con acqua gelata per resettare i sensi.", likes: 12, seedKey: 'tip2' }
       ],
       newComment: ''
     },
@@ -68,7 +73,7 @@ export class HelpPage implements OnInit {
       title: "Attacco di Panico",
       action: "Tecnica 5-4-3-2-1: identifica 5 cose che vedi, 4 che puoi toccare. Respira profondamente.",
       comments: [
-        { text: "Un attacco dura mediamente 10-20 minuti. Passerà.", likes: 21 }
+        { text: "Un attacco dura mediamente 10-20 minuti. Passerà.", likes: 21, seedKey: 'tip1' }
       ],
       newComment: ''
     }
@@ -298,6 +303,18 @@ export class HelpPage implements OnInit {
     return encodeURIComponent(text);
   }
 
+  getCrisisTitle(crisis: Crisis): string {
+    return this.i18n.t('help.crisis.' + crisis.id + '.title');
+  }
+
+  getCrisisAction(crisis: Crisis): string {
+    return this.i18n.t('help.crisis.' + crisis.id + '.action');
+  }
+
+  getCommentText(crisis: Crisis, comment: Comment): string {
+    return comment.seedKey ? this.i18n.t('help.crisis.' + crisis.id + '.' + comment.seedKey) : comment.text;
+  }
+
   async executePlan() {
     // Save to localStorage (old method)
     this.storageService.setSosPhone(this.trustPhone);
@@ -305,24 +322,14 @@ export class HelpPage implements OnInit {
     // Save to ProfileService (new method)
     this.saveHelpPreferences();
     
-    let issueText = "Te stesso";
-    
-    if (this.selectedIssue) {
-      const issueMap: any = {
-        'ansia': 'Ansia / Attacco di Panico',
-        'suicidio': 'Pensieri Oscuri / Crisi Grave',
-        'fisico': 'Dolore Fisico / Malessere',
-        'rabbia': 'Rabbia Incontrollata'
-      };
-      issueText = issueMap[this.selectedIssue] || this.selectedIssue;
-    }
+    const issueText = this.getIssueText();
 
     if (this.helpMode === 'wa' && !this.trustPhone) {
-      this.popupService.showStatus("Attenzione", "Inserisci un numero di telefono!");
+      this.popupService.showStatus(this.i18n.t('help.attentionTitle'), this.i18n.t('help.phoneRequired'));
       return;
     }
 
-    const planData = { mode: this.helpMode, phone: this.trustPhone, sosText: this.sosText, resource: this.comfortResource || "Respira profondamente. Tutto passerà.", issueText };
+    const planData = { mode: this.helpMode, phone: this.trustPhone, sosText: this.sosText, resource: this.comfortResource || this.i18n.t('help.defaultResource'), issueText };
     this.generatedPlan.set(planData);
     
     // Save the generated plan to profile
@@ -434,15 +441,9 @@ export class HelpPage implements OnInit {
 
   private getIssueText(): string {
     if (this.selectedIssue) {
-      const issueMap: any = {
-        'ansia': 'Ansia / Attacco di Panico',
-        'suicidio': 'Pensieri Oscuri / Crisi Grave',
-        'fisico': 'Dolore Fisico / Malessere',
-        'rabbia': 'Rabbia Incontrollata'
-      };
-      return issueMap[this.selectedIssue] || this.selectedIssue;
+      return this.i18n.t('help.issue.' + this.selectedIssue);
     }
-    return "Te stesso";
+    return this.i18n.t('help.issue.self');
   }
 
   private async saveHelpPreferences() {
@@ -451,7 +452,7 @@ export class HelpPage implements OnInit {
       const currentPreferences = profile?.preferences || {
         theme: 'dark',
         notifications: true,
-        language: 'it'
+        language: this.i18n.lang()
       };
 
       const updatedPreferences = {
@@ -502,13 +503,13 @@ export class HelpPage implements OnInit {
     const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
     
     if (diffDays === 1) {
-      return 'Oggi';
+      return this.i18n.t('help.dateToday');
     } else if (diffDays === 2) {
-      return 'Ieri';
+      return this.i18n.t('help.dateYesterday');
     } else if (diffDays <= 7) {
-      return `${diffDays - 1} giorni fa`;
+      return this.i18n.t('help.daysAgo', { days: diffDays - 1 });
     } else {
-      return date.toLocaleDateString('it-IT');
+      return date.toLocaleDateString(this.i18n.lang() === 'en' ? 'en-US' : 'it-IT');
     }
   }
 
@@ -533,22 +534,22 @@ export class HelpPage implements OnInit {
       // Generate the plan again
       await this.executePlan();
       
-      this.popupService.showStatus("Piano Riutilizzato", "Il piano è stato caricato e marcato come usato");
+      this.popupService.showStatus(this.i18n.t('help.planReused.title'), this.i18n.t('help.planReused.msg'));
     } catch (error) {
       console.error('Error reusing plan:', error);
-      this.popupService.showStatus("Errore", "Non è stato possibile riutilizzare il piano");
+      this.popupService.showStatus(this.i18n.t('help.planReuseError.title'), this.i18n.t('help.planReuseError.msg'));
     }
   }
 
   async deletePlan(planId: string) {
-    if (!confirm('Sei sicuro di voler eliminare questo piano?')) return;
+    if (!confirm(this.i18n.t('help.deleteConfirm'))) return;
 
     try {
       await this.profileService.deleteHelpPlan(planId);
-      this.popupService.showStatus("Piano Eliminato", "Il piano è stato rimosso con successo");
+      this.popupService.showStatus(this.i18n.t('help.planDeleted.title'), this.i18n.t('help.planDeleted.msg'));
     } catch (error) {
       console.error('Error deleting plan:', error);
-      this.popupService.showStatus("Errore", "Non è stato possibile eliminare il piano");
+      this.popupService.showStatus(this.i18n.t('help.planDeleteError.title'), this.i18n.t('help.planDeleteError.msg'));
     }
   }
 

@@ -2,59 +2,59 @@
   <div class="container">
     
     <div class="emergency-banner">
-      <h1>Non sei solo.</h1>
-      <p>Se sei in pericolo immediato, chiama subito uno di questi numeri:</p>
+      <h1>{{ 'help.title' | translate }}</h1>
+      <p>{{ 'help.subtitle' | translate }}</p>
       <div class="num-list">
-        <div class="num-item" (click)="callNumber('112')" (keydown.enter)="callNumber('112')" role="button" tabindex="0" aria-label="Chiama emergenza 112">📞 112</div>
-        <div class="num-item" (click)="callNumber('196')" (keydown.enter)="callNumber('196')" role="button" tabindex="0" aria-label="Chiama emergenza 196">📞 196</div>
-        <div class="num-item" (click)="callNumber('0223272327')" (keydown.enter)="callNumber('0223272327')" role="button" tabindex="0" aria-label="Chiama emergenza 0 2 2 3 2 7 2 3 2 7">📞 02 2327 2327</div>
+        <div class="num-item" (click)="callNumber('112')" (keydown.enter)="callNumber('112')" role="button" tabindex="0" [attr.aria-label]="'help.callAria112' | translate">📞 112</div>
+        <div class="num-item" (click)="callNumber('196')" (keydown.enter)="callNumber('196')" role="button" tabindex="0" [attr.aria-label]="'help.callAria196' | translate">📞 196</div>
+        <div class="num-item" (click)="callNumber('0223272327')" (keydown.enter)="callNumber('0223272327')" role="button" tabindex="0" [attr.aria-label]="'help.callAriaSos' | translate">📞 02 2327 2327</div>
       </div>
     </div>
 
     <div class="builder-box">
-      <h2>🛠️ Creatore di Aiuto Personalizzato</h2>
+      <h2>{{ 'help.builderTitle' | translate }}</h2>
       
-      <label for="issue-type">Cosa stai attraversando?</label>
+      <label for="issue-type">{{ 'help.issueLabel' | translate }}</label>
       <select id="issue-type" [(ngModel)]="selectedIssue" (ngModelChange)="onSelectedIssueChange()">
-        <option value="" disabled selected>Seleziona la tua condizione...</option>
-        <option value="ansia">Ansia / Attacco di Panico</option>
-        <option value="suicidio">Pensieri Oscuri / Crisi Grave</option>
-        <option value="fisico">Dolore Fisico / Malessere</option>
-        <option value="rabbia">Rabbia Incontrollata</option>
+        <option value="" disabled selected>{{ 'help.issuePlaceholder' | translate }}</option>
+        <option value="ansia">{{ 'help.issue.ansia' | translate }}</option>
+        <option value="suicidio">{{ 'help.issue.suicidio' | translate }}</option>
+        <option value="fisico">{{ 'help.issue.fisico' | translate }}</option>
+        <option value="rabbia">{{ 'help.issue.rabbia' | translate }}</option>
       </select>
 
-      <label id="help-mode-label">Metodo di supporto:</label>
+      <label id="help-mode-label">{{ 'help.modeLabel' | translate }}</label>
       <div class="mode-selector" role="radiogroup" aria-labelledby="help-mode-label">
         <label>
           <input type="radio" name="help-mode" value="wa" [(ngModel)]="helpMode" (change)="onHelpModeChange()">
           <div class="mode-btn">
             <span>📱</span>
-            <strong>Contatto Diretto</strong>
+            <strong>{{ 'help.modeDirect' | translate }}</strong>
           </div>
         </label>
         <label>
           <input type="radio" name="help-mode" value="self" [(ngModel)]="helpMode" (change)="onHelpModeChange()">
           <div class="mode-btn">
             <span>📖</span>
-            <strong>Auto-Aiuto</strong>
+            <strong>{{ 'help.modeSelf' | translate }}</strong>
           </div>
         </label>
       </div>
 
       <div id="wa-section" *ngIf="helpMode === 'wa'">
-        <label for="trust-phone">Contatto di Fiducia</label>
-        <input type="text" id="trust-phone" [(ngModel)]="trustPhone" (ngModelChange)="onTrustPhoneChange()" placeholder="Numero (es. 393331234567)">
-        <label for="sos-text">Messaggio preimpostato</label>
+        <label for="trust-phone">{{ 'help.trustPhoneLabel' | translate }}</label>
+        <input type="text" id="trust-phone" [(ngModel)]="trustPhone" (ngModelChange)="onTrustPhoneChange()" [placeholder]="'help.trustPhonePlaceholder' | translate">
+        <label for="sos-text">{{ 'help.sosTextLabel' | translate }}</label>
         <textarea id="sos-text" [(ngModel)]="sosText" (ngModelChange)="onSosTextChange()" rows="2"></textarea>
       </div>
 
       <div id="self-section" *ngIf="helpMode === 'self'">
-        <label for="comfort-resource">La tua ancora di salvezza (testo o link)</label>
-        <textarea id="comfort-resource" [(ngModel)]="comfortResource" (ngModelChange)="onComfortResourceChange()" rows="4" placeholder="Scrivi qualcosa di importante..."></textarea>
+        <label for="comfort-resource">{{ 'help.comfortLabel' | translate }}</label>
+        <textarea id="comfort-resource" [(ngModel)]="comfortResource" (ngModelChange)="onComfortResourceChange()" rows="4" [placeholder]="'help.comfortPlaceholder' | translate"></textarea>
       </div>
 
       <button class="btn-action main-action-btn" (click)="executePlan()">
-        {{ helpMode === 'wa' ? 'FATTI AIUTARE' : 'ATTIVA AUTO-AIUTO' }}
+        {{ helpMode === 'wa' ? ('help.actionGetHelp' | translate) : ('help.actionSelfHelp' | translate) }}
       </button>
     </div>
 
@@ -62,7 +62,7 @@
       
       <!-- Generated Cards via Execute -->
       <div class="crisis-card card-whatsapp" *ngIf="generatedPlan() && generatedPlan()!.mode === 'wa'">
-        <h2> Contatto di Fiducia Pronto</h2>
+        <h2> {{ 'help.waCardTitle' | translate }}</h2>
         <div class="message-preview">"{{ generatedPlan()!.sosText }}"</div>
         
         <div class="contact-buttons">
@@ -84,12 +84,12 @@
             [href]="'tel:' + generatedPlan()!.phone"
             class="phone-btn">
             <ion-icon name="call" slot="start"></ion-icon>
-            Telefono
+            {{ 'help.phoneButton' | translate }}
           </ion-button>
         </div>
       </div>
       <div class="crisis-card card-self" *ngIf="generatedPlan() && generatedPlan()!.mode === 'self'">
-        <h2>✨ Kit di Auto-Aiuto</h2>
+        <h2>{{ 'help.selfCardTitle' | translate }}</h2>
         <p>{{ generatedPlan()!.issueText }}</p>
         <div class="resource-box">{{ generatedPlan()!.resource }}</div>
       </div>
@@ -97,20 +97,20 @@
       <!-- Saved Help Plans Section -->
       <div class="saved-plans-section" *ngIf="getSavedPlans().length > 0">
         <div class="crisis-card">
-          <h2>📋 I Tuoi Piani di Aiuto Salvati</h2>
+          <h2>{{ 'help.savedPlansTitle' | translate }}</h2>
           <div class="plans-list">
             <div class="plan-item" *ngFor="let plan of getSavedPlans()" [class.used]="plan.isUsed">
               <div class="plan-header">
                 <span class="plan-date">{{ formatDate(plan.createdAt) }}</span>
                 <span class="plan-mode">
-                  {{ plan.mode === 'wa' ? '📱 Contatto Diretto' : '📖 Auto-Aiuto' }}
+                  {{ plan.mode === 'wa' ? ('help.modeDirectIcon' | translate) : ('help.modeSelfIcon' | translate) }}
                 </span>
               </div>
               <div class="plan-content">
-                <p><strong>Condizione:</strong> {{ plan.issueText }}</p>
+                <p><strong>{{ 'help.conditionLabel' | translate }}</strong> {{ plan.issueText }}</p>
                 <div *ngIf="plan.mode === 'wa' && plan.phone">
-                  <p><strong>Contatto:</strong> {{ plan.phone }}</p>
-                  <p><strong>Messaggio:</strong> "{{ plan.sosText }}"</p>
+                  <p><strong>{{ 'help.contactLabel' | translate }}</strong> {{ plan.phone }}</p>
+                  <p><strong>{{ 'help.messageLabel' | translate }}</strong> "{{ plan.sosText }}"</p>
                   <div class="action-buttons">
                     <button class="btn-whatsapp" (click)="openWhatsApp(plan.phone || '', plan.sosText || '')">
                       <ion-icon name="logo-whatsapp"></ion-icon>
@@ -121,16 +121,16 @@
                   </div>
                 </div>
                 <div *ngIf="plan.mode === 'self' && plan.resource">
-                  <p><strong>Risorsa:</strong> {{ plan.resource }}</p>
+                  <p><strong>{{ 'help.resourceLabel' | translate }}</strong> {{ plan.resource }}</p>
                 </div>
               </div>
               <div class="plan-actions" style="justify-content: center;">
                 <button class="btn-reuse" (click)="reusePlan(plan)" [disabled]="plan.isUsed">
-                  {{ plan.isUsed ? 'Già Usato' : 'Riutilizza' }}
+                  {{ plan.isUsed ? ('help.alreadyUsed' | translate) : ('help.reuse' | translate) }}
                 </button>
               </div>
               <div class="delete-container">
-                <button class="delete-sphere" (click)="deletePlan(plan.id)" aria-label="Elimina piano">
+                <button class="delete-sphere" (click)="deletePlan(plan.id)" [attr.aria-label]="'help.deleteAria' | translate">
                   <span class="delete-x">✕</span>
                 </button>
               </div>
@@ -142,22 +142,22 @@
       <!-- Anonymous Components Section -->
       <div class="saved-plans-section" *ngIf="addedComponents().length > 0">
         <div class="crisis-card">
-          <h2>📋 Componenti Aggiunti (Sessione Anonima)</h2>
+          <h2>{{ 'help.anonComponentsTitle' | translate }}</h2>
           <div class="plans-list">
             <div class="plan-item" *ngFor="let component of addedComponents()">
               <div class="plan-header">
                 <span class="plan-date">{{ formatDate(component.timestamp) }}</span>
                 <span class="plan-mode">
-                  {{ component.type === 'help-plan' ? '🛠️ Piano Aiuto' : '📝 Componente' }}
+                  {{ component.type === 'help-plan' ? ('help.componentTypeHelpPlan' | translate) : ('help.componentTypeGeneric' | translate) }}
                 </span>
               </div>
               <div class="plan-content">
                 <div *ngIf="component.type === 'help-plan' && component.data">
-                  <p><strong>Modalità:</strong> {{ component.data.mode === 'wa' ? 'Contatto Diretto' : 'Auto-Aiuto' }}</p>
-                  <p><strong>Condizione:</strong> {{ component.data.issueText }}</p>
+                  <p><strong>{{ 'help.modeLabelPlain' | translate }}</strong> {{ component.data.mode === 'wa' ? ('help.modeDirect' | translate) : ('help.modeSelf' | translate) }}</p>
+                  <p><strong>{{ 'help.conditionLabel' | translate }}</strong> {{ component.data.issueText }}</p>
                   <div *ngIf="component.data.mode === 'wa' && component.data.phone">
-                    <p><strong>Contatto:</strong> {{ component.data.phone }}</p>
-                    <p><strong>Messaggio:</strong> "{{ component.data.sosText }}"</p>
+                    <p><strong>{{ 'help.contactLabel' | translate }}</strong> {{ component.data.phone }}</p>
+                    <p><strong>{{ 'help.messageLabel' | translate }}</strong> "{{ component.data.sosText }}"</p>
                     <div class="action-buttons">
                       <button class="btn-whatsapp" (click)="openWhatsApp(component.data.phone, component.data.sosText)">
                         <ion-icon name="logo-whatsapp"></ion-icon>
@@ -168,15 +168,15 @@
                     </div>
                   </div>
                   <div *ngIf="component.data.mode === 'self' && component.data.resource">
-                    <p><strong>Risorsa:</strong> {{ component.data.resource }}</p>
+                    <p><strong>{{ 'help.resourceLabel' | translate }}</strong> {{ component.data.resource }}</p>
                   </div>
                 </div>
                 <div *ngIf="component.type !== 'help-plan'">
-                  <p>{{ component.data || 'Componente personalizzato' }}</p>
+                  <p>{{ component.data || ('help.customComponentFallback' | translate) }}</p>
                 </div>
               </div>
               <div class="action-buttons">
-                <button class="delete-sphere" style="color:red" (click)="deleteComponent(component.id)" aria-label="Elimina componente">
+                <button class="delete-sphere" style="color:red" (click)="deleteComponent(component.id)" [attr.aria-label]="'help.deleteComponentAria' | translate">
                   <span class="delete-x">✕</span>
                 </button>
               </div>
@@ -188,22 +188,22 @@
       <!-- Static Crisis Info -->
       <div class="crisis-section" *ngFor="let crisis of crisisData">
         <div class="crisis-card">
-          <h2>{{crisis.title}}</h2>
-          <p><strong>Cosa fare ora:</strong> {{crisis.action}}</p>
+          <h2>{{ getCrisisTitle(crisis) }}</h2>
+          <p><strong>{{ 'help.crisisActionLabel' | translate }}</strong> {{ getCrisisAction(crisis) }}</p>
           <div class="community-suggestions">
             <div *ngFor="let comment of crisis.comments">
               <div class="suggestion-item">
-                <span>{{comment.text}}</span>
+                <span>{{ getCommentText(crisis, comment) }}</span>
                 <div class="vote-section">
-                  <span [attr.aria-label]="comment.likes + ' voti'">{{comment.likes}}</span>
-                  <button class="vote-btn" (click)="addLike(crisis, comment)" aria-label="Aggiungi voto al commento">▲</button>
+                  <span [attr.aria-label]="i18n.t('help.likesAria', {count: comment.likes})">{{comment.likes}}</span>
+                  <button class="vote-btn" (click)="addLike(crisis, comment)" [attr.aria-label]="'help.addVoteAria' | translate">▲</button>
                 </div>
               </div>
             </div>
 
             <div class="add-comment">
-              <input type="text" [(ngModel)]="crisis.newComment" placeholder="Aggiungi un consiglio..." aria-label="Inserisci un consiglio per gestire la crisi">
-              <button class="btn-send" (click)="postComment(crisis)" title="Invia consiglio">
+              <input type="text" [(ngModel)]="crisis.newComment" [placeholder]="'help.commentPlaceholder' | translate" [attr.aria-label]="'help.commentAria' | translate">
+              <button class="btn-send" (click)="postComment(crisis)" [title]="'help.sendTip' | translate">
                 <ion-icon name="send" aria-hidden="true"></ion-icon>
               </button>
             </div>
