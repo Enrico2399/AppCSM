@@ -7,6 +7,8 @@ import { AlertController, IonHeader, IonToolbar, IonTitle, IonButtons, IonButton
 import { addIcons } from 'ionicons';
 import { add } from 'ionicons/icons';
 import * as L from 'leaflet';
+import { I18nService } from '../../services/i18n/i18n.service';
+import { TranslatePipe } from '../../pipes/translate.pipe';
 
 interface MapReport {
   id: string;
@@ -24,13 +26,15 @@ interface MapReport {
   standalone: true,
   imports: [CommonModule,
     IonHeader, IonToolbar, IonTitle, IonButtons, 
-    IonButton, IonContent, IonFab, IonFabButton, IonIcon
+    IonButton, IonContent, IonFab, IonFabButton, IonIcon,
+    TranslatePipe
   ]
 })
 export class MapPage implements OnInit, OnDestroy {
   map!: L.Map;
   markerGroup = L.layerGroup();
   
+  public i18n = inject(I18nService);
   private alertCtrl = inject(AlertController);
   public auth = inject(AuthService);
   private firebaseService = inject(FirebaseService);
@@ -172,21 +176,21 @@ export class MapPage implements OnInit, OnDestroy {
   // sostituire aggiungiSegnalazione():
   async aggiungiSegnalazione() {
     const alert = await this.alertCtrl.create({
-      header: 'Nuova Segnalazione',
+      header: this.i18n.t('map.newReportTitle'),
       inputs: [
-        { name: 'title', type: 'text', placeholder: 'Titolo' },
-        { name: 'description', type: 'text', placeholder: 'Descrizione' },
-        { name: 'category', type: 'radio', label: '🆘 Urgente', value: 'urgent' },
-        { name: 'category', type: 'radio', label: 'ℹ️ Info', value: 'info', checked: true },
-        { name: 'category', type: 'radio', label: '✅ Successo', value: 'success' }
+        { name: 'title', type: 'text', placeholder: this.i18n.t('map.titlePlaceholder') },
+        { name: 'description', type: 'text', placeholder: this.i18n.t('map.descriptionPlaceholder') },
+        { name: 'category', type: 'radio', label: this.i18n.t('map.filterUrgent'), value: 'urgent' },
+        { name: 'category', type: 'radio', label: this.i18n.t('map.filterInfo'), value: 'info', checked: true },
+        { name: 'category', type: 'radio', label: this.i18n.t('map.categorySuccess'), value: 'success' }
       ],
       buttons: [
-        { text: 'Annulla', role: 'cancel' },
-        { text: 'Aggiungi', handler: (data) => {
+        { text: this.i18n.t('map.cancel'), role: 'cancel' },
+        { text: this.i18n.t('map.add'), handler: (data) => {
             const hint = document.createElement('div');
             hint.id = 'map-hint';
             hint.style.cssText = 'position:fixed;bottom:80px;left:50%;transform:translateX(-50%);background:rgba(0,0,0,0.75);color:white;padding:10px 20px;border-radius:20px;z-index:9999;font-size:0.9rem;';
-            hint.textContent = '📍 Tocca la mappa per posizionare la segnalazione';
+            hint.textContent = this.i18n.t('map.placeReportHint');
             document.body.appendChild(hint);
 
             this.map.once('click', (e: L.LeafletMouseEvent) => {
@@ -194,7 +198,7 @@ export class MapPage implements OnInit, OnDestroy {
               const newReport = {
                 lat: e.latlng.lat,
                 lng: e.latlng.lng,
-                title: data.title || 'Nuova segnalazione',
+                title: data.title || this.i18n.t('map.defaultReportTitle'),
                 category: data.category || 'info',
                 description: data.description || ''
               };

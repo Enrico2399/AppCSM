@@ -1,24 +1,24 @@
 <ion-header>
   <ion-toolbar color="primary">
-    <ion-title>CSM Treviso - Monitoraggio</ion-title>
+    <ion-title>{{ 'map.title' | translate }}</ion-title>
     <ion-buttons slot="end">
-      <ion-button (click)="logout()">Logout</ion-button>
+      <ion-button (click)="logout()">{{ 'map.logout' | translate }}</ion-button>
     </ion-buttons>
   </ion-toolbar>
 </ion-header>
 
 <ion-content>
   <div class="filter-bar">
-    <button [class.active]="isCategorySelected('all')" (click)="toggleCategory('all')">Tutti</button>
-    <button [class.active]="isCategorySelected('urgent')" (click)="toggleCategory('urgent')">🆘 Urgente</button>
-    <button [class.active]="isCategorySelected('info')" (click)="toggleCategory('info')">ℹ️ Info</button>
-    <button [class.active]="isCategorySelected('success')" (click)="toggleCategory('success')">✅ Risolto</button>
+    <button [class.active]="isCategorySelected('all')" (click)="toggleCategory('all')">{{ 'map.filterAll' | translate }}</button>
+    <button [class.active]="isCategorySelected('urgent')" (click)="toggleCategory('urgent')">{{ 'map.filterUrgent' | translate }}</button>
+    <button [class.active]="isCategorySelected('info')" (click)="toggleCategory('info')">{{ 'map.filterInfo' | translate }}</button>
+    <button [class.active]="isCategorySelected('success')" (click)="toggleCategory('success')">{{ 'map.filterResolved' | translate }}</button>
   </div>
 
   <div id="map" style="height: calc(100% - 60px); width: 100%;"></div>
   
   <ion-fab vertical="bottom" horizontal="end" slot="fixed">
-    <ion-fab-button (click)="aggiungiSegnalazione()" aria-label="Aggiungi segnalazione">
+    <ion-fab-button (click)="aggiungiSegnalazione()" [attr.aria-label]="'map.addReportAria' | translate">
       <ion-icon name="add" aria-hidden="true"></ion-icon>
     </ion-fab-button>
   </ion-fab>
