@@ -1,25 +1,24 @@
 <ion-content [fullscreen]="true">
   <div class="container">
     <div class="header-section">
-      <div class="wip-badge">Work in Progress</div>
-      <h1>Vota cosa vorresti subito</h1>
-      <p>La tua opinione guida lo sviluppo della tecnologia empatica.</p>
+      <div class="wip-badge">{{ 'roadmap.wipBadge' | translate }}</div>
+      <h1>{{ 'roadmap.heading' | translate }}</h1>
+      <p>{{ 'roadmap.subtitle' | translate }}</p>
     </div>
 
-    <div class="intro-box">
-      Presentare una demo che tocca la salute mentale richiede un equilibrio delicato tra <strong>tecnologia</strong> ed <strong>empatia</strong>. Per rendere il progetto un vero supporto, ecco le evoluzioni in programma:
+    <div class="intro-box" [innerHTML]="'roadmap.introHtml' | translate">
     </div>
 
 
     <div id="roadmap-items">
-      <section class="feature-section" *ngFor="let feature of features">
+      <section class="feature-section" *ngFor="let feature of features()">
         <h2 class="feature-title">{{feature.title}}</h2>
         <div class="status-badge" *ngIf="feature.status" [ngClass]="feature.status">
-          {{ feature.status === 'done' ? '✅ Già disponibile' : '🔶 Parzialmente disponibile' }}
+          {{ feature.status === 'done' ? ('roadmap.statusDone' | translate) : ('roadmap.statusPartial' | translate) }}
         </div>
         <div class="feature-content">
           <div class="sub-area">
-            <strong>Cosa aggiungere:</strong>
+            <strong>{{ 'roadmap.whatToAdd' | translate }}</strong>
             {{feature.descAdd}}
           </div>
           <div class="sub-area">
@@ -27,29 +26,29 @@
             {{feature.descWhy}}
           </div>
           <div class="sub-area status-note" *ngIf="feature.statusNote">
-            <strong>Stato attuale:</strong>
+            <strong>{{ 'roadmap.currentStatus' | translate }}</strong>
             {{feature.statusNote}}
           </div>
         </div>
         <div class="vote-footer">
-          <a *ngIf="feature.route" class="try-link" [routerLink]="feature.route">Provalo →</a>
-          <span class="vote-count">{{votes()[feature.id] || 0}} voti</span>
+          <a *ngIf="feature.route" class="try-link" [routerLink]="feature.route">{{ 'roadmap.tryIt' | translate }}</a>
+          <span class="vote-count">{{votes()[feature.id] || 0}} {{ 'roadmap.votesLabel' | translate }}</span>
           <button 
             class="like-btn" 
             [ngClass]="{'voted': hasVoted(feature.id)}" 
             (click)="vote(feature.id)"
             [attr.aria-pressed]="hasVoted(feature.id)"
-            [attr.aria-label]="hasVoted(feature.id) ? 'Voto rimosso da ' + feature.title : 'Vota per ' + feature.title">
-            {{ hasVoted(feature.id) ? '❤️ Votato' : '👍 Mi serve' }}
+            [attr.aria-label]="hasVoted(feature.id) ? i18n.t('roadmap.ariaRemoveVote', {title: feature.title}) : i18n.t('roadmap.ariaVote', {title: feature.title})">
+            {{ hasVoted(feature.id) ? ('roadmap.voted' | translate) : ('roadmap.needIt' | translate) }}
           </button>
         </div>
       </section>
     </div>
 
     <div class="pitch-container">
-      <h2 style="margin-top: 0; text-align: center;">Obiettivi</h2>
+      <h2 style="margin-top: 0; text-align: center;">{{ 'roadmap.goals' | translate }}</h2>
       
-      <div class="pitch-item" *ngFor="let pitch of pitchItems">
+      <div class="pitch-item" *ngFor="let pitch of pitchItems()">
         <h4>{{pitch.title}}</h4>
         <p>"{{pitch.desc}}"</p>
       </div>
