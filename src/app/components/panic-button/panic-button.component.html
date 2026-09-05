@@ -10,7 +10,7 @@
   [class.pressed]="isPressed"
   role="button"
   tabindex="0"
-  aria-label="Pulsante di sicurezza - Tieni premuto per nascondere contenuti"
+  [attr.aria-label]="'panicBtn.ariaLabel' | translate"
   [attr.aria-pressed]="isPressed">
   
   <div class="panic-button">
@@ -21,7 +21,7 @@
     </svg>
     
     <div class="panic-text" *ngIf="isPressed">
-      <span class="hold-text">Tieni premuto</span>
+      <span class="hold-text">{{ 'panicBtn.holdText' | translate }}</span>
       <div class="progress-ring">
         <svg width="40" height="40">
           <circle 
@@ -50,7 +50,7 @@
   
   <!-- Tooltip -->
   <div class="panic-tooltip" *ngIf="!isPressed">
-    <span>Premi per nascondere</span>
+    <span>{{ 'panicBtn.tooltip' | translate }}</span>
     <span class="shortcut-hint">ESC</span>
   </div>
 </div>
@@ -59,8 +59,8 @@
 <div class="instructions-overlay" *ngIf="false">
   <div class="instructions-content">
     <ion-icon name="shield-checkmark-outline" class="instructions-icon"></ion-icon>
-    <h3>Funzione di Privacy</h3>
-    <p>Premi il pulsante 🔒 o usa ESC per nascondere rapidamente i contenuti</p>
-    <ion-button fill="clear" (click)="hideInstructions()">Ho capito</ion-button>
+    <h3>{{ 'panicBtn.instructionsTitle' | translate }}</h3>
+    <p>{{ 'panicBtn.instructionsBody' | translate }}</p>
+    <ion-button fill="clear" (click)="hideInstructions()">{{ 'panicBtn.gotIt' | translate }}</ion-button>
   </div>
 </div>

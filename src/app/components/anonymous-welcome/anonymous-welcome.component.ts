@@ -1,8 +1,10 @@
-import { Component, OnInit, OnDestroy, signal, computed } from '@angular/core';
+import { Component, OnInit, OnDestroy, signal, computed, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { IonicModule, ModalController } from '@ionic/angular';
 import { Router } from '@angular/router';
 import { AnonymousSessionService } from '../../services/anonymous-session/anonymous-session.service';
+import { I18nService } from '../../services/i18n/i18n.service';
+import { TranslatePipe } from '../../pipes/translate.pipe';
 import { addIcons } from 'ionicons';
 import { personAddOutline, shieldCheckmarkOutline, timeOutline } from 'ionicons/icons';
 
@@ -11,7 +13,7 @@ import { personAddOutline, shieldCheckmarkOutline, timeOutline } from 'ionicons/
   templateUrl: './anonymous-welcome.component.html',
   styleUrls: ['./anonymous-welcome.component.scss'],
   standalone: true,
-  imports: [CommonModule, IonicModule]
+  imports: [CommonModule, IonicModule, TranslatePipe]
 })
 export class AnonymousWelcomeComponent implements OnInit, OnDestroy {
   // Prima questo componente teneva un proprio stato isOpen mai letto dal
@@ -22,6 +24,8 @@ export class AnonymousWelcomeComponent implements OnInit, OnDestroy {
   // chiude davvero con modalCtrl.dismiss() invece di un signal senza effetto.
   session = signal<any>(null);
 
+  public i18n = inject(I18nService);
+
   timeRemaining = computed(() => {
     const sess = this.session();
     if (!sess) return '';
@@ -29,7 +33,7 @@ export class AnonymousWelcomeComponent implements OnInit, OnDestroy {
     const now = new Date();
     const expiresAt = new Date(sess.expiresAt);
     
-    if (now >= expiresAt) return 'Sessione scaduta';
+    if (now >= expiresAt) return this.i18n.t('anonWelcome.expired');
     
     const diff = expiresAt.getTime() - now.getTime();
     const hours = Math.floor(diff / (1000 * 60 * 60));

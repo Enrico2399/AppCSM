@@ -1,6 +1,6 @@
 <ion-header>
   <ion-toolbar>
-    <ion-title>Sessione Anonima</ion-title>
+    <ion-title>{{ 'anonWelcome.pageTitle' | translate }}</ion-title>
   </ion-toolbar>
 </ion-header>
 
@@ -10,27 +10,27 @@
       <div class="icon-container">
         <ion-icon name="shield-checkmark-outline" class="welcome-icon"></ion-icon>
       </div>
-      <h1>Benvenuto nella Sessione Anonima</h1>
-      <p class="subtitle">I tuoi dati sono al sicuri e temporanei</p>
+      <h1>{{ 'anonWelcome.welcome' | translate }}</h1>
+      <p class="subtitle">{{ 'anonWelcome.subtitle' | translate }}</p>
     </div>
 
     <div class="session-info">
       <div class="info-card">
-        <h3>📅 Durata Sessione</h3>
+        <h3>📅 {{ 'anonWelcome.duration' | translate }}</h3>
         <p class="time-remaining">{{ timeRemaining() }}</p>
-        <p class="description">La tua sessione scadrà tra 24 ore dalla creazione</p>
+        <p class="description">{{ 'anonWelcome.expiresIn24h' | translate }}</p>
       </div>
 
       <div class="info-card">
-        <h3>💾 Salvataggio Dati</h3>
-        <p class="feature">✅ Piani di aiuto salvati</p>
-        <p class="feature">✅ Preferenze memorizzate</p>
-        <p class="feature">✅ Cronologia temporanea</p>
+        <h3>💾 {{ 'anonWelcome.dataSaving' | translate }}</h3>
+        <p class="feature">✅ {{ 'anonWelcome.plansSaved' | translate }}</p>
+        <p class="feature">✅ {{ 'anonWelcome.prefsSaved' | translate }}</p>
+        <p class="feature">✅ {{ 'anonWelcome.tempHistory' | translate }}</p>
       </div>
 
       <div class="info-card warning">
-        <h3>⚠️ Importante</h3>
-        <p>Tutti i dati verranno <strong>eliminati automaticamente</strong> alla scadenza della sessione</p>
+        <h3>⚠️ {{ 'anonWelcome.important' | translate }}</h3>
+        <p [innerHTML]="'anonWelcome.autoDeleteWarning' | translate"></p>
       </div>
     </div>
 
@@ -42,7 +42,7 @@
         (click)="extendSession()"
         class="extend-btn">
         <ion-icon name="time-outline" slot="start"></ion-icon>
-        Estendi Sessione (+24h)
+        {{ 'anonWelcome.extendSession' | translate }}
       </ion-button>
 
       <ion-button 
@@ -52,7 +52,7 @@
         (click)="createAccount()"
         class="create-account-btn">
         <ion-icon name="person-add-outline" slot="start"></ion-icon>
-        Crea Account Permanente
+        {{ 'anonWelcome.createPermanentAccount' | translate }}
       </ion-button>
     </div>
 
@@ -62,7 +62,7 @@
         color="medium"
         (click)="closeWelcome()"
         class="close-btn">
-        Ho capito, continua
+        {{ 'anonWelcome.gotItContinue' | translate }}
       </ion-button>
     </div>
   </div>

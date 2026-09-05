@@ -1,4 +1,5 @@
-import { Injectable, signal } from '@angular/core';
+import { Injectable, signal, inject } from '@angular/core';
+import { I18nService } from '../i18n/i18n.service';
 import { FirebaseService } from '../firebase/firebase';
 import { StorageService } from '../storage/storage';
 import { User } from '@firebase/auth';
@@ -173,6 +174,8 @@ export class ProfileService {
   }
 
   // Get time remaining for anonymous user
+  private i18n = inject(I18nService);
+
   getTimeRemaining(): string {
     const profile = this.currentUserProfile();
     if (!profile?.isAnonymous || !profile.expiresAt) return '';
@@ -181,15 +184,15 @@ export class ProfileService {
     const expiry = new Date(profile.expiresAt);
     const diff = expiry.getTime() - now.getTime();
     
-    if (diff <= 0) return 'Scaduto';
+    if (diff <= 0) return this.i18n.t('time.expired');
     
     const hours = Math.floor(diff / (1000 * 60 * 60));
     const minutes = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
     
     if (hours > 0) {
-      return `${hours} ore ${minutes} minuti`;
+      return this.i18n.t('time.hoursMinutes', { hours, minutes });
     } else {
-      return `${minutes} minuti`;
+      return this.i18n.t('time.minutes', { minutes });
     }
   }
 

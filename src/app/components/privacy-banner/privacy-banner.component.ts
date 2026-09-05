@@ -4,6 +4,7 @@ import { IonicModule } from '@ionic/angular';
 import { RouterLink } from '@angular/router';
 import { Subscription } from 'rxjs';
 import { AuthService } from '../../services/auth';
+import { TranslatePipe } from '../../pipes/translate.pipe';
 
 const STORAGE_KEY = 'csm-privacy-banner-dismissed-v1';
 
@@ -18,7 +19,7 @@ const STORAGE_KEY = 'csm-privacy-banner-dismissed-v1';
   templateUrl: './privacy-banner.component.html',
   styleUrls: ['./privacy-banner.component.scss'],
   standalone: true,
-  imports: [CommonModule, IonicModule, RouterLink]
+  imports: [CommonModule, IonicModule, RouterLink, TranslatePipe]
 })
 export class PrivacyBannerComponent implements OnInit, OnDestroy {
   visible = signal(false);

@@ -1,5 +1,6 @@
 import { Component, OnDestroy, OnInit, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { TranslatePipe } from '../../pipes/translate.pipe';
 import { AuthService } from '../../services/auth';
 import { take } from 'rxjs';
 
@@ -28,7 +29,7 @@ interface BeforeInstallPromptEvent extends Event {
 @Component({
   selector: 'app-install-prompt',
   standalone: true,
-  imports: [CommonModule],
+  imports: [CommonModule, TranslatePipe],
   templateUrl: './install-prompt.component.html',
   styleUrls: ['./install-prompt.component.scss']
 })

@@ -1,3 +1,4 @@
+import { TranslatePipe } from '../../pipes/translate.pipe';
 import { Component, OnInit, OnDestroy } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { IonicModule } from '@ionic/angular';
@@ -10,7 +11,7 @@ import { shieldCheckmarkOutline } from 'ionicons/icons';
   templateUrl: './panic-button.component.html',
   styleUrls: ['./panic-button.component.scss'],
   standalone: true,
-  imports: [IonicModule, CommonModule]
+  imports: [IonicModule, CommonModule, TranslatePipe]
 })
 export class PanicButtonComponent implements OnInit, OnDestroy {
   isVisible = true;

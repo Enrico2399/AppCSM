@@ -1,27 +1,27 @@
-<div class="install-banner" *ngIf="visible" role="dialog" aria-live="polite" aria-label="Installa CSM Digitale">
-  <button type="button" class="install-close" (click)="dismiss()" aria-label="Chiudi, non ora">✕</button>
+<div class="install-banner" *ngIf="visible" role="dialog" aria-live="polite" [attr.aria-label]="'installPrompt.ariaLabel' | translate">
+  <button type="button" class="install-close" (click)="dismiss()" [attr.aria-label]="'installPrompt.closeAria' | translate">✕</button>
 
   <div class="install-icon" aria-hidden="true">📲</div>
 
   <div class="install-text">
-    <strong>Installa CSM sul tuo dispositivo</strong>
+    <strong>{{ 'installPrompt.title' | translate }}</strong>
 
     <p *ngIf="platform === 'android'">
-      Usala come un'app vera: si apre con un'icona sulla home e funziona anche offline.
+      {{ 'installPrompt.androidBody' | translate }}
     </p>
 
     <p *ngIf="platform === 'ios'">
-      Tocca <strong>Condividi</strong> <span aria-hidden="true">⬆️</span> nella barra di Safari, poi
-      <strong>"Aggiungi alla schermata Home"</strong>.
+      {{ 'installPrompt.iosBody1' | translate }} <strong>{{ 'installPrompt.share' | translate }}</strong> <span aria-hidden="true">⬆️</span> {{ 'installPrompt.iosBody2' | translate }}
+      <strong>{{ 'installPrompt.addToHome' | translate }}</strong>.
     </p>
   </div>
 
   <div class="install-actions">
     <button *ngIf="platform === 'android'" type="button" class="install-btn" (click)="install()">
-      Installa
+      {{ 'installPrompt.install' | translate }}
     </button>
     <button type="button" class="dismiss-btn" (click)="dismiss()">
-      Non ora
+      {{ 'installPrompt.notNow' | translate }}
     </button>
   </div>
 </div>

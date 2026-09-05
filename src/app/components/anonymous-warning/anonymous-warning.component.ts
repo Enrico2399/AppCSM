@@ -3,6 +3,7 @@ import { CommonModule } from '@angular/common';
 import { IonicModule } from '@ionic/angular';
 import { Router } from '@angular/router';
 import { ProfileService } from '../../services/profile/profile.service';
+import { I18nService } from '../../services/i18n/i18n.service';
 
 @Component({
   selector: 'app-anonymous-warning',
@@ -15,22 +16,26 @@ export class AnonymousWarningComponent implements OnInit, OnDestroy {
   showToast = false;
   toastMessage = '';
   timeRemaining = '';
-  
-  toastButtons = [
-    {
-      text: 'Chiudi',
-      role: 'cancel',
-      handler: () => this.dismissToast()
-    },
-    {
-      text: 'Crea Account',
-      handler: () => {
-        // Navigate to registration
-        this.dismissToast();
-        this.router.navigate(['/registration']);
+
+  public i18n = inject(I18nService);
+
+  get toastButtons() {
+    return [
+      {
+        text: this.i18n.t('anonWarning.close'),
+        role: 'cancel',
+        handler: () => this.dismissToast()
+      },
+      {
+        text: this.i18n.t('anonWarning.createAccount'),
+        handler: () => {
+          // Navigate to registration
+          this.dismissToast();
+          this.router.navigate(['/registration']);
+        }
       }
-    }
-  ];
+    ];
+  }
   
   constructor(private profileService: ProfileService, private router: Router) {}
 
@@ -59,7 +64,7 @@ export class AnonymousWarningComponent implements OnInit, OnDestroy {
       }
       
       // Clean up if expired
-      if (this.timeRemaining === 'Scaduto') {
+      if (this.timeRemaining === this.i18n.t('time.expired')) {
         this.profileService.cleanupExpiredAnonymousData();
       }
     }
@@ -67,7 +72,7 @@ export class AnonymousWarningComponent implements OnInit, OnDestroy {
 
   private showWarningToast() {
     this.showToast = true;
-    this.toastMessage = `⚠️ I tuoi dati anonimi scadranno tra ${this.timeRemaining}. Crea un account per salvarli permanentemente!`;
+    this.toastMessage = `⚠️ ${this.i18n.t('anonWarning.expiringIn', { time: this.timeRemaining })}`;
   }
 
   dismissToast() {
