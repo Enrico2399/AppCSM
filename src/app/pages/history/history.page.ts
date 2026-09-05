@@ -11,6 +11,8 @@ import { AnonymousSessionService } from '../../services/anonymous-session/anonym
 import { addIcons } from 'ionicons';
 import { trashOutline, trendingUpOutline, calendarOutline, barChartOutline, heartOutline, downloadOutline, filterOutline, shareOutline } from 'ionicons/icons';
 import { take } from 'rxjs';
+import { I18nService } from '../../services/i18n/i18n.service';
+import { TranslatePipe } from '../../pipes/translate.pipe';
 
 interface MoodLog {
   moodKey: string;
@@ -25,9 +27,10 @@ interface MoodLog {
   templateUrl: './history.page.html',
   styleUrls: ['./history.page.scss'],
   standalone: true,
-  imports: [IonicModule, CommonModule, FormsModule, ReactiveFormsModule, RouterModule]
+  imports: [IonicModule, CommonModule, FormsModule, ReactiveFormsModule, RouterModule, TranslatePipe]
 })
 export class HistoryPage implements OnInit, AfterViewInit, OnDestroy {
+  public i18n = inject(I18nService);
   private firebaseService = inject(FirebaseService);
   private authService = inject(AuthService);
   private chartService = inject(ChartService);
@@ -136,6 +139,11 @@ export class HistoryPage implements OnInit, AfterViewInit, OnDestroy {
       // Breve timeout per assicurarsi che il canvas sia nel DOM
       setTimeout(() => this.initChart(), 50);
     });
+
+    // Riallinea la lista mood (titoli/consigli tradotti) quando cambia la lingua
+    effect(() => {
+      this.moodData.set(this.moodService.getMoods());
+    });
   }
 
   private moodService = inject(MoodService);
@@ -155,14 +163,14 @@ export class HistoryPage implements OnInit, AfterViewInit, OnDestroy {
 
   adviceHtml = computed(() => {
     const history = this.history();
-    if (history.length === 0) return "Inizia a registrare i tuoi stati d'animo per ricevere suggerimenti personalizzati.";
+    if (history.length === 0) return this.i18n.t('history.adviceEmpty');
 
     const s = this.stats();
     const values = Object.values(s);
     const maxVal = Math.max(...values);
     const minVal = Math.min(...values);
 
-    if (maxVal === 0) return "Dati insufficienti per l'analisi.";
+    if (maxVal === 0) return this.i18n.t('history.adviceInsufficient');
 
     const dominantMoods = this.moodData().filter(m => s[m.key] === maxVal && maxVal > 0);
     const dormantMoods = this.moodData().filter(m => s[m.key] === minVal);
@@ -171,14 +179,14 @@ export class HistoryPage implements OnInit, AfterViewInit, OnDestroy {
     
     if (dominantMoods.length > 0) {
       html += `<div class="dominant-section">
-                <span class="advice-label dominant">Frequente: ${dominantMoods.map(m => m.title).join(', ')}</span>
+                <span class="advice-label dominant">${this.i18n.t('history.adviceDominantLabel')} ${dominantMoods.map(m => m.title).join(', ')}</span>
                 <p>${dominantMoods.map(m => m.highAdvice).join(' ')}</p>
                </div>`;
     }
 
     if (dormantMoods.length > 0 && maxVal > 1) {
       html += `<div class="dormant-section">
-                <span class="advice-label dormant">Raro: ${dormantMoods.map(m => m.title).join(', ')}</span>
+                <span class="advice-label dormant">${this.i18n.t('history.adviceDormantLabel')} ${dormantMoods.map(m => m.title).join(', ')}</span>
                 <p>${dormantMoods.map(m => m.lowAdvice).join(' ')}</p>
                </div>`;
     }
@@ -264,14 +272,14 @@ export class HistoryPage implements OnInit, AfterViewInit, OnDestroy {
     const labels = this.moodData().map(m => m.title);
     const data = this.moodData().map(m => this.stats()[m.key]);
     
-    this.chart = this.chartService.createRadarChart('moodChart', labels, data, 'Frequenza Stati d\'Animo');
+    this.chart = this.chartService.createRadarChart('moodChart', labels, data, this.i18n.t('history.chartLabel'));
   }
 
   // updateChart() rimosso in favore di effect()
 
   formatDate(isoString: string): string {
     const date = new Date(isoString);
-    return date.toLocaleString('it-IT', { 
+    return date.toLocaleString(this.i18n.lang() === 'en' ? 'en-US' : 'it-IT', { 
       day: '2-digit', 
       month: '2-digit', 
       year: 'numeric', 
@@ -335,7 +343,7 @@ export class HistoryPage implements OnInit, AfterViewInit, OnDestroy {
 
   async exportPdf() {
     const loading = await this.loadingCtrl.create({
-      message: 'Generazione PDF in corso...',
+      message: this.i18n.t('history.pdfGenerating'),
       spinner: 'circles'
     });
     await loading.present();
@@ -344,7 +352,7 @@ export class HistoryPage implements OnInit, AfterViewInit, OnDestroy {
       const data = this.filteredHistory();
       if (!data.length) {
         await loading.dismiss();
-        await this.showAlert('Nessun dato', 'Nessun dato da esportare per i filtri selezionati.');
+        await this.showAlert(this.i18n.t('history.pdfNoDataTitle'), this.i18n.t('history.pdfNoDataMsg'));
         return;
       }
 
@@ -363,11 +371,11 @@ export class HistoryPage implements OnInit, AfterViewInit, OnDestroy {
       URL.revokeObjectURL(url);
 
       await loading.dismiss();
-      await this.showAlert('Successo', 'PDF generato con successo. Puoi aprirlo e stamparlo come PDF.');
+      await this.showAlert(this.i18n.t('history.pdfSuccessTitle'), this.i18n.t('history.pdfSuccessMsg'));
     } catch (error) {
       await loading.dismiss();
       console.error('Error generating PDF:', error);
-      await this.showAlert('Errore', 'Errore nella generazione del PDF. Riprova più tardi.');
+      await this.showAlert(this.i18n.t('history.pdfErrorTitle'), this.i18n.t('history.pdfErrorMsg'));
     }
   }
 
@@ -383,7 +391,7 @@ export class HistoryPage implements OnInit, AfterViewInit, OnDestroy {
 <html>
 <head>
     <meta charset="UTF-8">
-    <title>Diario Emozionale CSM</title>
+    <title>${this.i18n.t('history.pdfDocTitle')}</title>
     <style>
         body { font-family: Arial, sans-serif; margin: 40px; line-height: 1.6; }
         .header { text-align: center; border-bottom: 2px solid #3498db; padding-bottom: 20px; margin-bottom: 30px; }
@@ -398,15 +406,15 @@ export class HistoryPage implements OnInit, AfterViewInit, OnDestroy {
 </head>
 <body>
     <div class="header">
-        <h1>🧠 Diario Emozionale CSM</h1>
-        <p>Generato il ${new Date().toLocaleDateString('it-IT')}</p>
-        <p>Periodo: ${this.getDateRangeText()}</p>
+        <h1>${this.i18n.t('history.pdfHeaderTitle')}</h1>
+        <p>${this.i18n.t('history.pdfGeneratedOn', { date: new Date().toLocaleDateString(this.i18n.lang() === 'en' ? 'en-US' : 'it-IT') })}</p>
+        <p>${this.i18n.t('history.pdfPeriod', { range: this.getDateRangeText() })}</p>
     </div>
 
     <div class="stats">
         <div class="stat-card">
             <h3>${data.length}</h3>
-            <p>Registrazioni totali</p>
+            <p>${this.i18n.t('history.pdfTotalRecords')}</p>
         </div>
         ${Object.entries(stats).map(([key, value]) => `
         <div class="stat-card">
@@ -416,7 +424,7 @@ export class HistoryPage implements OnInit, AfterViewInit, OnDestroy {
         `).join('')}
     </div>
 
-    <h2>📝 Registrazioni Dettagliate</h2>
+    <h2>${this.i18n.t('history.pdfDetailedRecords')}</h2>
     ${data.map(log => `
     <div class="mood-item" style="border-color: ${moodColors[log.moodKey]}">
         <div class="mood-title">${log.icon} ${log.moodTitle}</div>
@@ -426,8 +434,8 @@ export class HistoryPage implements OnInit, AfterViewInit, OnDestroy {
     `).join('')}
 
     <div style="margin-top: 40px; text-align: center; color: #666; font-size: 0.8em;">
-        <p>Generato con CSM App - Centro Salute Mentale</p>
-        <p>Questo documento contiene dati personali sensibili. Conservarlo con cura.</p>
+        <p>${this.i18n.t('history.pdfFooter1')}</p>
+        <p>${this.i18n.t('history.pdfFooter2')}</p>
     </div>
 </body>
 </html>`;
@@ -435,22 +443,23 @@ export class HistoryPage implements OnInit, AfterViewInit, OnDestroy {
 
   private getDateRangeText(): string {
     const range = this.selectedRange();
-    if (range === 'all') return 'Tutto il periodo';
+    const locale = this.i18n.lang() === 'en' ? 'en-US' : 'it-IT';
+    if (range === 'all') return this.i18n.t('history.rangeAll');
     if (range === 'custom') {
       const start = this.dateRange().start;
       const end = this.dateRange().end;
       if (start && end) {
-        return `Dal ${new Date(start).toLocaleDateString('it-IT')} al ${new Date(end).toLocaleDateString('it-IT')}`;
+        return this.i18n.t('history.rangeCustom', { start: new Date(start).toLocaleDateString(locale), end: new Date(end).toLocaleDateString(locale) });
       }
     }
     const days = range === '7d' ? 7 : range === '30d' ? 30 : range === '90d' ? 90 : 365;
-    return `Ultimi ${days} giorni`;
+    return this.i18n.t('history.rangeLastNDays', { days });
   }
 
   async shareData() {
     const data = this.filteredHistory();
     if (!data.length) {
-      await this.showAlert('Nessun dato', 'Nessun dato da condividere per i filtri selezionati.');
+      await this.showAlert(this.i18n.t('history.pdfNoDataTitle'), this.i18n.t('history.shareNoDataMsg'));
       return;
     }
 
@@ -460,18 +469,18 @@ export class HistoryPage implements OnInit, AfterViewInit, OnDestroy {
       
       if (navigator.share) {
         await navigator.share({
-          title: 'Diario Emozionale CSM',
+          title: this.i18n.t('history.pdfDocTitle'),
           text: summary,
           url: window.location.href
         });
       } else {
         // Fallback: copia negli appunti
         await this.copyToClipboard(summary);
-        await this.showAlert('Copiato', 'Il riassunto è stato copiato negli appunti.');
+        await this.showAlert(this.i18n.t('history.shareCopiedTitle'), this.i18n.t('history.shareCopiedMsg'));
       }
     } catch (error) {
       console.error('Error sharing data:', error);
-      await this.showAlert('Errore', 'Errore durante la condivisione dei dati.');
+      await this.showAlert(this.i18n.t('history.pdfErrorTitle'), this.i18n.t('history.shareErrorMsg'));
     }
   }
 
@@ -480,11 +489,11 @@ export class HistoryPage implements OnInit, AfterViewInit, OnDestroy {
     const totalEntries = data.length;
     const dateRange = this.getDateRangeText();
     
-    let summary = `🧠 Diario Emozionale CSM\n`;
+    let summary = `${this.i18n.t('history.pdfHeaderTitle')}\n`;
     summary += `📅 ${dateRange}\n`;
-    summary += `📊 ${totalEntries} registrazioni\n\n`;
+    summary += `📊 ${this.i18n.t('history.shareRecordsLabel', { count: totalEntries })}\n\n`;
     
-    summary += `Statistiche umori:\n`;
+    summary += `${this.i18n.t('history.shareStatsLabel')}\n`;
     Object.entries(stats).forEach(([key, value]) => {
       if (value > 0) {
         const mood = this.moodData().find(m => m.key === key);
@@ -492,7 +501,7 @@ export class HistoryPage implements OnInit, AfterViewInit, OnDestroy {
       }
     });
     
-    summary += `\nGenerato con CSM App - Centro Salute Mentale`;
+    summary += `\n${this.i18n.t('history.pdfFooter1')}`;
     
     return summary;
   }
@@ -524,8 +533,8 @@ export class HistoryPage implements OnInit, AfterViewInit, OnDestroy {
     const data = this.filteredHistory();
     if (!data.length) {
       const alert = await this.alertCtrl.create({
-        header: 'Nessun Dato',
-        message: 'Nessun dato da esportare per l\'intervallo selezionato.',
+        header: this.i18n.t('history.csvNoDataTitle'),
+        message: this.i18n.t('history.csvNoDataMsg'),
         buttons: ['OK']
       });
       await alert.present();
@@ -533,7 +542,7 @@ export class HistoryPage implements OnInit, AfterViewInit, OnDestroy {
     }
 
     const loading = await this.loadingCtrl.create({
-      message: 'Creazione file CSV in corso...'
+      message: this.i18n.t('history.csvGenerating')
     });
     await loading.present();
 
@@ -548,10 +557,11 @@ export class HistoryPage implements OnInit, AfterViewInit, OnDestroy {
         'thought'
       ].join(';');
 
+      const locale = this.i18n.lang() === 'en' ? 'en-US' : 'it-IT';
       const rows = data.map(log => {
         const d = new Date(log.timestamp);
-        const dateIt = d.toLocaleDateString('it-IT');
-        const timeIt = d.toLocaleTimeString('it-IT', { hour: '2-digit', minute: '2-digit' });
+        const dateIt = d.toLocaleDateString(locale);
+        const timeIt = d.toLocaleTimeString(locale, { hour: '2-digit', minute: '2-digit' });
         const thought = (log.thought || '').replace(/"/g, '""');
         return [
           log.timestamp,
@@ -583,7 +593,7 @@ export class HistoryPage implements OnInit, AfterViewInit, OnDestroy {
       a.href = url;
       
       // Nome file con data corrente
-      const today = new Date().toLocaleDateString('it-IT').replace(/\//g, '-');
+      const today = new Date().toLocaleDateString(locale).replace(/\//g, '-');
       a.download = `diario_emozionale_csm_${today}.csv`;
       
       document.body.appendChild(a);
@@ -592,16 +602,16 @@ export class HistoryPage implements OnInit, AfterViewInit, OnDestroy {
       URL.revokeObjectURL(url);
 
       const successAlert = await this.alertCtrl.create({
-        header: 'Export Completato',
-        message: `File CSV esportato con successo! ${data.length} record inclusi.`,
+        header: this.i18n.t('history.csvSuccessTitle'),
+        message: this.i18n.t('history.csvSuccessMsg', { count: data.length }),
         buttons: ['OK']
       });
       await successAlert.present();
 
     } catch (error) {
       const errorAlert = await this.alertCtrl.create({
-        header: 'Errore Export',
-        message: `Si è verificato un errore durante l'esportazione: ${(error as Error).message}`,
+        header: this.i18n.t('history.csvErrorTitle'),
+        message: this.i18n.t('history.csvErrorMsg', { msg: (error as Error).message }),
         buttons: ['OK']
       });
       await errorAlert.present();
@@ -611,7 +621,7 @@ export class HistoryPage implements OnInit, AfterViewInit, OnDestroy {
   }
 
   async deleteHistory() {
-    const confirmDelete = confirm('Sei sicuro di voler cancellare TUTTO il diario emozionale? Questa azione non può essere annullata.');
+    const confirmDelete = confirm(this.i18n.t('history.deleteConfirm'));
     if (!confirmDelete) {
       return;
     }
@@ -620,7 +630,7 @@ export class HistoryPage implements OnInit, AfterViewInit, OnDestroy {
     this.authService.user$.pipe(take(1)).subscribe(async user => {
       if (!user) {
         this.isLoading.set(false);
-        alert('Devi essere autenticato per cancellare il diario.');
+        alert(this.i18n.t('history.deleteNotAuthMsg'));
         return;
       }
       try {
@@ -631,11 +641,11 @@ export class HistoryPage implements OnInit, AfterViewInit, OnDestroy {
           this.chart.destroy();
           this.chart = null;
         }
-        alert('Diario emozionale cancellato con successo.');
+        alert(this.i18n.t('history.deleteSuccessMsg'));
       } catch (err) {
         console.error('Errore cancellazione diario', err);
         this.isLoading.set(false);
-        alert('Si è verificato un errore durante la cancellazione del diario. Riprova più tardi.');
+        alert(this.i18n.t('history.deleteErrorMsg'));
       }
     });
   }
