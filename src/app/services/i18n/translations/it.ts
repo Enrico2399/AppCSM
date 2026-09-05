@@ -527,4 +527,18 @@ export const IT: Record<string, string> = {
   'roadmap.ariaRemoveVote': 'Voto rimosso da {title}',
   'roadmap.ariaVote': 'Vota per {title}',
   'roadmap.goals': 'Obiettivi',
+
+  'community.title': 'Spazio Community',
+  'community.subtitle': 'Condividi come ti senti e connettiti con gli altri.',
+  'community.postPrompt': 'Cosa vuoi condividere?',
+  'community.messagePlaceholder': 'Scrivi un messaggio alla community...',
+  'community.sendTitle': 'Invia messaggio',
+  'community.attentionTitle': 'Attenzione',
+  'community.selectColor': 'Seleziona un colore...',
+  'community.writeMessage': 'Scrivi un messaggio!',
+  'community.defaultUserName': 'Utente',
+  'community.sentTitle': 'Inviato',
+  'community.sentMsg': 'Il tuo messaggio è stato pubblicato nella community!',
+  'community.errorTitle': 'Errore',
+  'community.mustBeLoggedIn': 'Devi essere loggato per scrivere nella community.',
 };

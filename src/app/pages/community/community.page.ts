@@ -1,5 +1,5 @@
 import { MoodService, Mood } from '../../services/mood/mood.service';
-import { Component, OnInit, OnDestroy, inject, signal } from '@angular/core';
+import { Component, OnInit, OnDestroy, inject, signal, effect } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { IonicModule } from '@ionic/angular';
@@ -9,6 +9,8 @@ import { take } from 'rxjs';
 import { addIcons } from 'ionicons';
 import { closeOutline, send } from 'ionicons/icons';
 import { PopupService } from '../../services/popup/popup.service';
+import { I18nService } from '../../services/i18n/i18n.service';
+import { TranslatePipe } from '../../pipes/translate.pipe';
 
 interface CommunityMessage {
   userId: string;
@@ -23,15 +25,21 @@ interface CommunityMessage {
   templateUrl: './community.page.html',
   styleUrls: ['./community.page.scss'],
   standalone: true,
-  imports: [IonicModule, CommonModule, FormsModule]
+  imports: [IonicModule, CommonModule, FormsModule, TranslatePipe]
 })
 export class CommunityPage implements OnInit, OnDestroy {
+  public i18n = inject(I18nService);
   private firebaseService = inject(FirebaseService);
   private authService = inject(AuthService);
   public popupService = inject(PopupService);
 
   constructor() {
     addIcons({ closeOutline, send });
+
+    // Riallinea la lista mood (icone/colori) quando cambia la lingua
+    effect(() => {
+      this.moods.set(this.moodService.getMoods());
+    });
   }
 
   messages = signal<CommunityMessage[]>([]);
@@ -39,7 +47,7 @@ export class CommunityPage implements OnInit, OnDestroy {
   selectedMoodKey = signal<string | null>(null);
 
   private moodService = inject(MoodService);
-  moods: Mood[] = this.moodService.getMoods();
+  moods = signal<Mood[]>(this.moodService.getMoods());
 
   private unsubscribeMessages: (() => void) | null = null;
 
@@ -70,11 +78,11 @@ export class CommunityPage implements OnInit, OnDestroy {
     const moodKey = this.selectedMoodKey();
 
     if (!moodKey) {
-      this.popupService.showStatus("Attenzione", "Seleziona un colore...");
+      this.popupService.showStatus(this.i18n.t('community.attentionTitle'), this.i18n.t('community.selectColor'));
       return;
     }
     if (!msg) {
-      this.popupService.showStatus("Attenzione", "Scrivi un messaggio!");
+      this.popupService.showStatus(this.i18n.t('community.attentionTitle'), this.i18n.t('community.writeMessage'));
       return;
     }
 
@@ -82,15 +90,15 @@ export class CommunityPage implements OnInit, OnDestroy {
       if (user) {
         this.firebaseService.sendCommunityMessage(
           user.uid,
-          user.displayName || "Utente",
+          user.displayName || this.i18n.t('community.defaultUserName'),
           moodKey,
           msg
         );
         this.messageInput.set('');
         this.selectedMoodKey.set(null);
-        this.popupService.showStatus("Inviato", "Il tuo messaggio è stato pubblicato nella community!");
+        this.popupService.showStatus(this.i18n.t('community.sentTitle'), this.i18n.t('community.sentMsg'));
       } else {
-        this.popupService.showStatus("Errore", "Devi essere loggato per scrivere nella community.");
+        this.popupService.showStatus(this.i18n.t('community.errorTitle'), this.i18n.t('community.mustBeLoggedIn'));
       }
     });
 
@@ -108,7 +116,7 @@ export class CommunityPage implements OnInit, OnDestroy {
 
   formatDate(isoString: string): string {
     const date = new Date(isoString);
-    return date.toLocaleString('it-IT', { 
+    return date.toLocaleString(this.i18n.lang() === 'en' ? 'en-US' : 'it-IT', { 
       hour: '2-digit', 
       minute: '2-digit',
       day: '2-digit',

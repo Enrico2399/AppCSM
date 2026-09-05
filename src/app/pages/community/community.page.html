@@ -1,17 +1,17 @@
 <ion-content [fullscreen]="true">
   <div class="container">
     <header>
-      <h1>Spazio Community</h1>
-      <p>Condividi come ti senti e connettiti con gli altri.</p>
+      <h1>{{ 'community.title' | translate }}</h1>
+      <p>{{ 'community.subtitle' | translate }}</p>
     </header>
 
     <!-- POST SECTION -->
     <div class="post-box glass-card">
-      <h3>Cosa vuoi condividere?</h3>
+      <h3>{{ 'community.postPrompt' | translate }}</h3>
       
       <div class="mood-selector">
         <div 
-          *ngFor="let mood of moods" 
+          *ngFor="let mood of moods()" 
           class="mood-chip" 
           [style.background-color]="mood.color"
           [class.selected]="selectedMoodKey() === mood.key"
@@ -25,8 +25,8 @@
           [ngModel]="messageInput()" 
           (ngModelChange)="messageInput.set($event)"
           rows="3" 
-          placeholder="Scrivi un messaggio alla community..."></textarea>
-        <button class="btn-send" (click)="sendMessage()" title="Invia messaggio">
+          [placeholder]="'community.messagePlaceholder' | translate"></textarea>
+        <button class="btn-send" (click)="sendMessage()" [title]="'community.sendTitle' | translate">
           <ion-icon name="send" aria-hidden="true"></ion-icon>
         </button>
       </div>

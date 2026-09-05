@@ -526,4 +526,18 @@ export const EN: Record<string, string> = {
   'roadmap.ariaRemoveVote': 'Vote removed from {title}',
   'roadmap.ariaVote': 'Vote for {title}',
   'roadmap.goals': 'Goals',
+
+  'community.title': 'Community Space',
+  'community.subtitle': 'Share how you feel and connect with others.',
+  'community.postPrompt': 'What do you want to share?',
+  'community.messagePlaceholder': 'Write a message to the community...',
+  'community.sendTitle': 'Send message',
+  'community.attentionTitle': 'Attention',
+  'community.selectColor': 'Select a color...',
+  'community.writeMessage': 'Write a message!',
+  'community.defaultUserName': 'User',
+  'community.sentTitle': 'Sent',
+  'community.sentMsg': 'Your message has been posted to the community!',
+  'community.errorTitle': 'Error',
+  'community.mustBeLoggedIn': 'You must be logged in to post in the community.',
 };
