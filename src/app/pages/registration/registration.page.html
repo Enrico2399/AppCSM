@@ -3,7 +3,7 @@
     <ion-buttons slot="start">
       <ion-back-button defaultHref="/home"></ion-back-button>
     </ion-buttons>
-    <ion-title>Registrazione</ion-title>
+    <ion-title>{{ 'registration.pageTitle' | translate }}</ion-title>
   </ion-toolbar>
 </ion-header>
 
@@ -12,51 +12,51 @@
     <!-- Logo e titolo -->
     <div class="header-section">
       <div class="logo">🧠</div>
-      <h1>Benvenuto in CSM</h1>
-      <p class="subtitle">Crea il tuo account per iniziare il percorso di benessere</p>
+      <h1>{{ 'registration.welcome' | translate }}</h1>
+      <p class="subtitle">{{ 'registration.subtitle' | translate }}</p>
     </div>
 
     <!-- Form di registrazione -->
     <form [formGroup]="registrationForm" (ngSubmit)="onSubmit()">
       <!-- Nome -->
       <ion-item class="input-item" [class.error]="nameControl?.invalid && nameControl?.touched">
-        <ion-label position="stacked" class="input-label">Nome Completo</ion-label>
+        <ion-label position="stacked" class="input-label">{{ 'registration.fullName' | translate }}</ion-label>
         <ion-input
           formControlName="name"
           type="text"
-          placeholder="Inserisci il tuo nome"
+          [placeholder]="'registration.namePlaceholder' | translate"
           autocomplete="name"
         ></ion-input>
         <ion-note slot="error" *ngIf="nameControl?.invalid && nameControl?.touched">
-          <span *ngIf="nameControl?.errors?.['required']">Il nome è obbligatorio</span>
-          <span *ngIf="nameControl?.errors?.['minlength']">Minimo 2 caratteri</span>
-          <span *ngIf="nameControl?.errors?.['maxlength']">Massimo 50 caratteri</span>
+          <span *ngIf="nameControl?.errors?.['required']">{{ 'registration.nameRequired' | translate }}</span>
+          <span *ngIf="nameControl?.errors?.['minlength']">{{ 'registration.nameMinLength' | translate }}</span>
+          <span *ngIf="nameControl?.errors?.['maxlength']">{{ 'registration.nameMaxLength' | translate }}</span>
         </ion-note>
       </ion-item>
 
       <!-- Email -->
       <ion-item class="input-item" [class.error]="emailControl?.invalid && emailControl?.touched">
-        <ion-label position="stacked" class="input-label">Email</ion-label>
+        <ion-label position="stacked" class="input-label">{{ 'registration.email' | translate }}</ion-label>
         <ion-input
           formControlName="email"
           type="email"
-          placeholder="nome@esempio.com"
+          placeholder="name@example.com"
           autocomplete="email"
           inputmode="email"
         ></ion-input>
         <ion-note slot="error" *ngIf="emailControl?.invalid && emailControl?.touched">
-          <span *ngIf="emailControl?.errors?.['required']">L'email è obbligatoria</span>
-          <span *ngIf="emailControl?.errors?.['email']">Email non valida</span>
+          <span *ngIf="emailControl?.errors?.['required']">{{ 'registration.emailRequired' | translate }}</span>
+          <span *ngIf="emailControl?.errors?.['email']">{{ 'registration.emailInvalid' | translate }}</span>
         </ion-note>
       </ion-item>
 
       <!-- Password -->
       <ion-item class="input-item" [class.error]="passwordControl?.invalid && passwordControl?.touched">
-        <ion-label position="stacked" class="input-label">Password</ion-label>
+        <ion-label position="stacked" class="input-label">{{ 'registration.password' | translate }}</ion-label>
         <ion-input
           formControlName="password"
           [type]="showPassword() ? 'text' : 'password'"
-          placeholder="Crea una password sicura"
+          [placeholder]="'registration.passwordPlaceholder' | translate"
           autocomplete="new-password"
         ></ion-input>
         <ion-button
@@ -65,14 +65,14 @@
           size="small"
           (click)="togglePasswordVisibility()"
           type="button"
-          [attr.aria-label]="showPassword() ? 'Nascondi password' : 'Mostra password'"
+          [attr.aria-label]="(showPassword() ? 'registration.hidePassword' : 'registration.showPassword') | translate"
         >
           <ion-icon [name]="showPassword() ? 'eye-off' : 'eye'" aria-hidden="true"></ion-icon>
         </ion-button>
         <ion-note slot="error" *ngIf="passwordControl?.invalid && passwordControl?.touched">
-          <span *ngIf="passwordControl?.errors?.['required']">La password è obbligatoria</span>
-          <span *ngIf="passwordControl?.errors?.['minlength']">Minimo 8 caratteri</span>
-          <span *ngIf="passwordControl?.errors?.['weakPassword']">Password troppo debole</span>
+          <span *ngIf="passwordControl?.errors?.['required']">{{ 'registration.passwordRequired' | translate }}</span>
+          <span *ngIf="passwordControl?.errors?.['minlength']">{{ 'registration.passwordMinLength' | translate }}</span>
+          <span *ngIf="passwordControl?.errors?.['weakPassword']">{{ 'registration.passwordTooWeak' | translate }}</span>
         </ion-note>
       </ion-item>
 
@@ -93,11 +93,11 @@
 
       <!-- Conferma Password -->
       <ion-item class="input-item" [class.error]="confirmPasswordControl?.invalid && confirmPasswordControl?.touched">
-        <ion-label position="stacked" class="input-label">Conferma Password</ion-label>
+        <ion-label position="stacked" class="input-label">{{ 'registration.confirmPassword' | translate }}</ion-label>
         <ion-input
           formControlName="confirmPassword"
           [type]="showConfirmPassword() ? 'text' : 'password'"
-          placeholder="Ripeti la password"
+          [placeholder]="'registration.confirmPasswordPlaceholder' | translate"
           autocomplete="new-password"
         ></ion-input>
         <ion-button
@@ -106,13 +106,13 @@
           size="small"
           (click)="toggleConfirmPasswordVisibility()"
           type="button"
-          [attr.aria-label]="showConfirmPassword() ? 'Nascondi conferma password' : 'Mostra conferma password'"
+          [attr.aria-label]="(showConfirmPassword() ? 'registration.hideConfirmPassword' : 'registration.showConfirmPassword') | translate"
         >
           <ion-icon [name]="showConfirmPassword() ? 'eye-off' : 'eye'" aria-hidden="true"></ion-icon>
         </ion-button>
         <ion-note slot="error" *ngIf="confirmPasswordControl?.invalid && confirmPasswordControl?.touched">
-          <span *ngIf="confirmPasswordControl?.errors?.['required']">Conferma la password</span>
-          <span *ngIf="registrationForm?.errors?.['passwordMismatch']">Le password non coincidono</span>
+          <span *ngIf="confirmPasswordControl?.errors?.['required']">{{ 'registration.confirmPasswordRequired' | translate }}</span>
+          <span *ngIf="registrationForm?.errors?.['passwordMismatch']">{{ 'registration.passwordMismatch' | translate }}</span>
         </ion-note>
       </ion-item>
 
@@ -121,16 +121,16 @@
         <ion-checkbox 
           formControlName="termsAccepted"
           id="terms-checkbox"
-          aria-label="Accetto i Termini e Condizioni e la Privacy Policy"
+          [attr.aria-label]="'registration.termsCheckboxAria' | translate"
         ></ion-checkbox>
         <ion-label for="terms-checkbox" class="terms-label">
-          Accetto i 
-          <a href="javascript:void(0)" (click)="showTerms()" class="link">Termini e Condizioni</a> 
-          e l' 
-          <a href="javascript:void(0)" (click)="showPrivacyPolicy()" class="link">Privacy Policy</a>
+          {{ 'registration.iAccept' | translate }}
+          <a href="javascript:void(0)" (click)="showTerms()" class="link">{{ 'registration.termsAndConditions' | translate }}</a> 
+          {{ 'registration.and' | translate }}
+          <a href="javascript:void(0)" (click)="showPrivacyPolicy()" class="link">{{ 'registration.privacyPolicy' | translate }}</a>
         </ion-label>
         <ion-note slot="error" *ngIf="termsControl?.invalid && termsControl?.touched">
-          <span *ngIf="termsControl?.errors?.['required']">È necessario accettare i termini</span>
+          <span *ngIf="termsControl?.errors?.['required']">{{ 'registration.mustAcceptTerms' | translate }}</span>
         </ion-note>
       </div>
 
@@ -144,7 +144,7 @@
           class="register-button"
         >
           <ion-spinner *ngIf="isLoading()" name="circles"></ion-spinner>
-          <span *ngIf="!isLoading()">Crea Account</span>
+          <span *ngIf="!isLoading()">{{ 'registration.createAccount' | translate }}</span>
         </ion-button>
 
         <ion-button
@@ -155,20 +155,20 @@
           type="button"
           class="login-button"
         >
-          Hai già un account? Accedi
+          {{ 'registration.alreadyHaveAccountLogin' | translate }}
         </ion-button>
       </div>
     </form>
 
     <!-- Requisiti password -->
     <div class="password-requirements">
-      <h4>Requisiti Password:</h4>
+      <h4>{{ 'registration.passwordRequirements' | translate }}</h4>
       <ul>
-        <li [class.valid]="hasMinLength()">Almeno 8 caratteri</li>
-        <li [class.valid]="hasBonusLength()">12+ caratteri (bonus)</li>
-        <li [class.valid]="hasUpperAndLower()">Maiuscole e minuscole</li>
-        <li [class.valid]="hasNumber()">Almeno un numero</li>
-        <li [class.valid]="hasSpecialChars()">Caratteri speciali</li>
+        <li [class.valid]="hasMinLength()">{{ 'registration.reqMinLength' | translate }}</li>
+        <li [class.valid]="hasBonusLength()">{{ 'registration.reqBonusLength' | translate }}</li>
+        <li [class.valid]="hasUpperAndLower()">{{ 'registration.reqUpperLower' | translate }}</li>
+        <li [class.valid]="hasNumber()">{{ 'registration.reqNumber' | translate }}</li>
+        <li [class.valid]="hasSpecialChars()">{{ 'registration.reqSpecialChars' | translate }}</li>
       </ul>
     </div>
   </div>
