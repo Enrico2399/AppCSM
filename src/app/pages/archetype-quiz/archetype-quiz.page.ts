@@ -6,6 +6,8 @@ import { FirebaseService } from '../../services/firebase/firebase';
 import { Auth } from '@firebase/auth';
 import { addIcons } from 'ionicons';
 import { chevronBackOutline, chevronForwardOutline, homeOutline, refreshOutline, starOutline } from 'ionicons/icons';
+import { I18nService } from '../../services/i18n/i18n.service';
+import { TranslatePipe } from '../../pipes/translate.pipe';
 
 export interface QuizQuestion {
   id: string;
@@ -35,7 +37,7 @@ export interface ArchetypeProfile {
   templateUrl: './archetype-quiz.page.html',
   styleUrls: ['./archetype-quiz.page.scss'],
   standalone: true,
-  imports: [IonicModule, CommonModule, FormsModule]
+  imports: [IonicModule, CommonModule, FormsModule, TranslatePipe]
 })
 export class ArchetypeQuizPage implements OnInit, OnDestroy {
   currentQuestionIndex = signal(0);
@@ -45,7 +47,7 @@ export class ArchetypeQuizPage implements OnInit, OnDestroy {
   loading = signal(false);
 
   // Quiz questions based on Jungian archetypes
-  private questions: QuizQuestion[] = [
+  private QUESTIONS_IT: QuizQuestion[] = [
     {
       id: '1',
       text: 'In una situazione di crisi, di solito:',
@@ -109,15 +111,88 @@ export class ArchetypeQuizPage implements OnInit, OnDestroy {
     }
   ];
 
+  private QUESTIONS_EN: QuizQuestion[] = [
+    {
+      id: '1',
+      text: 'In a crisis situation, you usually:',
+      options: [
+        { id: '1a', text: 'Take control and lead others', archetypes: ['sovrano', 'eroe'], weight: 3 },
+        { id: '1b', text: 'Look for creative, unconventional solutions', archetypes: ['creatore', 'esploratore'], weight: 3 },
+        { id: '1c', text: 'Analyze the situation calmly and wisely', archetypes: ['saggio'], weight: 3 },
+        { id: '1d', text: 'Question the established rules', archetypes: ['ribelle'], weight: 3 }
+      ],
+      type: 'single',
+      category: 'leadership'
+    },
+    {
+      id: '2',
+      text: 'My ideal in life is:',
+      options: [
+        { id: '2a', text: 'To create something unique and meaningful', archetypes: ['creatore'], weight: 3 },
+        { id: '2b', text: 'To explore new territories and possibilities', archetypes: ['esploratore'], weight: 3 },
+        { id: '2c', text: "To improve other people's lives", archetypes: ['eroe', 'sovrano'], weight: 3 },
+        { id: '2d', text: 'To understand the deep mysteries of life', archetypes: ['saggio'], weight: 3 }
+      ],
+      type: 'single',
+      category: 'purpose'
+    },
+    {
+      id: '3',
+      text: 'Faced with an injustice:',
+      options: [
+        { id: '3a', text: 'I actively fight to change things', archetypes: ['ribelle', 'eroe'], weight: 3 },
+        { id: '3b', text: 'I create a fairer alternative system', archetypes: ['creatore', 'sovrano'], weight: 3 },
+        { id: '3c', text: 'I try to understand the deeper causes', archetypes: ['saggio'], weight: 3 },
+        { id: '3d', text: 'I explore ways out or new solutions', archetypes: ['esploratore'], weight: 3 }
+      ],
+      type: 'single',
+      category: 'justice'
+    },
+    {
+      id: '4',
+      text: 'In relationships, I feel most at ease when:',
+      options: [
+        { id: '4a', text: 'I can offer guidance and wisdom', archetypes: ['saggio', 'sovrano'], weight: 3 },
+        { id: '4b', text: 'We can explore new experiences together', archetypes: ['esploratore'], weight: 3 },
+        { id: '4c', text: 'We can create something beautiful together', archetypes: ['creatore'], weight: 3 },
+        { id: '4d', text: 'I can inspire and motivate the other person', archetypes: ['eroe'], weight: 3 }
+      ],
+      type: 'single',
+      category: 'relationships'
+    },
+    {
+      id: '5',
+      text: 'My greatest fear is:',
+      options: [
+        { id: '5a', text: 'Mediocrity and normality', archetypes: ['creatore', 'esploratore'], weight: 3 },
+        { id: '5b', text: 'Losing control or power', archetypes: ['sovrano'], weight: 3 },
+        { id: '5c', text: 'Not being able to help those in need', archetypes: ['eroe'], weight: 3 },
+        { id: '5d', text: 'Ignorance and superficiality', archetypes: ['saggio'], weight: 3 },
+        { id: '5e', text: 'Being controlled or manipulated', archetypes: ['ribelle'], weight: 3 }
+      ],
+      type: 'single',
+      category: 'fears'
+    }
+  ];
+
+  private get questions(): QuizQuestion[] {
+    return this.i18n.lang() === 'en' ? this.QUESTIONS_EN : this.QUESTIONS_IT;
+  }
+
   private archetypes = ['sovrano', 'eroe', 'esploratore', 'creatore', 'saggio', 'ribelle'];
 
   constructor(
     private navCtrl: NavController,
     private alertCtrl: AlertController,
     private loadingCtrl: LoadingController,
-    private firebaseService: FirebaseService
+    private firebaseService: FirebaseService,
+    public i18n: I18nService
   ) {
     addIcons({ chevronBackOutline, chevronForwardOutline, homeOutline, refreshOutline, starOutline });
+  }
+
+  getArchetypeName(key: string): string {
+    return this.i18n.t('archetipi.arch.' + key);
   }
 
   ngOnInit() {
@@ -200,7 +275,7 @@ export class ArchetypeQuizPage implements OnInit, OnDestroy {
 
   async nextQuestion() {
     if (!this.canGoNext()) {
-      await this.showWarning('Seleziona una risposta per continuare');
+      await this.showWarning(this.i18n.t('archetypeQuiz.selectAnswerToContinue'));
       return;
     }
 
@@ -219,7 +294,7 @@ export class ArchetypeQuizPage implements OnInit, OnDestroy {
 
   private async completeQuiz() {
     const loading = await this.loadingCtrl.create({
-      message: 'Calcolo del tuo profilo...'
+      message: this.i18n.t('archetypeQuiz.calculatingProfile')
     });
     await loading.present();
 
@@ -239,7 +314,7 @@ export class ArchetypeQuizPage implements OnInit, OnDestroy {
     } catch (error) {
       await loading.dismiss();
       console.error('Error completing quiz:', error);
-      this.showError('Errore nel calcolo del profilo');
+      this.showError(this.i18n.t('archetypeQuiz.profileCalcError'));
     }
   }
 
@@ -284,41 +359,41 @@ export class ArchetypeQuizPage implements OnInit, OnDestroy {
 
   private async showResults(profile: ArchetypeProfile) {
     const archetypeDescriptions: { [key: string]: string } = {
-      sovrano: 'Il leader naturale, colui che porta ordine e stabilità',
-      eroe: 'Il coraggioso che lotta per giustizia e protegge gli altri',
-      esploratore: 'L\'avventuriero che cerca nuove esperienze e conoscenze',
-      creatore: 'L\'artista che dà forma alle idee e crea bellezza',
-      saggio: 'Il saggio che comprende i misteri e guida con saggezza',
-      ribelle: 'Il rivoluzionario che sfida lo status quo e cerca il cambiamento'
+      sovrano: this.i18n.t('archetypeQuiz.desc.sovrano'),
+      eroe: this.i18n.t('archetypeQuiz.desc.eroe'),
+      esploratore: this.i18n.t('archetypeQuiz.desc.esploratore'),
+      creatore: this.i18n.t('archetypeQuiz.desc.creatore'),
+      saggio: this.i18n.t('archetypeQuiz.desc.saggio'),
+      ribelle: this.i18n.t('archetypeQuiz.desc.ribelle')
     };
 
     const alert = await this.alertCtrl.create({
-      header: 'Il Tuo Profilo Archetipico',
+      header: this.i18n.t('archetypeQuiz.resultsHeader'),
       message: `
         <div style="text-align: left;">
-          <h4><strong>Archetipo Primario:</strong> ${profile.primary.toUpperCase()}</h4>
+          <h4><strong>${this.i18n.t('archetypeQuiz.primaryLabel')}</strong> ${this.getArchetypeName(profile.primary).toUpperCase()}</h4>
           <p>${archetypeDescriptions[profile.primary] || ''}</p>
           
-          <h4><strong>Archetipi Secondari:</strong></h4>
+          <h4><strong>${this.i18n.t('archetypeQuiz.secondaryLabel')}</strong></h4>
           <ul>
-            ${profile.secondary.map(arch => `<li>${arch}: ${archetypeDescriptions[arch] || ''}</li>`).join('')}
+            ${profile.secondary.map(arch => `<li>${this.getArchetypeName(arch)}: ${archetypeDescriptions[arch] || ''}</li>`).join('')}
           </ul>
           
           <p style="margin-top: 16px; font-style: italic;">
-            Questo profilo ti aiuterà a personalizzare la tua esperienza nell\'app.
+            ${this.i18n.t('archetypeQuiz.personalizeNote')}
           </p>
         </div>
       `,
       buttons: [
         {
-          text: 'Rifai il Test',
+          text: this.i18n.t('archetypeQuiz.retakeTest'),
           role: 'cancel',
           handler: () => {
             this.resetQuiz();
           }
         },
         {
-          text: 'Continua',
+          text: this.i18n.t('archetypeQuiz.continueBtn'),
           handler: () => {
             this.navCtrl.navigateForward('/archetipi');
           }
@@ -331,15 +406,15 @@ export class ArchetypeQuizPage implements OnInit, OnDestroy {
 
   async resetQuiz() {
     const alert = await this.alertCtrl.create({
-      header: 'Rifare il Test',
-      message: 'Sei sicuro di voler rifare il test? I risultati precedenti andranno persi.',
+      header: this.i18n.t('archetypeQuiz.retakeHeader'),
+      message: this.i18n.t('archetypeQuiz.retakeConfirm'),
       buttons: [
         {
-          text: 'Annulla',
+          text: this.i18n.t('archetypeQuiz.cancel'),
           role: 'cancel'
         },
         {
-          text: 'Rifai',
+          text: this.i18n.t('archetypeQuiz.retake'),
           handler: () => {
             this.currentQuestionIndex.set(0);
             this.selectedAnswers.set({});
@@ -355,7 +430,7 @@ export class ArchetypeQuizPage implements OnInit, OnDestroy {
 
   private async showError(message: string) {
     const alert = await this.alertCtrl.create({
-      header: 'Errore',
+      header: this.i18n.t('archetypeQuiz.errorTitle'),
       message,
       buttons: ['OK']
     });
@@ -364,7 +439,7 @@ export class ArchetypeQuizPage implements OnInit, OnDestroy {
 
   private async showWarning(message: string) {
     const alert = await this.alertCtrl.create({
-      header: 'Attenzione',
+      header: this.i18n.t('archetypeQuiz.attentionTitle'),
       message,
       buttons: ['OK']
     });

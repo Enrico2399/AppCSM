@@ -15,17 +15,17 @@
       <ion-progress-bar 
         value="{{getProgressPercentage()}}" 
         color="primary"
-        aria-label="Avanzamento del quiz">
+        [attr.aria-label]="'archetypeQuiz.progressAria' | translate">
       </ion-progress-bar>
       <p class="progress-text">
-        Domanda {{getCurrentQuestionIndex() + 1}} di {{getAllQuestions().length}}
+        {{ i18n.t('archetypeQuiz.questionOf', {current: getCurrentQuestionIndex() + 1, total: getAllQuestions().length}) }}
       </p>
     </div>
 
     <!-- Question Card -->
     <ion-card class="question-card">
       <ion-card-header>
-        <ion-card-title>Domanda {{getCurrentQuestionIndex() + 1}}</ion-card-title>
+        <ion-card-title>{{ i18n.t('archetypeQuiz.questionNumber', {number: getCurrentQuestionIndex() + 1}) }}</ion-card-title>
       </ion-card-header>
       <ion-card-content>
         <h3 class="question-text">{{getCurrentQuestion().text}}</h3>
@@ -53,7 +53,7 @@
         (click)="previousQuestion()"
         [disabled]="getCurrentQuestionIndex() === 0">
         <ion-icon name="chevron-back-outline" slot="start" aria-hidden="true"></ion-icon>
-        Precedente
+        {{ 'archetypeQuiz.previous' | translate }}
       </ion-button>
 
       <ion-button 
@@ -61,7 +61,7 @@
         (click)="nextQuestion()"
         [disabled]="!canGoNext()"
         color="primary">
-        {{getCurrentQuestionIndex() === getAllQuestions().length - 1 ? 'Completa Quiz' : 'Prossima'}}
+        {{getCurrentQuestionIndex() === getAllQuestions().length - 1 ? ('archetypeQuiz.completeQuiz' | translate) : ('archetypeQuiz.next' | translate)}}
         <ion-icon name="chevron-forward-outline" slot="end" aria-hidden="true"></ion-icon>
       </ion-button>
     </div>
@@ -71,20 +71,20 @@
   <div *ngIf="quizCompleted()" class="results-container">
     <ion-card class="results-card">
       <ion-card-header>
-        <ion-card-title>Quiz Completato!</ion-card-title>
+        <ion-card-title>{{ 'archetypeQuiz.completedTitle' | translate }}</ion-card-title>
       </ion-card-header>
       <ion-card-content>
         <div class="results-content">
-          <h4>Il tuo profilo archetipale:</h4>
+          <h4>{{ 'archetypeQuiz.yourProfile' | translate }}</h4>
           <div class="archetype-result">
             <ion-icon name="star-outline" color="primary" aria-hidden="true"></ion-icon>
-            <span class="primary-archetype">{{archetypeProfile()?.primary?.toUpperCase()}}</span>
+            <span class="primary-archetype">{{ archetypeProfile()?.primary ? getArchetypeName(archetypeProfile()!.primary).toUpperCase() : '' }}</span>
           </div>
           
           <div class="secondary-archetypes">
-            <h5>Archetipi secondari:</h5>
+            <h5>{{ 'archetypeQuiz.secondaryArchetypes' | translate }}</h5>
             <ion-chip *ngFor="let arch of archetypeProfile()?.secondary" color="secondary">
-              {{arch}}
+              {{ getArchetypeName(arch) }}
             </ion-chip>
           </div>
         </div>
@@ -97,14 +97,14 @@
         fill="outline"
         (click)="resetQuiz()">
         <ion-icon name="refresh-outline" slot="start" aria-hidden="true"></ion-icon>
-        Rifai il Test
+        {{ 'archetypeQuiz.retakeTest' | translate }}
       </ion-button>
       
       <ion-button 
         expand="block"
         (click)="goBack()">
         <ion-icon name="home-outline" slot="start" aria-hidden="true"></ion-icon>
-        Torna Indietro
+        {{ 'archetypeQuiz.goBack' | translate }}
       </ion-button>
     </div>
   </div>
@@ -112,6 +112,6 @@
   <!-- Loading Overlay -->
   <div *ngIf="loading()" class="loading-overlay">
     <ion-spinner></ion-spinner>
-    <p>Calcolo del tuo profilo...</p>
+    <p>{{ 'archetypeQuiz.calculatingProfile' | translate }}</p>
   </div>
 </ion-content>
