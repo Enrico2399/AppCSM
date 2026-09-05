@@ -3,38 +3,38 @@
     <ion-buttons slot="start">
       <ion-back-button defaultHref="/home"></ion-back-button>
     </ion-buttons>
-    <ion-title>Profilo Utente</ion-title>
+    <ion-title>{{ 'profile.pageTitle' | translate }}</ion-title>
   </ion-toolbar>
 </ion-header>
 
 <ion-content [fullscreen]="true" class="ion-padding">
   <div *ngIf="loading()" class="loading-container">
     <ion-spinner name="crescent"></ion-spinner>
-    <p>Caricamento dati...</p>
+    <p>{{ 'profile.loading' | translate }}</p>
   </div>
 
   <div *ngIf="!loading()" class="profile-container">
     <!-- User Info Section -->
     <ion-card>
       <ion-card-header>
-        <ion-card-title>Informazioni Personali</ion-card-title>
+        <ion-card-title>{{ 'profile.personalInfo' | translate }}</ion-card-title>
       </ion-card-header>
       <ion-card-content>
         <ion-item>
-          <ion-label position="stacked">Nome Visualizzato</ion-label>
+          <ion-label position="stacked">{{ 'profile.displayName' | translate }}</ion-label>
           <ion-input 
             type="text" 
             [(ngModel)]="displayName"
-            placeholder="Inserisci il tuo nome">
+            [placeholder]="'profile.displayNamePlaceholder' | translate">
           </ion-input>
         </ion-item>
 
         <ion-item>
-          <ion-label position="stacked">Email</ion-label>
+          <ion-label position="stacked">{{ 'profile.email' | translate }}</ion-label>
           <ion-input 
             type="email" 
             [(ngModel)]="email"
-            placeholder="tua@email.com"
+            placeholder="you@email.com"
             [readonly]="true">
           </ion-input>
         </ion-item>
@@ -44,7 +44,7 @@
         </ion-item>
         <ion-item *ngIf="!user()?.isAnonymous && !emailVerified()" lines="none" class="email-verification-notice">
           <ion-label color="warning">
-            <p>Email non verificata.</p>
+            <p>{{ 'profile.emailNotVerified' | translate }}</p>
           </ion-label>
           <ion-button
             slot="end"
@@ -52,7 +52,7 @@
             size="small"
             [disabled]="resendingVerification()"
             (click)="resendVerification()">
-            Rinvia email
+            {{ 'profile.resendEmail' | translate }}
           </ion-button>
         </ion-item>
       </ion-card-content>
@@ -61,40 +61,40 @@
     <!-- Preferences Section -->
     <ion-card>
       <ion-card-header>
-        <ion-card-title>Preferenze</ion-card-title>
+        <ion-card-title>{{ 'profile.preferences' | translate }}</ion-card-title>
       </ion-card-header>
       <ion-card-content>
         <ion-item>
-          <ion-label>Tema</ion-label>
+          <ion-label>{{ 'profile.theme' | translate }}</ion-label>
           <ion-select 
             [(ngModel)]="theme" 
-            placeholder="Seleziona tema"
+            [placeholder]="'profile.selectTheme' | translate"
             class="filter-select">
-            <ion-select-option value="light">Chiaro</ion-select-option>
-            <ion-select-option value="dark">Scuro</ion-select-option>
-            <ion-select-option value="auto">Automatico</ion-select-option>
+            <ion-select-option value="light">{{ 'profile.themeLight' | translate }}</ion-select-option>
+            <ion-select-option value="dark">{{ 'profile.themeDark' | translate }}</ion-select-option>
+            <ion-select-option value="auto">{{ 'profile.themeAuto' | translate }}</ion-select-option>
           </ion-select>
         </ion-item>
 
         <ion-item>
-          <ion-label>Notifiche Promemoria Stati d'Animo</ion-label>
-          <ion-toggle [(ngModel)]="moodReminders" aria-label="Notifiche Promemoria Stati d'Animo"></ion-toggle>
+          <ion-label>{{ 'profile.moodReminders' | translate }}</ion-label>
+          <ion-toggle [(ngModel)]="moodReminders" [attr.aria-label]="'profile.moodReminders' | translate"></ion-toggle>
         </ion-item>
 
         <ion-item>
-          <ion-label>Aggiornamenti Community</ion-label>
-          <ion-toggle [(ngModel)]="communityUpdates" aria-label="Aggiornamenti Community"></ion-toggle>
+          <ion-label>{{ 'profile.communityUpdates' | translate }}</ion-label>
+          <ion-toggle [(ngModel)]="communityUpdates" [attr.aria-label]="'profile.communityUpdates' | translate"></ion-toggle>
         </ion-item>
 
         <ion-item>
-          <ion-label>Report Settimanali</ion-label>
-          <ion-toggle [(ngModel)]="weeklyReports" aria-label="Report Settimanali"></ion-toggle>
+          <ion-label>{{ 'profile.weeklyReports' | translate }}</ion-label>
+          <ion-toggle [(ngModel)]="weeklyReports" [attr.aria-label]="'profile.weeklyReports' | translate"></ion-toggle>
         </ion-item>
 
         <ion-item button detail="true" lines="none" (click)="goToNotificationSettings()">
           <ion-label>
-            <strong>Gestisci Notifiche</strong>
-            <p>Attiva davvero i promemoria e scegli orari ed esercizi</p>
+            <strong>{{ 'profile.manageNotifications' | translate }}</strong>
+            <p>{{ 'profile.manageNotificationsDesc' | translate }}</p>
           </ion-label>
         </ion-item>
       </ion-card-content>
@@ -103,12 +103,12 @@
     <!-- Privacy Section -->
     <ion-card>
       <ion-card-header>
-        <ion-card-title>Privacy e Dati</ion-card-title>
+        <ion-card-title>{{ 'profile.privacyAndData' | translate }}</ion-card-title>
       </ion-card-header>
       <ion-card-content>
         <ion-item>
-          <ion-label position="stacked" *ngIf="!user()?.isAnonymous">Periodo di Conservazione Dati (giorni)</ion-label>
-          <ion-label position="stacked" *ngIf="user()?.isAnonymous">Periodo di Conservazione Dati</ion-label>
+          <ion-label position="stacked" *ngIf="!user()?.isAnonymous">{{ 'profile.dataRetentionDays' | translate }}</ion-label>
+          <ion-label position="stacked" *ngIf="user()?.isAnonymous">{{ 'profile.dataRetention' | translate }}</ion-label>
           <ion-input 
             type="number" 
             [(ngModel)]="dataRetention"
@@ -120,23 +120,23 @@
             type="text" 
             [(ngModel)]="dataRetention"
             [readonly]="true"
-            value="24 ore"
+            [value]="'profile.retention24h' | translate"
             *ngIf="user()?.isAnonymous">
           </ion-input>
         </ion-item>
         
         <div *ngIf="user()?.isAnonymous" class="anonymous-warning">
-          <p><strong>Cancellazione automatica dei dati dopo 24 ore, fai il login non da anonimo se vuoi i tuoi dati mantenuti.</strong></p>
+          <p><strong>{{ 'nav.anonWarning' | translate }}</strong></p>
         </div>
 
         <ion-item>
-          <ion-label>Condividi dati con terapeuta</ion-label>
-          <ion-toggle [(ngModel)]="shareWithTherapist" aria-label="Condividi dati con terapeuta"></ion-toggle>
+          <ion-label>{{ 'profile.shareWithTherapist' | translate }}</ion-label>
+          <ion-toggle [(ngModel)]="shareWithTherapist" [attr.aria-label]="'profile.shareWithTherapist' | translate"></ion-toggle>
         </ion-item>
 
         <ion-item>
-          <ion-label>Consenti analisi anonime</ion-label>
-          <ion-toggle [(ngModel)]="analyticsConsent" aria-label="Consenti analisi anonime"></ion-toggle>
+          <ion-label>{{ 'profile.allowAnalytics' | translate }}</ion-label>
+          <ion-toggle [(ngModel)]="analyticsConsent" [attr.aria-label]="'profile.allowAnalytics' | translate"></ion-toggle>
         </ion-item>
       </ion-card-content>
     </ion-card>
@@ -144,7 +144,7 @@
     <!-- Data Management Section -->
     <ion-card>
       <ion-card-header>
-        <ion-card-title>Gestione Dati</ion-card-title>
+        <ion-card-title>{{ 'profile.dataManagement' | translate }}</ion-card-title>
       </ion-card-header>
       <ion-card-content>
         <ion-button 
@@ -153,7 +153,7 @@
           (click)="exportData()"
           class="data-action-btn">
           <ion-icon name="download-outline" slot="start" aria-hidden="true"></ion-icon>
-          Esporta i Tuoi Dati
+          {{ 'profile.exportData' | translate }}
         </ion-button>
 
         <ion-button 
@@ -163,7 +163,7 @@
           (click)="clearMoodHistory()"
           class="data-action-btn">
           <ion-icon name="trash-outline" slot="start" aria-hidden="true"></ion-icon>
-          Cancella Cronologia Emozionale
+          {{ 'profile.clearMoodHistory' | translate }}
         </ion-button>
 
         <ion-button 
@@ -173,7 +173,7 @@
           (click)="deleteAccount()"
           class="data-action-btn delete-btn">
           <ion-icon name="warning-outline" slot="start" aria-hidden="true"></ion-icon>
-          Elimina Account
+          {{ 'profile.deleteAccount' | translate }}
         </ion-button>
       </ion-card-content>
     </ion-card>
@@ -185,8 +185,8 @@
       [disabled]="saving()"
       class="save-btn">
       <ion-spinner *ngIf="saving()" name="crescent" slot="start"></ion-spinner>
-      <span *ngIf="!saving()">Salva Profilo</span>
-      <span *ngIf="saving()">Salvataggio...</span>
+      <span *ngIf="!saving()">{{ 'profile.saveProfile' | translate }}</span>
+      <span *ngIf="saving()">{{ 'profile.saving' | translate }}</span>
     </ion-button>
   </div>
 </ion-content>

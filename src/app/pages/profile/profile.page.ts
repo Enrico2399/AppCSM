@@ -9,6 +9,8 @@ import { PrivacyService, UserProfile, UserPreferences } from '../../services/pri
 import { StorageService } from '../../services/storage/storage';
 import { AnonymousSessionService } from '../../services/anonymous-session/anonymous-session.service';
 import { Chart, ChartConfiguration, ChartType, registerables } from 'chart.js/auto';
+import { I18nService } from '../../services/i18n/i18n.service';
+import { TranslatePipe } from '../../pipes/translate.pipe';
 import { addIcons } from 'ionicons';
 import { downloadOutline, trashOutline, warningOutline } from 'ionicons/icons';
 
@@ -20,9 +22,11 @@ Chart.register(...registerables);
   templateUrl: './profile.page.html',
   styleUrls: ['./profile.page.scss'],
   standalone: true,
-  imports: [IonicModule, CommonModule, FormsModule, ReactiveFormsModule]
+  imports: [IonicModule, CommonModule, FormsModule, ReactiveFormsModule, TranslatePipe]
 })
 export class ProfilePage implements OnInit, OnDestroy {
+  public i18n = inject(I18nService);
+
   user = signal<User | null>(null);
   userProfile = signal<UserProfile | null>(null);
   loading = signal(false);
@@ -130,7 +134,7 @@ export class ProfilePage implements OnInit, OnDestroy {
       }
     } catch (error) {
       console.error('Error loading user data:', error);
-      this.showError('Errore nel caricamento dei dati utente');
+      this.showError(this.i18n.t('profile.loadError'));
     } finally {
       this.loading.set(false);
     }
@@ -347,7 +351,7 @@ export class ProfilePage implements OnInit, OnDestroy {
   async saveProfile() {
     const currentUser = this.firebaseService.auth.currentUser;
     if (!currentUser) {
-      this.showError('Utente non autenticato');
+      this.showError(this.i18n.t('profile.notAuthenticated'));
       return;
     }
 
@@ -356,7 +360,7 @@ export class ProfilePage implements OnInit, OnDestroy {
     try {
       const preferences: UserPreferences = {
         theme: this.theme(),
-        language: 'it',
+        language: this.i18n.lang(),
         timezone: 'Europe/Rome',
         notifications: {
           moodReminders: this.moodReminders(),
@@ -386,10 +390,10 @@ export class ProfilePage implements OnInit, OnDestroy {
         dataProcessing: true
       });
 
-      this.showSuccess('Profilo salvato con successo');
+      this.showSuccess(this.i18n.t('profile.saveSuccess'));
     } catch (error) {
       console.error('Error saving profile:', error);
-      this.showError('Errore nel salvataggio del profilo');
+      this.showError(this.i18n.t('profile.saveError'));
     } finally {
       this.saving.set(false);
     }
@@ -397,15 +401,15 @@ export class ProfilePage implements OnInit, OnDestroy {
 
   async deleteAccount() {
     const alert = await this.alertCtrl.create({
-      header: 'Elimina Account',
-      message: 'Questa azione è irreversibile. Tutti i tuoi dati verranno cancellati permanentemente. Sei sicuro?',
+      header: this.i18n.t('profile.deleteAccountTitle'),
+      message: this.i18n.t('profile.deleteAccountConfirm'),
       buttons: [
         {
-          text: 'Annulla',
+          text: this.i18n.t('profile.cancel'),
           role: 'cancel'
         },
         {
-          text: 'Elimina',
+          text: this.i18n.t('profile.delete'),
           role: 'destructive',
           handler: async () => {
             await this.confirmDeleteAccount();
@@ -434,17 +438,17 @@ export class ProfilePage implements OnInit, OnDestroy {
       // Navigate to login/home
       this.navCtrl.navigateRoot('/home');
       
-      this.showSuccess('Account eliminato con successo');
+      this.showSuccess(this.i18n.t('profile.deleteAccountSuccess'));
     } catch (error) {
       console.error('Error deleting account:', error);
-      this.showError('Errore nell\'eliminazione dell\'account');
+      this.showError(this.i18n.t('profile.deleteAccountError'));
     }
   }
 
   async exportData() {
     const currentUser = this.firebaseService.auth.currentUser;
     if (!currentUser) {
-      this.showError('Utente non autenticato');
+      this.showError(this.i18n.t('profile.notAuthenticated'));
       return;
     }
 
@@ -462,24 +466,24 @@ export class ProfilePage implements OnInit, OnDestroy {
       linkElement.setAttribute('download', exportFileDefaultName);
       linkElement.click();
       
-      this.showSuccess('Dati esportati con successo');
+      this.showSuccess(this.i18n.t('profile.exportSuccess'));
     } catch (error) {
       console.error('Error exporting data:', error);
-      this.showError('Errore nell\'esportazione dei dati');
+      this.showError(this.i18n.t('profile.exportError'));
     }
   }
 
   async clearMoodHistory() {
     const alert = await this.alertCtrl.create({
-      header: 'Cancella Cronologia Emozionale',
-      message: 'Questa azione cancellerà tutta la tua cronologia degli stati d\'animo. Sei sicuro?',
+      header: this.i18n.t('profile.clearHistoryTitle'),
+      message: this.i18n.t('profile.clearHistoryConfirm'),
       buttons: [
         {
-          text: 'Annulla',
+          text: this.i18n.t('profile.cancel'),
           role: 'cancel'
         },
         {
-          text: 'Cancella',
+          text: this.i18n.t('profile.clear'),
           role: 'destructive',
           handler: async () => {
             await this.confirmClearHistory();
@@ -497,10 +501,10 @@ export class ProfilePage implements OnInit, OnDestroy {
 
     try {
       await this.firebaseService.clearMoodHistory(currentUser.uid);
-      this.showSuccess('Cronologia emozionale cancellata');
+      this.showSuccess(this.i18n.t('profile.clearHistorySuccess'));
     } catch (error) {
       console.error('Error clearing mood history:', error);
-      this.showError('Errore nella cancellazione della cronologia');
+      this.showError(this.i18n.t('profile.clearHistoryError'));
     }
   }
 
@@ -511,9 +515,9 @@ export class ProfilePage implements OnInit, OnDestroy {
     this.resendingVerification.set(true);
     try {
       await this.authService.resendVerificationEmail();
-      this.showSuccess('Email di verifica inviata. Controlla la tua casella di posta.');
+      this.showSuccess(this.i18n.t('profile.verificationSent'));
     } catch (error: any) {
-      this.showError(error?.message || "Si e' verificato un errore nell'invio dell'email.");
+      this.showError(error?.message || this.i18n.t('profile.verificationError'));
     } finally {
       this.resendingVerification.set(false);
     }
@@ -521,7 +525,7 @@ export class ProfilePage implements OnInit, OnDestroy {
 
   private async showError(message: string) {
     const alert = await this.alertCtrl.create({
-      header: 'Errore',
+      header: this.i18n.t('profile.errorTitle'),
       message,
       buttons: ['OK']
     });
@@ -530,7 +534,7 @@ export class ProfilePage implements OnInit, OnDestroy {
 
   private async showSuccess(message: string) {
     const alert = await this.alertCtrl.create({
-      header: 'Successo',
+      header: this.i18n.t('profile.successTitle'),
       message,
       buttons: ['OK']
     });
