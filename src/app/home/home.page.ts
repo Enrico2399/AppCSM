@@ -1,5 +1,7 @@
 import { MoodService, Mood } from '../services/mood/mood.service';
-import { Component, signal, inject, OnInit, computed } from '@angular/core';
+import { Component, signal, inject, OnInit, computed, effect } from '@angular/core';
+import { I18nService } from '../services/i18n/i18n.service';
+import { TranslatePipe } from '../pipes/translate.pipe';
 import { CommonModule, AsyncPipe } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { IonicModule, ModalController } from '@ionic/angular';
@@ -25,7 +27,8 @@ import { User, ConfirmationResult } from '@firebase/auth';
     AsyncPipe,
     FormsModule,
     RouterModule,
-    IonicModule
+    IonicModule,
+    TranslatePipe
   ]
 })
 export class HomePage implements OnInit {
@@ -60,6 +63,8 @@ export class HomePage implements OnInit {
   recaptchaVerifier: any;
   confirmationResult: ConfirmationResult | null = null;
 
+  public i18n = inject(I18nService);
+
   constructor(
     private moodService: MoodService,
     private storageService: StorageService,
@@ -71,6 +76,21 @@ export class HomePage implements OnInit {
   ) {
     this.moods.set(this.moodService.getMoods());
     addIcons({ logoGoogle, logOutOutline, closeOutline, personCircleOutline });
+
+    // I titoli/testi degli umori vivono in MoodService (2 array IT/EN, non
+    // tradotti dal pipe nel template): quando la lingua cambia vanno
+    // ricaricati esplicitamente, e l'umore eventualmente attivo va aggiornato
+    // allo stesso oggetto nella nuova lingua (stesso "key", solo testo diverso).
+    effect(() => {
+      this.i18n.lang();
+      const freshMoods = this.moodService.getMoods();
+      this.moods.set(freshMoods);
+      const current = this.activeMood();
+      if (current) {
+        const updated = freshMoods.find(m => m.key === current.key);
+        if (updated) this.activeMood.set(updated);
+      }
+    });
   }
 
   ngOnInit() {
@@ -127,7 +147,7 @@ export class HomePage implements OnInit {
 
   saveMoodLog() {
     if (this.hasConsent() === false) {
-      this.showStatus("Privacy", "Per salvare i tuoi dati devi prima accettare l'informativa privacy.");
+      this.showStatus(this.i18n.t('home.privacy'), this.i18n.t('home.consentRequiredSave'));
       return;
     }
     const mood = this.activeMood();
@@ -135,7 +155,7 @@ export class HomePage implements OnInit {
 
     const note = this.moodNote().trim();
     if (!note) {
-      this.showStatus("Attenzione", "Inserisci il tuo pensiero o registra il tuo stato d'animo direttamente.");
+      this.showStatus(this.i18n.t('home.attention'), this.i18n.t('home.emptyNote'));
       return;
     }
 
@@ -148,20 +168,20 @@ export class HomePage implements OnInit {
         
         this.firebaseService.logMood(user.uid, mood.key, mood.title, mood.icon, note);
         if (navigator.onLine) {
-          this.showStatus("Registrato", "Stato d'animo registrato nella tua cronologia!");
+          this.showStatus(this.i18n.t('home.saved'), this.i18n.t('home.savedToHistory'));
         } else {
-          this.showStatus("Salvato offline", "Nessuna connessione: la voce è salvata sul dispositivo e verrà sincronizzata automaticamente quando torni online.");
+          this.showStatus(this.i18n.t('home.savedOffline'), this.i18n.t('home.savedOfflineMsg'));
         }
         this.moodNote.set('');
       } else {
-        this.showStatus("Errore", "Devi essere loggato per salvare nel diario.");
+        this.showStatus(this.i18n.t('home.error'), this.i18n.t('home.mustBeLoggedDiary'));
       }
     });
   }
 
   quickSaveMoodLog() {
     if (this.hasConsent() === false) {
-      this.showStatus("Privacy", "Per registrare le emozioni devi prima accettare l'informativa privacy.");
+      this.showStatus(this.i18n.t('home.privacy'), this.i18n.t('home.consentRequiredQuick'));
       return;
     }
     const mood = this.activeMood();
@@ -176,12 +196,12 @@ export class HomePage implements OnInit {
         
         this.firebaseService.logMood(user.uid, mood.key, mood.title, mood.icon, "");
         if (navigator.onLine) {
-          this.showStatus("Registrato", "Emozione registrata istantaneamente!");
+          this.showStatus(this.i18n.t('home.saved'), this.i18n.t('home.savedInstant'));
         } else {
-          this.showStatus("Salvato offline", "Nessuna connessione: l'emozione è salvata sul dispositivo e verrà sincronizzata automaticamente quando torni online.");
+          this.showStatus(this.i18n.t('home.savedOffline'), this.i18n.t('home.savedOfflineMsgQuick'));
         }
       } else {
-        this.showStatus("Errore", "Devi essere loggato per registrare le emozioni.");
+        this.showStatus(this.i18n.t('home.error'), this.i18n.t('home.mustBeLoggedEmotions'));
       }
     });
   }
@@ -262,7 +282,7 @@ export class HomePage implements OnInit {
       this.showConsentModal.set(false);
     } catch (err) {
       console.error("Errore salvataggio consenso", err);
-      this.showStatus("Errore", "Non è stato possibile salvare il consenso. Riprova più tardi.");
+      this.showStatus(this.i18n.t('home.error'), this.i18n.t('home.consentSaveError'));
     }
   }
 
@@ -277,7 +297,7 @@ export class HomePage implements OnInit {
     try {
       await this.authService.loginWithEmail(this.email(), this.password());
     } catch (err: any) {
-      this.showStatus("Errore Login", err.message);
+      this.showStatus(this.i18n.t('home.loginError'), err.message);
     }
   }
 
@@ -285,7 +305,7 @@ export class HomePage implements OnInit {
     try {
       await this.authService.registerWithEmail(this.email(), this.password(), this.name());
     } catch (err: any) {
-      this.showStatus("Errore Registrazione", err.message);
+      this.showStatus(this.i18n.t('home.registerError'), err.message);
     }
   }
 
@@ -319,7 +339,7 @@ export class HomePage implements OnInit {
         this.showAnonymousWelcome();
       }
     } catch (err: any) {
-      this.showStatus("Errore Accesso", err.message);
+      this.showStatus(this.i18n.t('home.accessError'), err.message);
     }
   }
 
@@ -352,9 +372,9 @@ export class HomePage implements OnInit {
       }
       this.confirmationResult = await this.authService.loginWithPhone(this.phone(), this.recaptchaVerifier);
       this.showOtpInput.set(true);
-      this.showStatus("SMS Inviato", "Codice inviato via SMS!");
+      this.showStatus(this.i18n.t('home.smsSentTitle'), this.i18n.t('home.smsSentMsg'));
     } catch (err: any) {
-      this.showStatus("Errore SMS", err.message);
+      this.showStatus(this.i18n.t('home.smsError'), err.message);
     }
   }
 
@@ -364,7 +384,7 @@ export class HomePage implements OnInit {
         await this.confirmationResult.confirm(this.otp());
       }
     } catch (err: any) {
-      this.showStatus("Errore Codice", err.message);
+      this.showStatus(this.i18n.t('home.codeError'), err.message);
     }
   }
 }
