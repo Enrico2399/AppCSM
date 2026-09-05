@@ -3,6 +3,8 @@ import { CommonModule } from '@angular/common';
 import { FormsModule, ReactiveFormsModule, FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { IonicModule, AlertController, ToastController } from '@ionic/angular';
 import { NotificationService, NotificationSettings } from '../../services/notifications/notifications.service';
+import { I18nService } from '../../services/i18n/i18n.service';
+import { TranslatePipe } from '../../pipes/translate.pipe';
 import { addIcons } from 'ionicons';
 import { notifications, trash, checkmarkCircle, alertCircle, colorPalette, people, barChart, leaf } from 'ionicons/icons';
 
@@ -11,13 +13,14 @@ import { notifications, trash, checkmarkCircle, alertCircle, colorPalette, peopl
   templateUrl: './notification-settings.component.html',
   styleUrls: ['./notification-settings.component.scss'],
   standalone: true,
-  imports: [IonicModule, CommonModule, FormsModule, ReactiveFormsModule]
+  imports: [IonicModule, CommonModule, FormsModule, ReactiveFormsModule, TranslatePipe]
 })
 export class NotificationSettingsComponent {
   private notificationService = inject(NotificationService);
   private formBuilder = inject(FormBuilder);
   private alertCtrl = inject(AlertController);
   private toastCtrl = inject(ToastController);
+  public i18n = inject(I18nService);
 
   settingsForm: FormGroup;
   isLoading = signal(false);
@@ -82,14 +85,14 @@ export class NotificationSettingsComponent {
       this.isInitialized.set(this.notificationService.isInitialized());
 
       if (this.isInitialized()) {
-        await this.showToast('Notifiche attivate!', 'success');
+        await this.showToast(this.i18n.t('notifSettings.enabled'), 'success');
         await this.loadSettings();
       } else {
-        await this.showToast('Permesso negato. Attivalo dalle impostazioni del browser/dispositivo.', 'warning');
+        await this.showToast(this.i18n.t('notifSettings.permissionDenied'), 'warning');
       }
     } catch (error) {
       console.error('Error requesting permission:', error);
-      await this.showToast('Errore nella richiesta dei permessi', 'danger');
+      await this.showToast(this.i18n.t('notifSettings.permissionRequestError'), 'danger');
     } finally {
       this.isLoading.set(false);
     }
@@ -97,12 +100,12 @@ export class NotificationSettingsComponent {
 
   async saveSettings() {
     if (this.settingsForm.invalid) {
-      await this.showToast('Compila tutti i campi correttamente', 'warning');
+      await this.showToast(this.i18n.t('notifSettings.fillFields'), 'warning');
       return;
     }
 
     if (!this.isInitialized()) {
-      await this.showToast('Concedi prima i permessi per le notifiche', 'warning');
+      await this.showToast(this.i18n.t('notifSettings.grantPermissionFirst'), 'warning');
       return;
     }
 
@@ -115,10 +118,10 @@ export class NotificationSettingsComponent {
       // Reload scheduled notifications
       await this.loadScheduledNotifications();
       
-      await this.showToast('Impostazioni notifiche salvate!', 'success');
+      await this.showToast(this.i18n.t('notifSettings.settingsSaved'), 'success');
     } catch (error) {
       console.error('Error saving settings:', error);
-      await this.showToast('Errore nel salvataggio delle impostazioni', 'danger');
+      await this.showToast(this.i18n.t('notifSettings.saveError'), 'danger');
     } finally {
       this.isLoading.set(false);
     }
@@ -126,30 +129,30 @@ export class NotificationSettingsComponent {
 
   async testNotification() {
     if (!this.isInitialized()) {
-      await this.showToast('Concedi prima i permessi per le notifiche', 'warning');
+      await this.showToast(this.i18n.t('notifSettings.grantPermissionFirst'), 'warning');
       return;
     }
 
     try {
       await this.notificationService.testNotification();
-      await this.showToast('Notifica di test inviata!', 'success');
+      await this.showToast(this.i18n.t('notifSettings.testSent'), 'success');
     } catch (error) {
       console.error('Error testing notification:', error);
-      await this.showToast('Errore nell\'invio della notifica di test', 'danger');
+      await this.showToast(this.i18n.t('notifSettings.testError'), 'danger');
     }
   }
 
   async clearAllNotifications() {
     const alert = await this.alertCtrl.create({
-      header: 'Cancella Tutte le Notifiche',
-      message: 'Questa azione cancellerà tutte le notifiche programmate. Vuoi procedere?',
+      header: this.i18n.t('notifSettings.clearAllTitle'),
+      message: this.i18n.t('notifSettings.clearAllConfirm'),
       buttons: [
         {
-          text: 'Annulla',
+          text: this.i18n.t('notifSettings.cancel'),
           role: 'cancel'
         },
         {
-          text: 'Cancella',
+          text: this.i18n.t('notifSettings.clear'),
           role: 'destructive',
           handler: async () => {
             await this.performClearNotifications();
@@ -165,10 +168,10 @@ export class NotificationSettingsComponent {
     try {
       await this.notificationService.clearAllScheduledNotifications();
       await this.loadScheduledNotifications();
-      await this.showToast('Notifiche cancellate', 'success');
+      await this.showToast(this.i18n.t('notifSettings.cleared'), 'success');
     } catch (error) {
       console.error('Error clearing notifications:', error);
-      await this.showToast('Errore nella cancellazione delle notifiche', 'danger');
+      await this.showToast(this.i18n.t('notifSettings.clearError'), 'danger');
     }
   }
 
@@ -184,16 +187,16 @@ export class NotificationSettingsComponent {
 
   getNotificationTypeLabel(type: string): string {
     const labels: Record<string, string> = {
-      'mood': 'Promemoria Umore',
-      'community': 'Aggiornamenti Community',
-      'report': 'Report Settimanale',
-      'grounding': 'Esercizi Grounding'
+      'mood': this.i18n.t('notifSettings.typeMood'),
+      'community': this.i18n.t('notifSettings.typeCommunity'),
+      'report': this.i18n.t('notifSettings.typeReport'),
+      'grounding': this.i18n.t('notifSettings.typeGrounding')
     };
-    return labels[type] || 'Notifica';
+    return labels[type] || this.i18n.t('notifSettings.typeGeneric');
   }
 
   formatScheduledTime(date: Date): string {
-    return date.toLocaleString('it-IT', {
+    return date.toLocaleString(this.i18n.lang() === 'en' ? 'en-US' : 'it-IT', {
       day: '2-digit',
       month: '2-digit',
       hour: '2-digit',
@@ -205,15 +208,15 @@ export class NotificationSettingsComponent {
     const now = new Date();
     const diff = date.getTime() - now.getTime();
     
-    if (diff < 0) return 'Scaduto';
+    if (diff < 0) return this.i18n.t('time.expired');
     
     const days = Math.floor(diff / (1000 * 60 * 60 * 24));
     const hours = Math.floor((diff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
     const minutes = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
     
-    if (days > 0) return `${days}g ${hours}h`;
-    if (hours > 0) return `${hours}h ${minutes}m`;
-    return `${minutes}m`;
+    if (days > 0) return this.i18n.t('time.daysHoursShort', { days, hours });
+    if (hours > 0) return this.i18n.t('time.hoursMinShort', { hours, minutes });
+    return this.i18n.t('time.minShort', { minutes });
   }
 
   private async showToast(message: string, color: 'success' | 'warning' | 'danger' = 'success') {
