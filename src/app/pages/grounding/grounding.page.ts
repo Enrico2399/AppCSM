@@ -1,8 +1,10 @@
-import { Component, OnInit, OnDestroy, signal } from '@angular/core';
+import { Component, OnInit, OnDestroy, signal, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { IonicModule, NavController, AlertController } from '@ionic/angular';
 import { FirebaseService } from '../../services/firebase/firebase';
+import { I18nService } from '../../services/i18n/i18n.service';
+import { TranslatePipe } from '../../pipes/translate.pipe';
 import { Auth } from '@firebase/auth';
 import { addIcons } from 'ionicons';
 import { arrowForwardOutline, checkmarkCircleOutline, homeOutline, leafOutline, refreshOutline } from 'ionicons/icons';
@@ -31,7 +33,7 @@ export interface GroundingSession {
   templateUrl: './grounding.page.html',
   styleUrls: ['./grounding.page.scss'],
   standalone: true,
-  imports: [IonicModule, CommonModule, FormsModule]
+  imports: [IonicModule, CommonModule, FormsModule, TranslatePipe]
 })
 export class GroundingPage implements OnInit, OnDestroy {
   session = signal<GroundingSession | null>(null);
@@ -74,6 +76,8 @@ export class GroundingPage implements OnInit, OnDestroy {
     }
   ];
 
+  public i18n = inject(I18nService);
+
   constructor(
     private navCtrl: NavController,
     private alertCtrl: AlertController,
@@ -101,6 +105,16 @@ export class GroundingPage implements OnInit, OnDestroy {
     const session = this.session();
     if (!session) return this.steps[0];
     return session.steps[this.currentStep()];
+  }
+
+  // I prompt vivono nell'array 'steps' in italiano (copiati anche dentro
+  // ogni sessione salvata su Firebase, per mantenere lo storico coerente con
+  // la lingua di quando e' stato fatto l'esercizio): per la lingua mostrata
+  // ORA nel template si usa invece questa traduzione in base al tipo di
+  // passaggio, che si aggiorna subito se l'utente cambia lingua a metà
+  // esercizio.
+  getCurrentStepPrompt(): string {
+    return this.i18n.t('grounding.prompt.' + this.getCurrentStep().type);
   }
 
   getExpectedCount(): number {
@@ -145,7 +159,7 @@ export class GroundingPage implements OnInit, OnDestroy {
     const expectedCount = this.getExpectedCount();
 
     if (currentItems.length < expectedCount) {
-      await this.showWarning(`Devi inserire almeno ${expectedCount} elementi per continuare`);
+      await this.showWarning(this.i18n.t('grounding.minItemsWarning', { count: expectedCount }));
       return;
     }
 
@@ -200,17 +214,17 @@ export class GroundingPage implements OnInit, OnDestroy {
 
   private async showCompletionMessage() {
     const alert = await this.alertCtrl.create({
-      header: 'Esercizio Completato!',
-      message: 'Ottimo lavoro! Hai completato l\'esercizio di grounding. Prenditi un momento per notare come ti senti ora.',
+      header: this.i18n.t('grounding.completedTitle'),
+      message: this.i18n.t('grounding.completedMessage'),
       buttons: [
         {
-          text: 'Nuovo Esercizio',
+          text: this.i18n.t('grounding.newExercise'),
           handler: () => {
             this.initializeSession();
           }
         },
         {
-          text: 'Torna alla Home',
+          text: this.i18n.t('grounding.backToHome'),
           handler: () => {
             this.navCtrl.navigateRoot('/home');
           }
@@ -225,7 +239,7 @@ export class GroundingPage implements OnInit, OnDestroy {
     this.userInputText.set('');
     const currentUser = this.firebaseService.auth.currentUser;
     if (!currentUser) {
-      this.showError('Utente non autenticato');
+      this.showError(this.i18n.t('grounding.notAuthenticated'));
       return;
     }
 
@@ -247,15 +261,15 @@ export class GroundingPage implements OnInit, OnDestroy {
 
   async restartSession() {
     const alert = await this.alertCtrl.create({
-      header: 'Ricominciare',
-      message: 'Sei sicuro di voler ricominciare l\'esercizio? I progressi attuali andranno persi.',
+      header: this.i18n.t('grounding.restartTitle'),
+      message: this.i18n.t('grounding.restartConfirm'),
       buttons: [
         {
-          text: 'Annulla',
+          text: this.i18n.t('grounding.cancel'),
           role: 'cancel'
         },
         {
-          text: 'Ricomincia',
+          text: this.i18n.t('grounding.restart'),
           handler: () => {
             this.initializeSession();
           }
@@ -268,15 +282,15 @@ export class GroundingPage implements OnInit, OnDestroy {
 
   async skipStep() {
     const alert = await this.alertCtrl.create({
-      header: 'Salta Passaggio',
-      message: 'Sei sicuro di voler saltare questo passaggio? È meglio completare tutti i passaggi per ottenere il massimo beneficio.',
+      header: this.i18n.t('grounding.skipTitle'),
+      message: this.i18n.t('grounding.skipConfirm'),
       buttons: [
         {
-          text: 'Annulla',
+          text: this.i18n.t('grounding.cancel'),
           role: 'cancel'
         },
         {
-          text: 'Salta',
+          text: this.i18n.t('grounding.skip'),
           handler: () => {
             const session = this.session();
             if (session && this.currentStep() < this.steps.length - 1) {
@@ -299,7 +313,7 @@ export class GroundingPage implements OnInit, OnDestroy {
 
   private async showError(message: string) {
     const alert = await this.alertCtrl.create({
-      header: 'Errore',
+      header: this.i18n.t('grounding.errorTitle'),
       message,
       buttons: ['OK']
     });
@@ -308,7 +322,7 @@ export class GroundingPage implements OnInit, OnDestroy {
 
   private async showWarning(message: string) {
     const alert = await this.alertCtrl.create({
-      header: 'Attenzione',
+      header: this.i18n.t('grounding.attentionTitle'),
       message,
       buttons: ['OK']
     });
@@ -334,7 +348,13 @@ export class GroundingPage implements OnInit, OnDestroy {
 
   getSuggestions(): string[] {
     const step = this.getCurrentStep();
-    const suggestions = {
+    const suggestions = this.i18n.lang() === 'en' ? {
+      see: ['chair', 'table', 'window', 'lamp', 'computer', 'plant', 'book', 'phone'],
+      touch: ['keyboard', 'button', 'mug', 'surface', 'fabric', 'pen', 'handle', 'rug'],
+      hear: ['weather', 'keyboard', 'voice', 'music', 'traffic', 'birds', 'wind', 'silence'],
+      smell: ['coffee', 'perfume', 'food', 'fresh air', 'flowers', 'candle', 'paper', 'dust'],
+      taste: ['water', 'coffee', 'mouth', 'toothpaste', 'candy', 'fruit', 'chocolate', 'salt']
+    } : {
       see: ['sedia', 'tavolo', 'finestra', 'lampada', 'computer', 'pianta', 'libro', 'telefono'],
       touch: ['tastiera', 'bottone', 'tazza', 'superficie', 'tessuto', 'penna', 'maniglia', 'tappeto'],
       hear: ['clima', 'tastiera', 'voce', 'musica', 'traffico', 'uccelli', 'vento', 'silenzio'],
