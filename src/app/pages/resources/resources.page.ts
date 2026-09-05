@@ -6,6 +6,8 @@ import { Geolocation, Position } from '@capacitor/geolocation';
 import { FirebaseService } from '../../services/firebase/firebase';
 import { addIcons } from 'ionicons';
 import { callOutline, globeOutline, heartOutline, locationOutline, mailOutline, mapOutline, refreshOutline, searchOutline, timeOutline, warningOutline } from 'ionicons/icons';
+import { I18nService } from '../../services/i18n/i18n.service';
+import { TranslatePipe } from '../../pipes/translate.pipe';
 
 export interface Resource {
   id: string;
@@ -31,7 +33,7 @@ export interface Resource {
   templateUrl: './resources.page.html',
   styleUrls: ['./resources.page.scss'],
   standalone: true,
-  imports: [IonicModule, CommonModule, FormsModule]
+  imports: [IonicModule, CommonModule, FormsModule, TranslatePipe]
 })
 export class ResourcesPage implements OnInit, OnDestroy {
   resources = signal<Resource[]>([]);
@@ -118,7 +120,8 @@ export class ResourcesPage implements OnInit, OnDestroy {
     private navCtrl: NavController,
     private alertCtrl: AlertController,
     private loadingCtrl: LoadingController,
-    private firebaseService: FirebaseService
+    private firebaseService: FirebaseService,
+    public i18n: I18nService
   ) {
     addIcons({ callOutline, globeOutline, heartOutline, locationOutline, mailOutline, mapOutline, refreshOutline, searchOutline, timeOutline, warningOutline });
   }
@@ -215,7 +218,7 @@ export class ResourcesPage implements OnInit, OnDestroy {
 
   async refreshLocation() {
     const loading = await this.loadingCtrl.create({
-      message: 'Aggiornamento posizione...'
+      message: this.i18n.t('resources.refreshingLocation')
     });
     await loading.present();
 
@@ -224,7 +227,7 @@ export class ResourcesPage implements OnInit, OnDestroy {
       await loading.dismiss();
     } catch (error) {
       await loading.dismiss();
-      this.showError('Impossibile ottenere la posizione');
+      this.showError(this.i18n.t('resources.locationError'));
     }
   }
 
@@ -281,15 +284,15 @@ export class ResourcesPage implements OnInit, OnDestroy {
 
   async callPhone(phone: string) {
     const alert = await this.alertCtrl.create({
-      header: 'Chiama Numero',
-      message: `Vuoi chiamare ${phone}?`,
+      header: this.i18n.t('resources.callNumberTitle'),
+      message: this.i18n.t('resources.callConfirm', { phone }),
       buttons: [
         {
-          text: 'Annulla',
+          text: this.i18n.t('resources.cancel'),
           role: 'cancel'
         },
         {
-          text: 'Chiama',
+          text: this.i18n.t('resources.callBtn'),
           handler: () => {
             window.open(`tel:${phone}`, '_system');
           }
@@ -322,6 +325,61 @@ export class ResourcesPage implements OnInit, OnDestroy {
     return ['all', ...regions.sort()];
   }
 
+  getTypeLabel(type: string): string {
+    const labels: Record<string, string> = {
+      hotline: this.i18n.t('resources.typeHotline'),
+      center: this.i18n.t('resources.typeCenter'),
+      website: this.i18n.t('resources.typeWebsite'),
+      app: this.i18n.t('resources.typeApp')
+    };
+    return labels[type] || labels['app'];
+  }
+
+  private static readonly REGION_KEYS: Record<string, string> = {
+    'Nazionale': 'resources.region.nazionale',
+    'Veneto': 'resources.region.veneto'
+  };
+
+  getRegionLabel(region: string): string {
+    const key = ResourcesPage.REGION_KEYS[region];
+    return key ? this.i18n.t(key) : region;
+  }
+
+  private static readonly SERVICE_KEYS: Record<string, string> = {
+    'Ascolto': 'resources.service.ascolto',
+    'Supporto emotivo': 'resources.service.supportoEmotivo',
+    'Prevenzione suicidio': 'resources.service.prevenzioneSuicidio',
+    'Emergenze mediche': 'resources.service.emergenzeMediche',
+    'Supporto psicologico urgente': 'resources.service.supportoPsicologicoUrgente',
+    'Psichiatria': 'resources.service.psichiatria',
+    'Psicoterapia': 'resources.service.psicoterapia',
+    'Consulenza': 'resources.service.consulenza',
+    'Informazioni': 'resources.service.informazioni',
+    'Risorse': 'resources.service.risorse',
+    'Linee guida': 'resources.service.lineeGuida',
+    'Consulenza psicologica': 'resources.service.consulenzaPsicologica',
+    'Supporto legale': 'resources.service.supportoLegale',
+    'Urgenze': 'resources.service.urgenze'
+  };
+
+  getServiceLabel(service: string): string {
+    const key = ResourcesPage.SERVICE_KEYS[service];
+    return key ? this.i18n.t(key) : service;
+  }
+
+  getResourceHours(resource: Resource): string {
+    const key = 'resources.res.' + resource.id + '.hours';
+    const translated = this.i18n.t(key);
+    return translated === key ? resource.hours : translated;
+  }
+
+  getResourceDescription(resource: Resource): string | undefined {
+    if (!resource.description) return undefined;
+    const key = 'resources.res.' + resource.id + '.description';
+    const translated = this.i18n.t(key);
+    return translated === key ? resource.description : translated;
+  }
+
   getTypeIcon(type: string): string {
     const icons: Record<string, string> = {
       hotline: 'call-outline',
@@ -351,7 +409,7 @@ export class ResourcesPage implements OnInit, OnDestroy {
 
   private async showError(message: string) {
     const alert = await this.alertCtrl.create({
-      header: 'Errore',
+      header: this.i18n.t('resources.errorTitle'),
       message,
       buttons: ['OK']
     });
