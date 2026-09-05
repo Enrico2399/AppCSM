@@ -2,6 +2,7 @@ import { Injectable, signal, inject } from '@angular/core';
 import { FirebaseService } from '../firebase/firebase';
 import { AuthService } from '../auth';
 import { take } from 'rxjs';
+import { I18nService } from '../i18n/i18n.service';
 
 export interface AudioMeditation {
   id: string;
@@ -32,6 +33,7 @@ export interface PlaybackSession {
 export class AudioMeditationService {
   private firebaseService = inject(FirebaseService);
   private authService = inject(AuthService);
+  private i18n = inject(I18nService);
 
   currentMeditation = signal<AudioMeditation | null>(null);
   isPlaying = signal(false);
@@ -89,7 +91,7 @@ export class AudioMeditationService {
   async getMeditations(): Promise<AudioMeditation[]> {
     // Return default meditations for now
     // In a real app, these would come from Firebase or a CDN
-    return this.getDefaultMeditations();
+    return this.i18n.lang() === 'en' ? this.getDefaultMeditationsEn() : this.getDefaultMeditationsIt();
   }
 
   async getMeditationsByCategory(category: string): Promise<AudioMeditation[]> {
@@ -280,7 +282,7 @@ export class AudioMeditationService {
     return (this.currentTime() / this.duration()) * 100;
   }
 
-  private getDefaultMeditations(): AudioMeditation[] {
+  private getDefaultMeditationsIt(): AudioMeditation[] {
     return [
       {
         id: 'breathing-basic',
@@ -378,6 +380,115 @@ export class AudioMeditationService {
         title: 'Rilassamento Profondo',
         description: 'Stato di profondo relax e benessere',
         duration: 1500, // 25 minutes
+        audioUrl: '/assets/audio/meditations/deep-relaxation.mp3',
+        category: 'mindfulness',
+        moodTags: ['blu', 'viola', 'bianco'],
+        difficulty: 'advanced',
+        language: 'it',
+        isPremium: true,
+        thumbnailUrl: '/assets/images/meditations/relaxation.jpg'
+      }
+    ];
+  }
+
+  private getDefaultMeditationsEn(): AudioMeditation[] {
+    return [
+      {
+        id: 'breathing-basic',
+        title: 'Mindful Breathing',
+        description: 'A basic exercise to calm the mind and reduce stress',
+        duration: 300,
+        audioUrl: '/assets/audio/meditations/breathing-basic.mp3',
+        category: 'breathing',
+        moodTags: ['blu', 'verde', 'bianco'],
+        difficulty: 'beginner',
+        language: 'it',
+        isPremium: false,
+        thumbnailUrl: '/assets/images/meditations/breathing.jpg'
+      },
+      {
+        id: 'grounding-54321',
+        title: '5-4-3-2-1 Technique',
+        description: 'A grounding exercise to return to the present moment',
+        duration: 600,
+        audioUrl: '/assets/audio/meditations/grounding-54321.mp3',
+        category: 'grounding',
+        moodTags: ['rosso', 'arancio', 'nero'],
+        difficulty: 'beginner',
+        language: 'it',
+        isPremium: false,
+        thumbnailUrl: '/assets/images/meditations/grounding.jpg'
+      },
+      {
+        id: 'mindfulness-body',
+        title: 'Body Scan',
+        description: 'Mindfulness to connect with your body',
+        duration: 900,
+        audioUrl: '/assets/audio/meditations/mindfulness-body.mp3',
+        category: 'mindfulness',
+        moodTags: ['verde', 'blu', 'viola'],
+        difficulty: 'intermediate',
+        language: 'it',
+        isPremium: false,
+        thumbnailUrl: '/assets/images/meditations/mindfulness.jpg'
+      },
+      {
+        id: 'stress-relief',
+        title: 'Stress Release',
+        description: 'Techniques to relax mind and body',
+        duration: 450,
+        audioUrl: '/assets/audio/meditations/stress-relief.mp3',
+        category: 'stress',
+        moodTags: ['rosso', 'arancio', 'giallo'],
+        difficulty: 'beginner',
+        language: 'it',
+        isPremium: false,
+        thumbnailUrl: '/assets/images/meditations/stress.jpg'
+      },
+      {
+        id: 'sleep-preparation',
+        title: 'Sleep Preparation',
+        description: 'A guided meditation for deep sleep',
+        duration: 1200,
+        audioUrl: '/assets/audio/meditations/sleep-preparation.mp3',
+        category: 'sleep',
+        moodTags: ['blu', 'viola', 'bianco', 'nero'],
+        difficulty: 'beginner',
+        language: 'it',
+        isPremium: false,
+        thumbnailUrl: '/assets/images/meditations/sleep.jpg'
+      },
+      {
+        id: 'anxiety-calm',
+        title: 'Calming Anxiety',
+        description: 'Specific techniques to reduce anxiety',
+        duration: 720,
+        audioUrl: '/assets/audio/meditations/anxiety-calm.mp3',
+        category: 'stress',
+        moodTags: ['rosso', 'giallo', 'nero'],
+        difficulty: 'intermediate',
+        language: 'it',
+        isPremium: true,
+        thumbnailUrl: '/assets/images/meditations/anxiety.jpg'
+      },
+      {
+        id: 'focus-mind',
+        title: 'Focused Mind',
+        description: 'A meditation to improve concentration',
+        duration: 600,
+        audioUrl: '/assets/audio/meditations/focus-mind.mp3',
+        category: 'mindfulness',
+        moodTags: ['giallo', 'verde', 'bianco'],
+        difficulty: 'intermediate',
+        language: 'it',
+        isPremium: true,
+        thumbnailUrl: '/assets/images/meditations/focus.jpg'
+      },
+      {
+        id: 'deep-relaxation',
+        title: 'Deep Relaxation',
+        description: 'A state of deep relaxation and wellbeing',
+        duration: 1500,
         audioUrl: '/assets/audio/meditations/deep-relaxation.mp3',
         category: 'mindfulness',
         moodTags: ['blu', 'viola', 'bianco'],

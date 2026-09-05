@@ -1,21 +1,26 @@
-import { Component, signal, inject, OnInit, OnDestroy } from '@angular/core';
+import { Component, signal, inject, OnInit, OnDestroy, effect } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { IonicModule } from '@ionic/angular';
 import { AudioMeditationService, AudioMeditation } from '../../services/audio-meditation/audio-meditation.service';
+import { MoodService } from '../../services/mood/mood.service';
 import { addIcons } from 'ionicons';
 import { close, diamond, downloadOutline, heartOutline, musicalNotes, play, time, pause, volumeMute, volumeHigh, apps, cloudOutline, flowerOutline, leaf, moon, heart } from 'ionicons/icons';
 import { RouterModule } from '@angular/router';
+import { I18nService } from '../../services/i18n/i18n.service';
+import { TranslatePipe } from '../../pipes/translate.pipe';
 
 @Component({
   selector: 'app-audio-meditations',
   templateUrl: './audio-meditations.page.html',
   styleUrls: ['./audio-meditations.page.scss'],
   standalone: true,
-  imports: [IonicModule, CommonModule, FormsModule, RouterModule]
+  imports: [IonicModule, CommonModule, FormsModule, RouterModule, TranslatePipe]
 })
 export class AudioMeditationsPage implements OnInit, OnDestroy {
+  public i18n = inject(I18nService);
   private audioService = inject(AudioMeditationService);
+  private moodService = inject(MoodService);
 
   meditations = signal<AudioMeditation[]>([]);
   filteredMeditations = signal<AudioMeditation[]>([]);
@@ -34,7 +39,7 @@ export class AudioMeditationsPage implements OnInit, OnDestroy {
   showPlayer = signal(false);
 
   // Categories
-  categories = [
+  private readonly CATEGORIES_IT = [
     { id: 'all', name: 'Tutte', icon: 'apps' },
     { id: 'breathing', name: 'Respirazione', icon: 'cloud-outline' },
     { id: 'mindfulness', name: 'Mindfulness', icon: 'flower-outline' },
@@ -43,8 +48,27 @@ export class AudioMeditationsPage implements OnInit, OnDestroy {
     { id: 'stress', name: 'Stress', icon: 'heart' }
   ];
 
+  private readonly CATEGORIES_EN = [
+    { id: 'all', name: 'All', icon: 'apps' },
+    { id: 'breathing', name: 'Breathing', icon: 'cloud-outline' },
+    { id: 'mindfulness', name: 'Mindfulness', icon: 'flower-outline' },
+    { id: 'grounding', name: 'Grounding', icon: 'leaf' },
+    { id: 'sleep', name: 'Sleep', icon: 'moon' },
+    { id: 'stress', name: 'Stress', icon: 'heart' }
+  ];
+
+  get categories() {
+    return this.i18n.lang() === 'en' ? this.CATEGORIES_EN : this.CATEGORIES_IT;
+  }
+
   constructor() {
     addIcons({ close, diamond, downloadOutline, heartOutline, musicalNotes, play, time, pause, volumeMute, volumeHigh, apps, cloudOutline, flowerOutline, leaf, moon, heart });
+
+    // Ricarica le meditazioni (titoli/descrizioni tradotti) quando cambia la lingua
+    effect(() => {
+      this.i18n.lang();
+      this.loadMeditations();
+    });
   }
 
   ngOnInit() {
@@ -168,7 +192,15 @@ export class AudioMeditationsPage implements OnInit, OnDestroy {
 
   getCategoryName(categoryId: string): string {
     const category = this.categories.find(c => c.id === categoryId);
-    return category?.name || 'Tutte';
+    return category?.name || this.categories[0].name;
+  }
+
+  getMoodColor(key: string): string {
+    return this.moodService.getMoodColor(key);
+  }
+
+  getMoodTitle(key: string): string {
+    return this.moodService.getMoodByKey(key)?.title || key;
   }
 
   getDifficultyColor(difficulty: string): string {
@@ -182,9 +214,9 @@ export class AudioMeditationsPage implements OnInit, OnDestroy {
 
   getDifficultyText(difficulty: string): string {
     switch (difficulty) {
-      case 'beginner': return 'Principiante';
-      case 'intermediate': return 'Intermedio';
-      case 'advanced': return 'Avanzato';
+      case 'beginner': return this.i18n.t('audioMeditations.difficultyBeginner');
+      case 'intermediate': return this.i18n.t('audioMeditations.difficultyIntermediate');
+      case 'advanced': return this.i18n.t('audioMeditations.difficultyAdvanced');
       default: return difficulty;
     }
   }

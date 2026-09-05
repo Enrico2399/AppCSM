@@ -3,7 +3,7 @@
     <ion-buttons slot="start">
       <ion-back-button defaultHref="/home"></ion-back-button>
     </ion-buttons>
-    <ion-title>Audio-Meditazioni</ion-title>
+    <ion-title>{{ 'audioMeditations.title' | translate }}</ion-title>
   </ion-toolbar>
 </ion-header>
 
@@ -14,7 +14,7 @@
       <ion-searchbar
         [(ngModel)]="searchTerm"
         (ionInput)="onSearchChange($event)"
-        placeholder="Cerca meditazioni..."
+        [placeholder]="'audioMeditations.searchPlaceholder' | translate"
         animated="true"
         debounce="300"
       ></ion-searchbar>
@@ -22,7 +22,7 @@
 
     <!-- Category filters -->
     <div class="categories-section">
-      <h3>Categorie</h3>
+      <h3>{{ 'audioMeditations.categories' | translate }}</h3>
       <div class="category-chips">
         <ion-chip 
           *ngFor="let category of categories"
@@ -39,13 +39,13 @@
     <!-- Loading state -->
     <div class="loading-section" *ngIf="isLoading()">
       <ion-spinner name="circles"></ion-spinner>
-      <p>Caricamento meditazioni...</p>
+      <p>{{ 'audioMeditations.loading' | translate }}</p>
     </div>
 
     <!-- Meditations list -->
     <div class="meditations-list" *ngIf="!isLoading()">
       <div class="list-header">
-        <h3>{{ filteredMeditations().length }} Meditazioni</h3>
+        <h3>{{ i18n.t('audioMeditations.countLabel', {count: filteredMeditations().length}) }}</h3>
         <p *ngIf="selectedCategory() !== 'all'">
           {{ getCategoryName(selectedCategory()) }}
         </p>
@@ -68,7 +68,7 @@
                 size="small" 
                 (click)="toggleFavorite(meditation, $event)"
                 class="favorite-btn"
-                aria-label="Aggiungi ai preferiti"
+                [attr.aria-label]="'audioMeditations.addFavoriteAria' | translate"
               >
                 <ion-icon name="heart-outline"></ion-icon>
               </ion-button>
@@ -78,7 +78,7 @@
                 (click)="downloadForOffline(meditation, $event)"
                 class="download-btn"
                 [disabled]="meditation.isPremium"
-                aria-label="Scarica per l'ascolto offline"
+                [attr.aria-label]="'audioMeditations.downloadAria' | translate"
               >
                 <ion-icon name="download-outline"></ion-icon>
               </ion-button>
@@ -106,7 +106,7 @@
             </div>
 
             <div class="mood-tags" *ngIf="meditation.moodTags.length > 0">
-              <span class="tags-label">Adatto per:</span>
+              <span class="tags-label">{{ 'audioMeditations.goodFor' | translate }}</span>
               <div class="tags">
                 <span 
                   *ngFor="let tag of meditation.moodTags" 
@@ -120,7 +120,7 @@
 
             <div class="premium-badge" *ngIf="meditation.isPremium">
               <ion-icon name="diamond"></ion-icon>
-              <span>Premium</span>
+              <span>{{ 'audioMeditations.premium' | translate }}</span>
             </div>
           </div>
 
@@ -131,7 +131,7 @@
               [disabled]="meditation.isPremium"
             >
               <ion-icon name="play"></ion-icon>
-              {{ meditation.isPremium ? 'Premium' : 'Ascolta' }}
+              {{ meditation.isPremium ? ('audioMeditations.premium' | translate) : ('audioMeditations.listen' | translate) }}
             </ion-button>
           </div>
         </div>
@@ -141,8 +141,8 @@
     <!-- Empty state -->
     <div class="empty-state" *ngIf="!isLoading() && filteredMeditations().length === 0">
       <ion-icon name="musical-notes" class="empty-icon"></ion-icon>
-      <h3>Nessuna meditazione trovata</h3>
-      <p>Prova a cambiare categoria o termine di ricerca</p>
+      <h3>{{ 'audioMeditations.emptyTitle' | translate }}</h3>
+      <p>{{ 'audioMeditations.emptyText' | translate }}</p>
     </div>
   </div>
 
@@ -158,7 +158,7 @@
         size="small" 
         (click)="stop()"
         class="close-player"
-        aria-label="Chiudi il player"
+        [attr.aria-label]="'audioMeditations.closePlayerAria' | translate"
       >
         <ion-icon name="close"></ion-icon>
       </ion-button>
@@ -184,7 +184,7 @@
           size="large" 
           (click)="togglePlayPause()"
           class="play-pause-btn"
-          [attr.aria-label]="isPlaying() ? 'Metti in pausa' : 'Riproduci'"
+          [attr.aria-label]="isPlaying() ? i18n.t('audioMeditations.pause') : i18n.t('audioMeditations.playAria')"
         >
           <ion-icon [name]="isPlaying() ? 'pause' : 'play'"></ion-icon>
         </ion-button>
@@ -239,7 +239,7 @@
           size="small" 
           (click)="toggleMute()"
           class="volume-btn"
-          [attr.aria-label]="isMuted() ? 'Riattiva audio' : 'Disattiva audio'"
+          [attr.aria-label]="isMuted() ? i18n.t('audioMeditations.unmute') : i18n.t('audioMeditations.mute')"
         >
           <ion-icon [name]="isMuted() ? 'volume-mute' : 'volume-high'"></ion-icon>
         </ion-button>
