@@ -71,10 +71,28 @@ h1 {
   }
 }
 
-.install-app-hint {
-  margin: 12px 0 0 !important;
-  font-size: 0.78rem !important;
+.install-app-icon-hint {
+  font-size: 2rem;
+  line-height: 1;
+  margin: 4px 0 12px;
+}
+
+.install-app-primary-hint {
+  font-size: 0.95rem !important;
+  font-weight: 600;
+  color: var(--text-light) !important;
+  margin: 0 0 20px !important;
+}
+
+.install-app-secondary-link {
+  display: inline-block;
+  font-size: 0.8rem;
   color: var(--text-muted);
+  text-decoration: underline;
+
+  &:hover {
+    color: var(--text-light);
+  }
 }
 
 .install-checklist {

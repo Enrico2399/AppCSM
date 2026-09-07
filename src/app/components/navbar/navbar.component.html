@@ -52,7 +52,7 @@
       <div class="nav-links">
         <a routerLink="/roadmap" routerLinkActive="active" style="color: violet;">{{ 'nav.roadmap' | translate }}</a>
 
-        <a *ngIf="!installService.installed()" (click)="downloadApp()" (keydown.enter)="downloadApp()" role="button" tabindex="0" style="color: violet;">{{ 'nav.downloadApp' | translate }}</a>
+        <a *ngIf="!installService.isStandalone()" (click)="downloadApp()" (keydown.enter)="downloadApp()" role="button" tabindex="0" style="color: violet;">{{ (installService.installed() ? 'nav.openApp' : 'nav.downloadApp') | translate }}</a>
 
         <a (click)="toggleLang()" (keydown.enter)="toggleLang()" class="lang-toggle" role="button" tabindex="0" [attr.aria-label]="'nav.ariaLang' | translate">
           {{ i18n.lang() === 'it' ? 'EN' : 'IT' }}
@@ -85,7 +85,7 @@
   <a routerLink="/help" routerLinkActive="active" (click)="closeMobileMenu()">{{ 'nav.help' | translate }}</a>
   <hr>
   <a routerLink="/roadmap" routerLinkActive="active" class="roadmap-link" (click)="closeMobileMenu()">{{ 'nav.roadmap' | translate }}</a>
-  <a *ngIf="!installService.installed()" (click)="downloadApp()" (keydown.enter)="downloadApp()" role="button" tabindex="0" class="roadmap-link">{{ 'nav.downloadApp' | translate }}</a>
+  <a *ngIf="!installService.isStandalone()" (click)="downloadApp()" (keydown.enter)="downloadApp()" role="button" tabindex="0" class="roadmap-link">{{ (installService.installed() ? 'nav.openApp' : 'nav.downloadApp') | translate }}</a>
 </nav>
 
 <ng-template #noAuth></ng-template>

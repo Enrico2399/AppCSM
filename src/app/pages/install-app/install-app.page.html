@@ -45,10 +45,18 @@
         <p class="install-app-status">{{ 'installApp.alreadyInstalled' | translate }}</p>
 
         <ng-container *ngIf="!installService.isStandalone(); else alreadyInApp">
-          <a [href]="appHomeUrl" class="install-app-btn">
-            {{ 'installApp.openApp' | translate }}
+          <!--
+            Non esiste un'API web per aprire da qui, con certezza, l'icona
+            gia' installata come finestra separata: l'unico modo affidabile
+            e' che sia l'utente a cercarla (vedi install-prompt.service.ts
+            per i dettagli). Per questo l'istruzione "cerca l'icona" e'
+            l'azione principale qui, non il link qui sotto.
+          -->
+          <div class="install-app-icon-hint" aria-hidden="true">🏠📲</div>
+          <p class="install-app-primary-hint">{{ 'installApp.findIconHint' | translate }}</p>
+          <a [href]="appHomeUrl" class="install-app-secondary-link">
+            {{ 'installApp.continueInBrowser' | translate }}
           </a>
-          <p class="install-app-hint">{{ 'installApp.openAppHint' | translate }}</p>
         </ng-container>
         <ng-template #alreadyInApp>
           <a routerLink="/home" class="install-app-btn">{{ 'installApp.continue' | translate }}</a>

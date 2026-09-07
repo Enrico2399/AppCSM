@@ -33,17 +33,16 @@ export class InstallAppPage {
   public installService = inject(InstallPromptService);
 
   /**
-   * URL per il pulsante "Apri App": un <a href> vero e proprio (non
-   * routerLink, che farebbe solo un cambio di vista Angular senza una
-   * navigazione reale del browser). Chrome 139+ su desktop e le versioni
-   * recenti su Android possono intercettare una navigazione autentica come
-   * questa e aprirla nella finestra dell'app gia' installata invece che
-   * nella scheda del browser, quando l'URL rientra nello scope del
-   * manifest (vedi "launch_handler" in manifest.json) - ma e' una
-   * decisione del browser, non qualcosa che questa pagina possa forzare:
-   * sui browser che non lo supportano ancora, il link ricarica semplicemente
-   * la pagina in questa stessa scheda (comunque gia' autenticata con lo
-   * stesso account, vedi installApp.openAppHint qui sotto).
+   * URL per il link secondario "Continua nel browser": un <a href> vero e
+   * proprio (non routerLink, che farebbe solo un cambio di vista Angular
+   * senza una navigazione reale del browser), cosi' un browser che supporta
+   * la navigation capturing verso PWA installate (Chrome 139+ su desktop;
+   * supporto su Android meno prevedibile) ha almeno la possibilita' di
+   * intercettarla e aprirla nell'app installata. Non e' pero' garantito -
+   * per questo e' un'azione secondaria: l'unico modo davvero affidabile di
+   * aprire l'app installata resta cercarne l'icona nella schermata Home
+   * (vedi installApp.findIconHint nel template), che e' un semplice tap
+   * dell'utente, non qualcosa che questa pagina possa fare al posto suo.
    */
   get appHomeUrl(): string {
     return new URL('home', document.baseURI).href;

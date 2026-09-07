@@ -14,6 +14,10 @@ const FIRST_SHOW_DELAY_MS = 2500;
 // faccia in tempo a leggerlo.
 const SECURITY_STEP_MIN_MS = 600;
 const CONFIGURING_STEP_MIN_MS = 700;
+// Quanto aspettare al massimo la conferma reale del sistema operativo
+// (evento 'appinstalled') dopo che l'utente ha accettato il prompt, prima
+// di procedere comunque: di norma arriva entro 1-3 secondi.
+const APPINSTALLED_TIMEOUT_MS = 10000;
 
 // I quattro passaggi mostrati nella pagina /install-app, nell'ordine in cui
 // avvengono davvero (vedi install() qui sotto per cosa fa ciascuno).
@@ -119,8 +123,14 @@ export class InstallPromptService {
    * ora" di quella pagina, con un gesto utente fresco come richiede il
    * browser per accettare il prompt nativo. Il checklist (vedi
    * installStep) mostra quattro passaggi reali, in quest'ordine:
-   * 1. "download"     - il prompt nativo del browser, che decide se e come
-   *                      scaricare/preparare il pacchetto dell'app.
+   * 1. "download"     - il prompt nativo del browser (accettazione) E
+   *                      l'attesa della conferma reale che l'installazione
+   *                      a livello di sistema operativo e' completata
+   *                      (evento 'appinstalled') - accettare il prompt non
+   *                      basta, il browser installa l'app in background
+   *                      dopo, e senza aspettare quell'evento il checklist
+   *                      poteva segnarsi "fatto" prima che l'icona
+   *                      dell'app esistesse davvero.
    * 2. "security"      - runSecurityCheck() qui sotto.
    * 3. "installing"    - primeOfflineCache() qui sotto (progresso reale).
    * 4. "configuring"   - runConfiguring() qui sotto.
@@ -138,11 +148,17 @@ export class InstallPromptService {
       if (choice.outcome !== 'accepted') {
         return;
       }
-      // Segnato subito (non solo nell'handler 'appinstalled', che su
-      // alcuni browser puo' arrivare con un certo ritardo): l'utente ha
-      // gia' accettato, la pagina puo' gia' mostrare "Apri App" a fine
-      // checklist.
+
+      const reallyInstalled = await this.waitForAppInstalled(APPINSTALLED_TIMEOUT_MS);
+      if (!reallyInstalled) {
+        // Non e' arrivata conferma dal sistema operativo entro il timeout:
+        // succede raramente, ma non blocchiamo l'utente all'infinito per
+        // questo. Procediamo comunque (l'utente ha accettato, l'installazione
+        // e' quasi certamente in corso), segnalando solo nella console.
+        console.warn("Evento 'appinstalled' non ricevuto entro il timeout: procedo comunque.");
+      }
       this.setInstalledFlag(true);
+
       window.addEventListener('beforeunload', this.beforeUnloadHandler);
       try {
         await this.runSecurityCheck();
@@ -158,6 +174,32 @@ export class InstallPromptService {
       this.installStep.set(null);
       this.dismiss();
     }
+  }
+
+  /**
+   * Attende l'evento 'appinstalled' (la conferma del sistema operativo che
+   * l'app e' stata davvero installata, non solo che l'utente ha accettato
+   * il prompt) fino a un massimo di timeoutMs. Restituisce true se
+   * l'evento e' arrivato, false se e' scaduto il timeout.
+   */
+  private waitForAppInstalled(timeoutMs: number): Promise<boolean> {
+    return new Promise((resolve) => {
+      let settled = false;
+      const onInstalled = () => {
+        if (settled) return;
+        settled = true;
+        window.removeEventListener('appinstalled', onInstalled);
+        clearTimeout(timer);
+        resolve(true);
+      };
+      const timer = setTimeout(() => {
+        if (settled) return;
+        settled = true;
+        window.removeEventListener('appinstalled', onInstalled);
+        resolve(false);
+      }, timeoutMs);
+      window.addEventListener('appinstalled', onInstalled);
+    });
   }
 
   /**
@@ -182,11 +224,11 @@ export class InstallPromptService {
   }
 
   /**
-   * L'installazione vera e propria (l'icona sulla home) e' gestita dal
-   * browser ed e' pressoche' istantanea: qui prepariamo invece l'uso
-   * offline, rifetchando gli asset dell'app corrente cosi' il service
-   * worker (sw.js) li mette in cache subito, invece di aspettare che
-   * l'utente visiti ogni pagina almeno una volta.
+   * A questo punto l'installazione a livello di sistema operativo (l'icona
+   * sulla home) e' gia' confermata da waitForAppInstalled() sopra: qui
+   * prepariamo l'uso offline, rifetchando gli asset dell'app corrente cosi'
+   * il service worker (sw.js) li mette in cache subito, invece di aspettare
+   * che l'utente visiti ogni pagina almeno una volta.
    */
   private async runInstalling(): Promise<void> {
     this.installStep.set('installing');
