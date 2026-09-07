@@ -1,37 +1,37 @@
-<div class="install-banner" *ngIf="visible" role="dialog" aria-live="polite" [attr.aria-label]="'installPrompt.ariaLabel' | translate">
-  <button type="button" class="install-close" (click)="dismiss()" [attr.aria-label]="'installPrompt.closeAria' | translate">✕</button>
+<div class="install-banner" *ngIf="installService.visible()" role="dialog" aria-live="polite" [attr.aria-label]="'installPrompt.ariaLabel' | translate">
+  <button type="button" class="install-close" (click)="installService.dismiss()" [attr.aria-label]="'installPrompt.closeAria' | translate">✕</button>
 
   <div class="install-icon" aria-hidden="true">📲</div>
 
   <div class="install-text">
     <strong>{{ 'installPrompt.title' | translate }}</strong>
 
-    <p *ngIf="platform === 'android'">
+    <p *ngIf="installService.platform() === 'android'">
       {{ 'installPrompt.androidBody' | translate }}
     </p>
 
-    <p *ngIf="platform === 'ios'">
+    <p *ngIf="installService.platform() === 'ios'">
       {{ 'installPrompt.iosBody1' | translate }} <strong>{{ 'installPrompt.share' | translate }}</strong> <span aria-hidden="true">⬆️</span> {{ 'installPrompt.iosBody2' | translate }}
       <strong>{{ 'installPrompt.addToHome' | translate }}</strong>.
     </p>
   </div>
 
   <div class="install-actions">
-    <button *ngIf="platform === 'android'" type="button" class="install-btn" (click)="install()">
+    <button *ngIf="installService.platform() === 'android'" type="button" class="install-btn" (click)="installService.install()">
       {{ 'installPrompt.install' | translate }}
     </button>
-    <button type="button" class="dismiss-btn" (click)="dismiss()">
+    <button type="button" class="dismiss-btn" (click)="installService.dismiss()">
       {{ 'installPrompt.notNow' | translate }}
     </button>
   </div>
 </div>
 
-<div class="install-progress-overlay" *ngIf="installing" role="alertdialog" aria-live="assertive" [attr.aria-label]="'installPrompt.downloadingAria' | translate">
+<div class="install-progress-overlay" *ngIf="installService.installing()" role="alertdialog" aria-live="assertive" [attr.aria-label]="'installPrompt.downloadingAria' | translate">
   <div class="install-progress-card">
     <div class="install-progress-icon" aria-hidden="true">📲</div>
     <strong>{{ 'installPrompt.downloading' | translate }}</strong>
-    <div class="progress-track" role="progressbar" [attr.aria-valuenow]="installProgress * 100" aria-valuemin="0" aria-valuemax="100">
-      <div class="progress-fill" [style.width.%]="installProgress * 100"></div>
+    <div class="progress-track" role="progressbar" [attr.aria-valuenow]="installService.installProgress() * 100" aria-valuemin="0" aria-valuemax="100">
+      <div class="progress-fill" [style.width.%]="installService.installProgress() * 100"></div>
     </div>
     <p class="install-progress-warning">{{ 'installPrompt.dontLeave' | translate }}</p>
   </div>

@@ -9,6 +9,7 @@ import {
 } from '@ionic/angular/standalone';
 import { StorageService } from '../../services/storage/storage';
 import { I18nService } from '../../services/i18n/i18n.service';
+import { InstallPromptService } from '../../services/install-prompt/install-prompt.service';
 import { TranslatePipe } from '../../pipes/translate.pipe';
 import { AuthService } from '../../services/auth';
 import { FirebaseService } from '../../services/firebase/firebase';
@@ -35,6 +36,7 @@ import { take, firstValueFrom } from 'rxjs';
 export class NavbarComponent implements OnInit {
   public authService = inject(AuthService);
   public i18n = inject(I18nService);
+  public installService = inject(InstallPromptService);
   private storageService = inject(StorageService);
   private router = inject(Router);
   private firebaseService = inject(FirebaseService);
@@ -75,6 +77,15 @@ export class NavbarComponent implements OnInit {
 
   toggleLang() {
     this.i18n.toggle();
+  }
+
+  downloadApp() {
+    if (this.installService.platform() === 'android') {
+      this.installService.install();
+    } else {
+      this.installService.showNow();
+    }
+    this.closeMobileMenu();
   }
 
   toggleTheme() {
