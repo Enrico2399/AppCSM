@@ -70,16 +70,34 @@
     flex: none;
   }
 
+  .theme-icon,
+  .lang-toggle {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 34px;
+    height: 34px;
+    padding: 0;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.08);
+    cursor: pointer;
+    flex: none;
+    transition: background var(--transition-fast);
+
+    &:hover {
+      background: rgba(255, 255, 255, 0.16);
+    }
+  }
+
   .theme-icon {
-    font-size: 1.15rem;
+    font-size: 1.05rem;
   }
 
   .lang-toggle {
-    font-size: 0.75rem;
+    font-size: 0.7rem;
     font-weight: 700;
-    letter-spacing: 0.03em;
-    cursor: pointer;
-    opacity: 0.85;
+    letter-spacing: 0.02em;
+    opacity: 0.9;
     color: var(--text-light);
   }
 }
@@ -236,19 +254,35 @@
     }
   }
 
-  .theme-icon {
-    font-size: 1.2rem;
+  .theme-icon,
+  .lang-toggle {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 32px;
+    height: 32px;
+    padding: 0;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.08);
+    cursor: pointer;
     flex: none;
+    transition: background var(--transition-fast);
+
+    &:hover {
+      background: rgba(255, 255, 255, 0.16);
+    }
+  }
+
+  .theme-icon {
+    font-size: 1.1rem;
   }
 
   .lang-toggle {
-    font-size: 0.8rem;
+    font-size: 0.72rem;
     font-weight: 700;
-    letter-spacing: 0.03em;
-    cursor: pointer;
-    opacity: 0.85;
+    letter-spacing: 0.02em;
+    opacity: 0.9;
     color: var(--text-light);
-    flex: none;
   }
 }
 
@@ -295,6 +329,8 @@
   .navbar a.active { color: white; background: var(--accent); }
   .user-chip { background: rgba(0, 0, 0, 0.05); }
   .user-chip:hover { background: rgba(0, 0, 0, 0.09); }
+  .theme-icon, .lang-toggle { background: rgba(0, 0, 0, 0.05); }
+  .theme-icon:hover, .lang-toggle:hover { background: rgba(0, 0, 0, 0.09); }
   .roadmap-nav { background: rgba(255, 255, 255, 0.85); box-shadow: var(--shadow-sm); }
 
   .mobile-bar {
@@ -324,18 +360,18 @@
     padding: 5px 10px;
   }
   
+  .theme-icon,
+  .lang-toggle {
+    width: 28px;
+    height: 28px;
+  }
+
   .theme-icon {
-    font-size: 1.1rem;
-    margin-top: -2px;
+    font-size: 1rem;
   }
 
   .lang-toggle {
-    font-size: 0.68rem;
-    font-weight: 700;
-    letter-spacing: 0.03em;
-    cursor: pointer;
-    opacity: 0.85;
-    color: var(--text-light);
+    font-size: 0.64rem;
   }
 }
 
