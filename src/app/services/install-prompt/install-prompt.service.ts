@@ -1,5 +1,5 @@
 import { Injectable, inject, signal } from '@angular/core';
-import { take } from 'rxjs';
+import { firstValueFrom, take } from 'rxjs';
 import { AuthService } from '../auth';
 
 const DISMISS_STORAGE_KEY = 'csm-install-prompt-last-dismissed';
@@ -7,11 +7,18 @@ const INSTALLED_STORAGE_KEY = 'csm-app-installed-v1';
 const PRIVACY_BANNER_DISMISSED_KEY = 'csm-privacy-banner-dismissed-v1';
 const REPROMPT_AFTER_DAYS = 7;
 const FIRST_SHOW_DELAY_MS = 2500;
-// La preparazione offline (primeOfflineCache) e' spesso troppo rapida
-// (pochi fetch, sotto il secondo su una buona connessione) perche' la barra
-// di progresso sia percepibile: la teniamo visibile almeno questo tanto,
-// cosi' non lampeggia e sparisce senza che l'utente faccia in tempo a vederla.
-const MIN_INSTALLING_DISPLAY_MS = 1500;
+// "Controllo di sicurezza" e "Configurazione" (vedi runSecurityCheck e
+// runConfiguring) fanno gia' un lavoro vero ma quasi sempre troppo rapido
+// da percepire da solo: teniamo visibile ciascun passaggio almeno questo
+// tanto, cosi' il checklist non lampeggia e sparisce senza che l'utente
+// faccia in tempo a leggerlo.
+const SECURITY_STEP_MIN_MS = 600;
+const CONFIGURING_STEP_MIN_MS = 700;
+
+// I quattro passaggi mostrati nella pagina /install-app, nell'ordine in cui
+// avvengono davvero (vedi install() qui sotto per cosa fa ciascuno).
+export type InstallStep = 'download' | 'security' | 'installing' | 'configuring';
+const INSTALL_STEPS: InstallStep[] = ['download', 'security', 'installing', 'configuring'];
 
 // L'evento 'beforeinstallprompt' non ha ancora un tipo ufficiale nelle
 // definizioni standard del DOM: lo tipizziamo qui con solo cio' che usiamo.
@@ -49,10 +56,11 @@ export class InstallPromptService {
   // quella stessa scheda si rivedrebbe "Installa ora".
   installed = signal(this.readInstalledFlag());
 
-  // Stato del download/preparazione offline mostrato nel pop-up dopo aver
-  // premuto "Installa": installing attiva l'overlay, installProgress (0..1)
-  // ne riempie la barra. Aggiornati da primeOfflineCache() qui sotto.
-  installing = signal(false);
+  // Passaggio corrente del checklist mostrato in /install-app dopo aver
+  // premuto "Installa ora" (null = fuori dal flusso di installazione).
+  // installProgress (0..1) riempie la barra del solo passaggio
+  // "installing", aggiornata da primeOfflineCache() qui sotto.
+  installStep = signal<InstallStep | null>(null);
   installProgress = signal(0);
 
   private deferredEvent: BeforeInstallPromptEvent | null = null;
@@ -109,7 +117,13 @@ export class InstallPromptService {
    * un prompt programmabile, l'utente segue invece le istruzioni manuali
    * mostrate nella pagina /install-app). Chiamata dal pulsante "Installa
    * ora" di quella pagina, con un gesto utente fresco come richiede il
-   * browser per accettare il prompt nativo.
+   * browser per accettare il prompt nativo. Il checklist (vedi
+   * installStep) mostra quattro passaggi reali, in quest'ordine:
+   * 1. "download"     - il prompt nativo del browser, che decide se e come
+   *                      scaricare/preparare il pacchetto dell'app.
+   * 2. "security"      - runSecurityCheck() qui sotto.
+   * 3. "installing"    - primeOfflineCache() qui sotto (progresso reale).
+   * 4. "configuring"   - runConfiguring() qui sotto.
    */
   async install(): Promise<void> {
     if (this.platform() !== 'android' || !this.deferredEvent) {
@@ -118,25 +132,53 @@ export class InstallPromptService {
     }
 
     try {
-      // Il prompt nativo richiede un gesto utente "fresco" (il click che ha
-      // chiamato questo metodo): non mostriamo ancora nulla di nostro qui,
-      // perche' l'utente potrebbe anche rifiutare, e in quel caso non c'e'
-      // stato nessun "download" da mostrare.
+      this.installStep.set('download');
       await this.deferredEvent.prompt();
       const choice = await this.deferredEvent.userChoice;
-      if (choice.outcome === 'accepted') {
-        // Segnato subito (non solo nell'handler 'appinstalled', che su
-        // alcuni browser puo' arrivare con un certo ritardo): l'utente ha
-        // gia' accettato, la pagina puo' gia' mostrare "Apri App".
-        this.setInstalledFlag(true);
-        await this.runInstallingPhase();
+      if (choice.outcome !== 'accepted') {
+        return;
+      }
+      // Segnato subito (non solo nell'handler 'appinstalled', che su
+      // alcuni browser puo' arrivare con un certo ritardo): l'utente ha
+      // gia' accettato, la pagina puo' gia' mostrare "Apri App" a fine
+      // checklist.
+      this.setInstalledFlag(true);
+      window.addEventListener('beforeunload', this.beforeUnloadHandler);
+      try {
+        await this.runSecurityCheck();
+        await this.runInstalling();
+        await this.runConfiguring();
+      } finally {
+        window.removeEventListener('beforeunload', this.beforeUnloadHandler);
       }
     } catch (err) {
       console.warn('Prompt di installazione non riuscito:', err);
     } finally {
       this.deferredEvent = null;
+      this.installStep.set(null);
       this.dismiss();
     }
+  }
+
+  /**
+   * Verifica che l'app giri in un contesto sicuro con un service worker
+   * attivo prima di procedere a mettere in cache le risorse per l'uso
+   * offline (il service worker stesso richiede HTTPS): un controllo reale,
+   * non solo scenico, anche se di solito troppo rapido da notare da solo -
+   * per questo SECURITY_STEP_MIN_MS.
+   */
+  private async runSecurityCheck(): Promise<void> {
+    this.installStep.set('security');
+    const start = Date.now();
+    try {
+      if ('serviceWorker' in navigator) {
+        await navigator.serviceWorker.ready;
+      }
+    } catch {
+      // Nessun service worker pronto: non blocchiamo l'installazione per
+      // questo, l'app puo' comunque funzionare online.
+    }
+    await this.padTo(start, SECURITY_STEP_MIN_MS);
   }
 
   /**
@@ -144,23 +186,68 @@ export class InstallPromptService {
    * browser ed e' pressoche' istantanea: qui prepariamo invece l'uso
    * offline, rifetchando gli asset dell'app corrente cosi' il service
    * worker (sw.js) li mette in cache subito, invece di aspettare che
-   * l'utente visiti ogni pagina almeno una volta. Tenuta visibile almeno
-   * MIN_INSTALLING_DISPLAY_MS (vedi sopra) anche se finisce prima.
+   * l'utente visiti ogni pagina almeno una volta.
    */
-  private async runInstallingPhase(): Promise<void> {
-    this.installing.set(true);
+  private async runInstalling(): Promise<void> {
+    this.installStep.set('installing');
     this.installProgress.set(0);
-    window.addEventListener('beforeunload', this.beforeUnloadHandler);
+    await this.primeOfflineCache();
+  }
+
+  /**
+   * Ultimo passaggio: rinfresca e mette in cache il token di autenticazione
+   * dell'account con cui si e' gia' connessi nella webapp, cosi' l'app
+   * appena installata risulta gia' autenticata con lo stesso account fin
+   * dal primo avvio (stesso browser, stesso storage: vedi isStandalone()).
+   * Tenuto visibile almeno CONFIGURING_STEP_MIN_MS anche se il refresh del
+   * token finisce prima.
+   */
+  private async runConfiguring(): Promise<void> {
+    this.installStep.set('configuring');
     const start = Date.now();
     try {
-      await this.primeOfflineCache();
-    } finally {
-      const elapsed = Date.now() - start;
-      if (elapsed < MIN_INSTALLING_DISPLAY_MS) {
-        await new Promise((resolve) => setTimeout(resolve, MIN_INSTALLING_DISPLAY_MS - elapsed));
+      const user = await firstValueFrom(this.authService.user$.pipe(take(1)));
+      if (user) {
+        await user.getIdToken(true);
       }
-      window.removeEventListener('beforeunload', this.beforeUnloadHandler);
-      this.installing.set(false);
+    } catch {
+      // Un refresh del token fallito qui non e' bloccante: l'utente
+      // restera' comunque autenticato al prossimo giro online.
+    }
+    await this.padTo(start, CONFIGURING_STEP_MIN_MS);
+  }
+
+  private async padTo(start: number, minMs: number): Promise<void> {
+    const elapsed = Date.now() - start;
+    if (elapsed < minMs) {
+      await new Promise((resolve) => setTimeout(resolve, minMs - elapsed));
+    }
+  }
+
+  /**
+   * Stato di un passaggio del checklist, per evidenziarlo nella pagina
+   * /install-app: 'done' (gia' passato), 'active' (in corso) o 'pending'
+   * (deve ancora iniziare).
+   */
+  stepStatus(step: InstallStep): 'pending' | 'active' | 'done' {
+    const current = this.installStep();
+    if (current === null) {
+      return 'pending';
+    }
+    const currentIndex = INSTALL_STEPS.indexOf(current);
+    const stepIndex = INSTALL_STEPS.indexOf(step);
+    if (stepIndex < currentIndex) {
+      return 'done';
+    }
+    return stepIndex === currentIndex ? 'active' : 'pending';
+  }
+
+  /** Simbolo da mostrare accanto al passaggio, coerente con stepStatus(). */
+  stepGlyph(step: InstallStep): string {
+    switch (this.stepStatus(step)) {
+      case 'done': return '✓';
+      case 'active': return '●';
+      default: return '○';
     }
   }
 

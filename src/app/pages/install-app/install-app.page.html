@@ -5,39 +5,58 @@
     <div class="install-app-icon" aria-hidden="true">📲</div>
     <h1>{{ 'installApp.title' | translate }}</h1>
 
-    <ng-container *ngIf="installService.installing()">
+    <ng-container *ngIf="installService.installStep()">
       <div
-        class="install-progress-block"
+        class="install-checklist"
         role="alertdialog"
         aria-live="assertive"
         [attr.aria-label]="'installPrompt.downloadingAria' | translate"
       >
         <strong>{{ 'installPrompt.downloading' | translate }}</strong>
 
-        <div
-          class="progress-track"
-          role="progressbar"
-          [attr.aria-valuenow]="installService.installProgress() * 100"
-          aria-valuemin="0"
-          aria-valuemax="100"
-        >
-          <div class="progress-fill" [style.width.%]="installService.installProgress() * 100"></div>
-        </div>
+        <ul class="checklist-steps">
+          <li class="checklist-step" [class.is-done]="installService.stepStatus('download') === 'done'" [class.is-active]="installService.stepStatus('download') === 'active'">
+            <span class="step-icon" aria-hidden="true">{{ installService.stepGlyph('download') }}</span>
+            <span class="step-label">{{ 'installApp.stepDownload' | translate }}</span>
+          </li>
+          <li class="checklist-step" [class.is-done]="installService.stepStatus('security') === 'done'" [class.is-active]="installService.stepStatus('security') === 'active'">
+            <span class="step-icon" aria-hidden="true">{{ installService.stepGlyph('security') }}</span>
+            <span class="step-label">{{ 'installApp.stepSecurity' | translate }}</span>
+          </li>
+          <li class="checklist-step" [class.is-done]="installService.stepStatus('installing') === 'done'" [class.is-active]="installService.stepStatus('installing') === 'active'">
+            <span class="step-icon" aria-hidden="true">{{ installService.stepGlyph('installing') }}</span>
+            <span class="step-label">{{ 'installApp.stepInstalling' | translate }}</span>
+            <div class="step-progress-track" *ngIf="installService.stepStatus('installing') === 'active'">
+              <div class="step-progress-fill" [style.width.%]="installService.installProgress() * 100"></div>
+            </div>
+          </li>
+          <li class="checklist-step" [class.is-done]="installService.stepStatus('configuring') === 'done'" [class.is-active]="installService.stepStatus('configuring') === 'active'">
+            <span class="step-icon" aria-hidden="true">{{ installService.stepGlyph('configuring') }}</span>
+            <span class="step-label">{{ 'installApp.stepConfiguring' | translate }}</span>
+          </li>
+        </ul>
 
         <p class="install-progress-warning">{{ 'installPrompt.dontLeave' | translate }}</p>
       </div>
     </ng-container>
 
-    <ng-container *ngIf="!installService.installing() && installService.installed()">
+    <ng-container *ngIf="!installService.installStep() && installService.installed()">
       <div class="install-app-section">
         <p class="install-app-status">{{ 'installApp.alreadyInstalled' | translate }}</p>
-        <button *ngIf="!installService.isStandalone()" type="button" class="install-app-btn" (click)="openApp()">
-          {{ 'installApp.openApp' | translate }}
-        </button>
+
+        <ng-container *ngIf="!installService.isStandalone(); else alreadyInApp">
+          <a [href]="appHomeUrl" class="install-app-btn">
+            {{ 'installApp.openApp' | translate }}
+          </a>
+          <p class="install-app-hint">{{ 'installApp.openAppHint' | translate }}</p>
+        </ng-container>
+        <ng-template #alreadyInApp>
+          <a routerLink="/home" class="install-app-btn">{{ 'installApp.continue' | translate }}</a>
+        </ng-template>
       </div>
     </ng-container>
 
-    <ng-container *ngIf="!installService.installing() && !installService.installed()">
+    <ng-container *ngIf="!installService.installStep() && !installService.installed()">
       <div *ngIf="installService.platform() === 'android'" class="install-app-section">
         <p>{{ 'installPrompt.androidBody' | translate }}</p>
         <button type="button" class="install-app-btn" (click)="installService.install()">

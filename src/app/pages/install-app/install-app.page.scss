@@ -47,12 +47,19 @@ h1 {
 }
 
 .install-app-btn {
+  // Usato sia su <button> (avvio installazione) sia su <a href>/<a
+  // routerLink> ("Apri App"/"Continua"): serve display esplicito e niente
+  // sottolineatura perche' si comporti visivamente allo stesso modo.
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
   min-height: 46px;
   padding: 12px 28px;
   border-radius: var(--radius-pill);
   border: none;
   background: var(--ion-color-primary);
   color: white;
+  text-decoration: none;
   font-weight: 700;
   font-size: 0.95rem;
   cursor: pointer;
@@ -60,30 +67,104 @@ h1 {
 
   &:hover {
     transform: translateY(-1px);
+    color: white;
   }
 }
 
-// Riusa lo stesso aspetto della barra di progresso gia' definita per il
-// vecchio overlay in install-prompt.component.scss (progress-track/-fill),
-// qui pero' come blocco stabile nella pagina invece che in un pop-up.
-.install-progress-block {
+.install-app-hint {
+  margin: 12px 0 0 !important;
+  font-size: 0.78rem !important;
+  color: var(--text-muted);
+}
+
+.install-checklist {
   padding: 12px 0 8px;
+  text-align: left;
 
   strong {
     display: block;
     font-size: 1rem;
-    margin-bottom: 16px;
+    margin-bottom: 18px;
+    text-align: center;
   }
 }
 
-.progress-track {
-  height: 8px;
+.checklist-steps {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.checklist-step {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 12px;
+  opacity: 0.5;
+  transition: opacity var(--transition-fast);
+
+  &.is-active,
+  &.is-done {
+    opacity: 1;
+  }
+}
+
+.step-icon {
+  flex: none;
+  width: 26px;
+  height: 26px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  border: 1px solid var(--border);
+  font-size: 0.85rem;
+  color: var(--text-muted);
+}
+
+.checklist-step.is-active .step-icon {
+  border-color: var(--ion-color-primary);
+  color: var(--ion-color-primary);
+  animation: install-step-pulse 1.1s ease-in-out infinite;
+}
+
+.checklist-step.is-done .step-icon {
+  border-color: var(--ion-color-primary);
+  background: var(--ion-color-primary);
+  color: white;
+}
+
+@keyframes install-step-pulse {
+  0%, 100% { transform: scale(1); }
+  50% { transform: scale(1.15); }
+}
+
+.step-label {
+  font-size: 0.88rem;
+  color: var(--text-muted);
+}
+
+.checklist-step.is-active .step-label,
+.checklist-step.is-done .step-label {
+  color: var(--text-light);
+}
+
+.step-progress-track {
+  flex-basis: 100%;
+  // Allineata sotto l'etichetta, non sotto l'icona: stesso rientro di
+  // icona (26px) + gap (12px) della riga sopra.
+  margin: 4px 0 0 38px;
+  width: calc(100% - 38px);
+  height: 4px;
   border-radius: var(--radius-pill);
   background: rgba(255, 255, 255, 0.12);
   overflow: hidden;
 }
 
-.progress-fill {
+.step-progress-fill {
   height: 100%;
   border-radius: var(--radius-pill);
   background: var(--ion-color-primary);
@@ -91,17 +172,18 @@ h1 {
 }
 
 .install-progress-warning {
-  margin: 14px 0 0;
+  margin: 20px 0 0;
   font-size: 0.82rem;
   color: var(--text-muted);
   line-height: 1.4;
+  text-align: center;
 }
 
 body.light-theme .install-app-container {
   color: #333;
 }
 
-body.light-theme .progress-track {
+body.light-theme .step-progress-track {
   background: rgba(0, 0, 0, 0.08);
 }
 

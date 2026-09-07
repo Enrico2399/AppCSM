@@ -133,6 +133,12 @@ export const EN: Record<string, string> = {
   'installApp.alreadyInstalled': 'The app is already installed on this device.',
   'installApp.installNow': 'Install now',
   'installApp.openApp': 'Open App',
+  'installApp.openAppHint': 'If the installed app doesn\'t open, look for it on your Home screen or in your device\'s app launcher.',
+  'installApp.continue': 'Continue',
+  'installApp.stepDownload': 'Download',
+  'installApp.stepSecurity': 'Security check',
+  'installApp.stepInstalling': 'Installing',
+  'installApp.stepConfiguring': 'Setting up',
   // Global offline indicator (app.component)
   'offline.title': 'You\'re offline',
   'offline.body': 'Login, registration and roadmap voting aren\'t available. Diary, community, map, consents and grounding sessions are saved on your device and synced automatically once you\'re back online.',

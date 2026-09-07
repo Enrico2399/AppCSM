@@ -1,7 +1,7 @@
 import { Component, inject } from '@angular/core';
 import { IonicModule } from '@ionic/angular';
 import { CommonModule } from '@angular/common';
-import { Router, RouterModule } from '@angular/router';
+import { RouterModule } from '@angular/router';
 import { I18nService } from '../../services/i18n/i18n.service';
 import { TranslatePipe } from '../../pipes/translate.pipe';
 import { InstallPromptService } from '../../services/install-prompt/install-prompt.service';
@@ -31,16 +31,21 @@ import { InstallPromptService } from '../../services/install-prompt/install-prom
 export class InstallAppPage {
   public i18n = inject(I18nService);
   public installService = inject(InstallPromptService);
-  private router = inject(Router);
 
   /**
-   * "Apri App": non esiste un'API web per far aprire dalla pagina l'icona
-   * gia' installata come finestra separata (nessun browser la offre in modo
-   * affidabile) - qui continuiamo semplicemente nella scheda corrente, che
-   * e' gia' autenticata con lo stesso account (stessa origine, stesso
-   * storage del browser: vedi install-prompt.service.ts).
+   * URL per il pulsante "Apri App": un <a href> vero e proprio (non
+   * routerLink, che farebbe solo un cambio di vista Angular senza una
+   * navigazione reale del browser). Chrome 139+ su desktop e le versioni
+   * recenti su Android possono intercettare una navigazione autentica come
+   * questa e aprirla nella finestra dell'app gia' installata invece che
+   * nella scheda del browser, quando l'URL rientra nello scope del
+   * manifest (vedi "launch_handler" in manifest.json) - ma e' una
+   * decisione del browser, non qualcosa che questa pagina possa forzare:
+   * sui browser che non lo supportano ancora, il link ricarica semplicemente
+   * la pagina in questa stessa scheda (comunque gia' autenticata con lo
+   * stesso account, vedi installApp.openAppHint qui sotto).
    */
-  openApp() {
-    this.router.navigate(['/home']);
+  get appHomeUrl(): string {
+    return new URL('home', document.baseURI).href;
   }
 }
