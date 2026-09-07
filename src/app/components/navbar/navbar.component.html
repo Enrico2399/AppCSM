@@ -53,6 +53,7 @@
         <a routerLink="/roadmap" routerLinkActive="active" style="color: violet;">{{ 'nav.roadmap' | translate }}</a>
 
         <a *ngIf="!installService.isStandalone()" (click)="downloadApp()" (keydown.enter)="downloadApp()" role="button" tabindex="0" style="color: violet;">{{ (installService.installed() ? 'nav.openApp' : 'nav.downloadApp') | translate }}</a>
+        <a routerLink="/donazioni" routerLinkActive="active" style="color: #ff6f91;">💛 {{ 'nav.donate' | translate }}</a>
 
         <a (click)="toggleLang()" (keydown.enter)="toggleLang()" class="lang-toggle" role="button" tabindex="0" [attr.aria-label]="'nav.ariaLang' | translate">
           {{ i18n.lang() === 'it' ? 'EN' : 'IT' }}
@@ -86,6 +87,7 @@
   <hr>
   <a routerLink="/roadmap" routerLinkActive="active" class="roadmap-link" (click)="closeMobileMenu()">{{ 'nav.roadmap' | translate }}</a>
   <a *ngIf="!installService.isStandalone()" (click)="downloadApp()" (keydown.enter)="downloadApp()" role="button" tabindex="0" class="roadmap-link">{{ (installService.installed() ? 'nav.openApp' : 'nav.downloadApp') | translate }}</a>
+  <a routerLink="/donazioni" routerLinkActive="active" class="donate-link" (click)="closeMobileMenu()">💛 {{ 'nav.donate' | translate }}</a>
 </nav>
 
 <ng-template #noAuth></ng-template>

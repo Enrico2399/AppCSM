@@ -13,6 +13,7 @@ export const IT: Record<string, string> = {
   'nav.roadmap': 'Nuovi Sviluppi',
   'nav.downloadApp': 'Scarica App',
   'nav.openApp': 'Apri App',
+  'nav.donate': 'Dona',
   'nav.ariaMobileNav': 'Navigazione mobile',
   'nav.ariaOpenMenu': 'Apri il menu di navigazione',
   'nav.ariaTheme': 'Cambia tema',
@@ -141,6 +142,14 @@ export const IT: Record<string, string> = {
   'installApp.stepSecurity': 'Controllo di sicurezza',
   'installApp.stepInstalling': 'Installazione',
   'installApp.stepConfiguring': 'Configurazione',
+  // Pagina Dona
+  'donate.back': '← Torna alla home',
+  'donate.title': 'Sostieni CSM Digitale',
+  'donate.intro': 'L\'idea è tenere il servizio sempre gratuito, per aiutare chiunque a prendersi cura della propria salute fisica e mentale senza doversi porre il problema del costo.',
+  'donate.body1': 'CSM Digitale nasce per offrire uno spazio accessibile a tutti dove monitorare il proprio umore, trovare esercizi di grounding, informazioni utili e supporto nei momenti difficili. Vogliamo che resti così: aperto a chiunque ne abbia bisogno.',
+  'donate.body2': 'Mantenere l\'app online, sicura e in continuo miglioramento ha però un costo reale (hosting, infrastruttura, tempo di sviluppo). Una donazione, anche piccola, aiuta a coprire queste spese e a far crescere il progetto, senza mai chiedere nulla in cambio a chi usa l\'app.',
+  'donate.comingSoonBadge': 'Presto disponibile',
+  'donate.comingSoonBody': 'Stiamo attivando un metodo di donazione sicuro: a breve qui troverai un modo semplice per contribuire, se vorrai.',
   // Indicatore globale offline (app.component)
   'offline.title': 'Sei offline',
   'offline.body': 'Login, registrazione e voto sulla roadmap non sono disponibili. Diario, community, mappa, consensi e sessioni di grounding vengono salvati sul dispositivo e sincronizzati automaticamente appena torni online.',

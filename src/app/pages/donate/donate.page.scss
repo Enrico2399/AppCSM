@@ -1,0 +1,92 @@
+.donate-content {
+  --background: transparent;
+}
+
+.donate-container {
+  max-width: 480px;
+  margin: 64px auto 32px;
+  padding: 0 20px 32px;
+  box-sizing: border-box;
+  color: var(--text-light, #f8f8f8);
+  text-align: center;
+}
+
+.back-link {
+  display: inline-block;
+  margin-bottom: 24px;
+  font-size: 0.85rem;
+  color: var(--text-muted);
+  text-decoration: none;
+
+  &:hover {
+    color: var(--text-light);
+  }
+}
+
+.donate-icon {
+  font-size: 2.6rem;
+  line-height: 1;
+  margin-bottom: 8px;
+}
+
+h1 {
+  font-size: 1.4rem;
+  margin: 0 0 20px;
+}
+
+.donate-intro {
+  font-size: 0.98rem;
+  font-weight: 600;
+  color: var(--text-light);
+  line-height: 1.5;
+  margin: 0 0 16px;
+}
+
+.donate-container p {
+  font-size: 0.9rem;
+  color: var(--text-muted);
+  line-height: 1.55;
+  text-align: left;
+  margin: 0 0 14px;
+}
+
+.donate-coming-soon {
+  margin-top: 24px;
+  padding: 20px;
+  border-radius: var(--radius-lg);
+  background: var(--bg-elevated);
+  border: 1px solid var(--border);
+
+  p {
+    margin: 10px 0 0;
+    text-align: center;
+    font-size: 0.82rem;
+  }
+}
+
+.coming-soon-badge {
+  display: inline-block;
+  padding: 6px 16px;
+  border-radius: var(--radius-pill);
+  background: rgba(255, 214, 10, 0.15);
+  color: #ffd60a;
+  font-weight: 700;
+  font-size: 0.78rem;
+  letter-spacing: 0.02em;
+}
+
+body.light-theme .donate-container {
+  color: #333;
+}
+
+body.light-theme .coming-soon-badge {
+  background: rgba(180, 130, 0, 0.12);
+  color: #8a6200;
+}
+
+@media (max-width: 600px) {
+  .donate-container {
+    margin: 56px 8px 24px;
+    padding: 0 8px 24px;
+  }
+}

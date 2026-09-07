@@ -12,6 +12,7 @@ export const EN: Record<string, string> = {
   'nav.roadmap': "What's New",
   'nav.downloadApp': 'Download App',
   'nav.openApp': 'Open App',
+  'nav.donate': 'Donate',
   'nav.ariaMobileNav': 'Mobile navigation',
   'nav.ariaOpenMenu': 'Open the navigation menu',
   'nav.ariaTheme': 'Change theme',
@@ -140,6 +141,14 @@ export const EN: Record<string, string> = {
   'installApp.stepSecurity': 'Security check',
   'installApp.stepInstalling': 'Installing',
   'installApp.stepConfiguring': 'Setting up',
+  // Donate page
+  'donate.back': '← Back to home',
+  'donate.title': 'Support CSM Digitale',
+  'donate.intro': 'The idea is to keep the service free forever, so anyone can take care of their physical and mental health without having to worry about the cost.',
+  'donate.body1': 'CSM Digitale was built to offer a space everyone can access to track their mood, find grounding exercises, useful information and support in difficult moments. We want it to stay that way: open to anyone who needs it.',
+  'donate.body2': 'Keeping the app online, secure and constantly improving does have a real cost (hosting, infrastructure, development time). A donation, even a small one, helps cover these costs and grow the project, without ever asking anything in return from people using the app.',
+  'donate.comingSoonBadge': 'Coming soon',
+  'donate.comingSoonBody': 'We\'re setting up a secure way to donate: soon you\'ll find a simple way to contribute here, if you\'d like to.',
   // Global offline indicator (app.component)
   'offline.title': 'You\'re offline',
   'offline.body': 'Login, registration and roadmap voting aren\'t available. Diary, community, map, consents and grounding sessions are saved on your device and synced automatically once you\'re back online.',

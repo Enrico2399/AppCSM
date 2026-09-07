@@ -178,6 +178,14 @@ export const routes: Routes = [
 
   {
 
+    path: 'donazioni',
+
+    loadComponent: () => import('./pages/donate/donate.page').then(m => m.DonatePage)
+
+  },
+
+  {
+
     path: '**',
 
     redirectTo: 'home'
