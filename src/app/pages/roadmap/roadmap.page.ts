@@ -182,7 +182,16 @@ export class RoadmapPage implements OnInit, OnDestroy {
 
   vote(featureId: string) {
     if (this.hasVoted(featureId)) return;
-    
+
+    if (!navigator.onLine) {
+      // Il voto legge prima il conteggio attuale e poi scrive (non e' una
+      // scrittura "cieca" come quelle in coda offline, vedi OfflineQueueService):
+      // se segnassimo comunque "votato" qui sotto, il voto andrebbe perso per
+      // sempre senza che l'utente se ne accorga. Meglio dirglielo subito.
+      alert(this.i18n.t('roadmap.voteOffline'));
+      return;
+    }
+
     const userName = this.storageService.getUserName();
     this.firebaseService.voteInFirebase(featureId, userName);
     this.storageService.setVoted(featureId);

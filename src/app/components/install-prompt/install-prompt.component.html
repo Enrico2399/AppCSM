@@ -25,3 +25,14 @@
     </button>
   </div>
 </div>
+
+<div class="install-progress-overlay" *ngIf="installing" role="alertdialog" aria-live="assertive" [attr.aria-label]="'installPrompt.downloadingAria' | translate">
+  <div class="install-progress-card">
+    <div class="install-progress-icon" aria-hidden="true">📲</div>
+    <strong>{{ 'installPrompt.downloading' | translate }}</strong>
+    <div class="progress-track" role="progressbar" [attr.aria-valuenow]="installProgress * 100" aria-valuemin="0" aria-valuemax="100">
+      <div class="progress-fill" [style.width.%]="installProgress * 100"></div>
+    </div>
+    <p class="install-progress-warning">{{ 'installPrompt.dontLeave' | translate }}</p>
+  </div>
+</div>

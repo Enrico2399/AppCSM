@@ -39,8 +39,23 @@ export class InstallPromptComponent implements OnInit, OnDestroy {
   visible = false;
   platform: 'android' | 'ios' | null = null;
 
+  // Stato del download/preparazione offline mostrato nel pop-up dopo aver
+  // premuto "Installa": installing attiva l'overlay, installProgress (0..1)
+  // ne riempie la barra. Aggiornati da primeOfflineCache() qui sotto.
+  installing = false;
+  installProgress = 0;
+
   private deferredEvent: BeforeInstallPromptEvent | null = null;
   private showTimeout: ReturnType<typeof setTimeout> | null = null;
+
+  // Mentre il download e' in corso, chiede al browser di mostrare la sua
+  // conferma nativa "Vuoi davvero uscire?" se l'utente prova a chiudere la
+  // scheda o a navigare altrove: e' il modo reale (non solo testuale) di
+  // scoraggiarlo dall'uscire dalla sessione durante il download.
+  private beforeUnloadHandler = (e: BeforeUnloadEvent) => {
+    e.preventDefault();
+    e.returnValue = '';
+  };
 
   private onBeforeInstallPrompt = (e: Event) => {
     // Impedisce il mini-avviso nativo del browser (poco visibile, facile da
@@ -83,15 +98,74 @@ export class InstallPromptComponent implements OnInit, OnDestroy {
 
   async install() {
     if (this.platform === 'android' && this.deferredEvent) {
+      this.installing = true;
+      this.installProgress = 0;
+      window.addEventListener('beforeunload', this.beforeUnloadHandler);
       try {
         await this.deferredEvent.prompt();
-        await this.deferredEvent.userChoice;
+        const choice = await this.deferredEvent.userChoice;
+        if (choice.outcome === 'accepted') {
+          // L'installazione vera e propria (l'icona sulla home) e' gestita
+          // dal browser ed e' pressoche' istantanea: qui prepariamo invece
+          // l'uso offline, rifetchando gli asset dell'app corrente cosi' il
+          // service worker (sw.js) li mette in cache subito, invece di
+          // aspettare che l'utente visiti ogni pagina almeno una volta.
+          await this.primeOfflineCache();
+        }
       } catch (err) {
         console.warn('Prompt di installazione non riuscito:', err);
+      } finally {
+        window.removeEventListener('beforeunload', this.beforeUnloadHandler);
+        this.installing = false;
       }
       this.deferredEvent = null;
     }
     this.dismiss();
+  }
+
+  /**
+   * Rifetcha esplicitamente gli asset dell'app-shell attualmente caricati
+   * (bundle JS/CSS con hash univoco ad ogni build: non elencabili in
+   * anticipo, letti quindi dal DOM) piu' i pochi asset statici gia' noti al
+   * service worker. Il "progresso" e' la quota di questi fetch completati:
+   * un'approssimazione onesta di quanto manca, non una percentuale nativa
+   * di download (il browser non ne espone una per l'installazione PWA).
+   */
+  private async primeOfflineCache(): Promise<void> {
+    const urls = new Set<string>();
+    document.querySelectorAll('script[src]').forEach((el) => {
+      const src = (el as HTMLScriptElement).src;
+      if (src) urls.add(src);
+    });
+    document.querySelectorAll('link[rel="stylesheet"][href]').forEach((el) => {
+      const href = (el as HTMLLinkElement).href;
+      if (href) urls.add(href);
+    });
+    ['manifest.json', 'assets/icons/icon-192.webp', 'assets/icons/icon-512.webp'].forEach((p) => {
+      try {
+        urls.add(new URL(p, document.baseURI).toString());
+      } catch {
+        // URL non valido in qualche contesto insolito: salta, non e' critico.
+      }
+    });
+
+    const list = Array.from(urls);
+    if (list.length === 0) {
+      this.installProgress = 1;
+      return;
+    }
+
+    let done = 0;
+    await Promise.all(
+      list.map((url) =>
+        fetch(url, { cache: 'reload' })
+          .catch(() => null) // un asset irraggiungibile non deve bloccare gli altri
+          .finally(() => {
+            done++;
+            this.installProgress = done / list.length;
+          })
+      )
+    );
   }
 
   dismiss() {

@@ -355,6 +355,15 @@ export class ProfilePage implements OnInit, OnDestroy {
       return;
     }
 
+    if (!navigator.onLine) {
+      // saveProfile legge il profilo esistente prima di scrivere (merge),
+      // quindi non puo' essere messo in coda come le scritture "cieche"
+      // (vedi OfflineQueueService): senza connessione fallirebbe comunque,
+      // meglio dirlo subito invece di far comparire lo spinner per niente.
+      this.showError(this.i18n.t('profile.saveOffline'));
+      return;
+    }
+
     this.saving.set(true);
 
     try {

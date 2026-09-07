@@ -133,3 +133,70 @@
     box-shadow: var(--shadow-sm);
   }
 }
+
+.install-progress-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 10500; // sopra al banner stesso
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+  background: rgba(0, 0, 0, 0.6);
+  backdrop-filter: blur(2px);
+  -webkit-backdrop-filter: blur(2px);
+}
+
+.install-progress-card {
+  width: 100%;
+  max-width: 340px;
+  padding: 28px 24px;
+  border-radius: var(--radius-lg);
+  background: var(--bg-elevated);
+  border: 1px solid var(--border);
+  box-shadow: var(--shadow-lg);
+  text-align: center;
+  color: var(--text-light);
+
+  strong {
+    display: block;
+    font-size: 1.05rem;
+    margin: 10px 0 16px;
+  }
+}
+
+.install-progress-icon {
+  font-size: 2.2rem;
+  line-height: 1;
+}
+
+.progress-track {
+  height: 8px;
+  border-radius: var(--radius-pill);
+  background: rgba(255, 255, 255, 0.12);
+  overflow: hidden;
+}
+
+.progress-fill {
+  height: 100%;
+  border-radius: var(--radius-pill);
+  background: var(--ion-color-primary);
+  transition: width 0.2s ease;
+}
+
+.install-progress-warning {
+  margin: 14px 0 0;
+  font-size: 0.82rem;
+  color: var(--text-muted);
+  line-height: 1.4;
+}
+
+:host-context(.light-theme) {
+  .install-progress-overlay {
+    background: rgba(0, 0, 0, 0.45);
+  }
+
+  .progress-track {
+    background: rgba(0, 0, 0, 0.08);
+  }
+}
