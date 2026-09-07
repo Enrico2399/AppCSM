@@ -1,0 +1,59 @@
+<ion-content [fullscreen]="true" class="presentazione-content">
+  <span class="preview-badge">{{ 'presentazione.previewBadge' | translate }}</span>
+
+  <section class="hero">
+    <div class="hero-icon" aria-hidden="true">🧠💙</div>
+    <h1>CSM <span class="accent-text">Digitale</span></h1>
+    <p class="hero-tagline">{{ 'presentazione.tagline' | translate }}</p>
+
+    <!-- Mockup illustrativo della ruota dell'umore: non e' uno screenshot,
+         solo una rappresentazione grafica semplificata per dare un'idea
+         visiva della funzione principale dell'app. -->
+    <div class="phone-mockup" aria-hidden="true">
+      <div class="phone-notch"></div>
+      <div class="phone-screen">
+        <div class="mock-header"></div>
+        <p class="mock-question">{{ 'home.howDoYouFeel' | translate }}</p>
+        <div class="mock-wheel">
+          <span
+            class="mock-mood"
+            *ngFor="let mood of moodExamples"
+            [style.background]="mood.color"
+          >{{ mood.emoji }}</span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="mission">
+    <h2>{{ 'presentazione.missionTitle' | translate }}</h2>
+    <p>{{ 'donate.intro' | translate }}</p>
+    <p>{{ 'donate.body1' | translate }}</p>
+  </section>
+
+  <section class="features">
+    <h2>{{ 'presentazione.featuresTitle' | translate }}</h2>
+    <div class="features-grid">
+      <div class="feature-card" *ngFor="let feature of features">
+        <div class="feature-icon" aria-hidden="true">{{ feature.icon }}</div>
+        <h3>{{ feature.titleKey | translate }}</h3>
+        <p>{{ feature.bodyKey | translate }}</p>
+      </div>
+    </div>
+  </section>
+
+  <section class="cta">
+    <h2>{{ 'presentazione.ctaTitle' | translate }}</h2>
+    <p>{{ 'presentazione.ctaBody' | translate }}</p>
+    <div class="cta-actions">
+      <a href="mailto:enrico.baldasso@leviahub.com?subject=CSM%20Digitale%20-%20Informazioni" class="cta-btn">
+        {{ 'presentazione.ctaContact' | translate }}
+      </a>
+      <a routerLink="/home" class="cta-link">{{ 'presentazione.ctaTry' | translate }}</a>
+    </div>
+  </section>
+
+  <footer class="presentazione-footer">
+    <p>{{ 'presentazione.footerNote' | translate }}</p>
+  </footer>
+</ion-content>

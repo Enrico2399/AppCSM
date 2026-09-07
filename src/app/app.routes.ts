@@ -186,6 +186,14 @@ export const routes: Routes = [
 
   {
 
+    path: 'presentazione',
+
+    loadComponent: () => import('./pages/presentazione/presentazione.page').then(m => m.PresentazionePage)
+
+  },
+
+  {
+
     path: '**',
 
     redirectTo: 'home'
