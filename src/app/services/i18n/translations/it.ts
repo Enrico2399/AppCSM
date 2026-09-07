@@ -133,6 +133,7 @@ export const IT: Record<string, string> = {
   'installApp.title': 'Scarica CSM Digitale',
   'installApp.alreadyInstalled': 'L\'app è già installata su questo dispositivo.',
   'installApp.installNow': 'Installa ora',
+  'installApp.openApp': 'Apri App',
   // Indicatore globale offline (app.component)
   'offline.title': 'Sei offline',
   'offline.body': 'Login, registrazione e voto sulla roadmap non sono disponibili. Diario, community, mappa, consensi e sessioni di grounding vengono salvati sul dispositivo e sincronizzati automaticamente appena torni online.',

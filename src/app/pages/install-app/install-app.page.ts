@@ -1,7 +1,7 @@
 import { Component, inject } from '@angular/core';
 import { IonicModule } from '@ionic/angular';
 import { CommonModule } from '@angular/common';
-import { RouterModule } from '@angular/router';
+import { Router, RouterModule } from '@angular/router';
 import { I18nService } from '../../services/i18n/i18n.service';
 import { TranslatePipe } from '../../pipes/translate.pipe';
 import { InstallPromptService } from '../../services/install-prompt/install-prompt.service';
@@ -31,4 +31,16 @@ import { InstallPromptService } from '../../services/install-prompt/install-prom
 export class InstallAppPage {
   public i18n = inject(I18nService);
   public installService = inject(InstallPromptService);
+  private router = inject(Router);
+
+  /**
+   * "Apri App": non esiste un'API web per far aprire dalla pagina l'icona
+   * gia' installata come finestra separata (nessun browser la offre in modo
+   * affidabile) - qui continuiamo semplicemente nella scheda corrente, che
+   * e' gia' autenticata con lo stesso account (stessa origine, stesso
+   * storage del browser: vedi install-prompt.service.ts).
+   */
+  openApp() {
+    this.router.navigate(['/home']);
+  }
 }

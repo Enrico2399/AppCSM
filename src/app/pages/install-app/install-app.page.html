@@ -5,13 +5,8 @@
     <div class="install-app-icon" aria-hidden="true">📲</div>
     <h1>{{ 'installApp.title' | translate }}</h1>
 
-    <ng-container *ngIf="installService.isStandalone(); else notStandalone">
-      <p class="install-app-status">{{ 'installApp.alreadyInstalled' | translate }}</p>
-    </ng-container>
-
-    <ng-template #notStandalone>
+    <ng-container *ngIf="installService.installing()">
       <div
-        *ngIf="installService.installing()"
         class="install-progress-block"
         role="alertdialog"
         aria-live="assertive"
@@ -31,27 +26,36 @@
 
         <p class="install-progress-warning">{{ 'installPrompt.dontLeave' | translate }}</p>
       </div>
+    </ng-container>
 
-      <ng-container *ngIf="!installService.installing()">
-        <div *ngIf="installService.platform() === 'android'" class="install-app-section">
-          <p>{{ 'installPrompt.androidBody' | translate }}</p>
-          <button type="button" class="install-app-btn" (click)="installService.install()">
-            {{ 'installApp.installNow' | translate }}
-          </button>
-        </div>
+    <ng-container *ngIf="!installService.installing() && installService.installed()">
+      <div class="install-app-section">
+        <p class="install-app-status">{{ 'installApp.alreadyInstalled' | translate }}</p>
+        <button *ngIf="!installService.isStandalone()" type="button" class="install-app-btn" (click)="openApp()">
+          {{ 'installApp.openApp' | translate }}
+        </button>
+      </div>
+    </ng-container>
 
-        <div *ngIf="installService.platform() === 'ios'" class="install-app-section">
-          <p>
-            {{ 'installPrompt.iosBody1' | translate }} <strong>{{ 'installPrompt.share' | translate }}</strong>
-            <span aria-hidden="true">⬆️</span> {{ 'installPrompt.iosBody2' | translate }}
-            <strong>{{ 'installPrompt.addToHome' | translate }}</strong>.
-          </p>
-        </div>
+    <ng-container *ngIf="!installService.installing() && !installService.installed()">
+      <div *ngIf="installService.platform() === 'android'" class="install-app-section">
+        <p>{{ 'installPrompt.androidBody' | translate }}</p>
+        <button type="button" class="install-app-btn" (click)="installService.install()">
+          {{ 'installApp.installNow' | translate }}
+        </button>
+      </div>
 
-        <div *ngIf="!installService.platform()" class="install-app-section">
-          <p>{{ 'installPrompt.notAvailable' | translate }}</p>
-        </div>
-      </ng-container>
-    </ng-template>
+      <div *ngIf="installService.platform() === 'ios'" class="install-app-section">
+        <p>
+          {{ 'installPrompt.iosBody1' | translate }} <strong>{{ 'installPrompt.share' | translate }}</strong>
+          <span aria-hidden="true">⬆️</span> {{ 'installPrompt.iosBody2' | translate }}
+          <strong>{{ 'installPrompt.addToHome' | translate }}</strong>.
+        </p>
+      </div>
+
+      <div *ngIf="!installService.platform()" class="install-app-section">
+        <p>{{ 'installPrompt.notAvailable' | translate }}</p>
+      </div>
+    </ng-container>
   </div>
 </ion-content>

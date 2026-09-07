@@ -3,6 +3,7 @@ import { take } from 'rxjs';
 import { AuthService } from '../auth';
 
 const DISMISS_STORAGE_KEY = 'csm-install-prompt-last-dismissed';
+const INSTALLED_STORAGE_KEY = 'csm-app-installed-v1';
 const PRIVACY_BANNER_DISMISSED_KEY = 'csm-privacy-banner-dismissed-v1';
 const REPROMPT_AFTER_DAYS = 7;
 const FIRST_SHOW_DELAY_MS = 2500;
@@ -39,6 +40,15 @@ export class InstallPromptService {
   visible = signal(false);
   platform = signal<'android' | 'ios' | null>(null);
 
+  // Vero appena l'utente accetta il prompt nativo (o se la pagina si apre
+  // gia' in modalita' standalone): usato dalla pagina /install-app per
+  // mostrare "Apri App" al posto di "Installa ora" anche in futuro,
+  // senza dover ripetere l'installazione. Persistito perche' la scheda del
+  // browser da cui si e' installata resta una scheda normale (non diventa
+  // standalone essa stessa) - senza salvarlo, tornando su /install-app in
+  // quella stessa scheda si rivedrebbe "Installa ora".
+  installed = signal(this.readInstalledFlag());
+
   // Stato del download/preparazione offline mostrato nel pop-up dopo aver
   // premuto "Installa": installing attiva l'overlay, installProgress (0..1)
   // ne riempie la barra. Aggiornati da primeOfflineCache() qui sotto.
@@ -63,17 +73,23 @@ export class InstallPromptService {
     e.preventDefault();
     this.deferredEvent = e as BeforeInstallPromptEvent;
     this.platform.set('android');
+    // Il browser ripropone questo evento solo se l'app non risulta (piu')
+    // installata: se avevamo segnato "installed" da una volta precedente
+    // (es. l'utente l'ha disinstallata), lo correggiamo qui.
+    this.setInstalledFlag(false);
     this.attemptShow();
   };
 
   private onAppInstalled = () => {
     this.visible.set(false);
     this.deferredEvent = null;
+    this.setInstalledFlag(true);
   };
 
   constructor() {
     if (this.isStandalone()) {
       // Aperta come app installata: non ha senso proporne l'installazione.
+      this.setInstalledFlag(true);
       return;
     }
 
@@ -109,6 +125,10 @@ export class InstallPromptService {
       await this.deferredEvent.prompt();
       const choice = await this.deferredEvent.userChoice;
       if (choice.outcome === 'accepted') {
+        // Segnato subito (non solo nell'handler 'appinstalled', che su
+        // alcuni browser puo' arrivare con un certo ritardo): l'utente ha
+        // gia' accettato, la pagina puo' gia' mostrare "Apri App".
+        this.setInstalledFlag(true);
         await this.runInstallingPhase();
       }
     } catch (err) {
@@ -151,6 +171,28 @@ export class InstallPromptService {
     } catch {
       // localStorage non disponibile: il banner potra' ripresentarsi prima,
       // non e' un problema critico.
+    }
+  }
+
+  private readInstalledFlag(): boolean {
+    try {
+      return localStorage.getItem(INSTALLED_STORAGE_KEY) === '1';
+    } catch {
+      return false;
+    }
+  }
+
+  private setInstalledFlag(value: boolean): void {
+    this.installed.set(value);
+    try {
+      if (value) {
+        localStorage.setItem(INSTALLED_STORAGE_KEY, '1');
+      } else {
+        localStorage.removeItem(INSTALLED_STORAGE_KEY);
+      }
+    } catch {
+      // localStorage non disponibile: il segnale resta comunque corretto
+      // per questa sessione, solo non sopravvive a un ricaricamento.
     }
   }
 

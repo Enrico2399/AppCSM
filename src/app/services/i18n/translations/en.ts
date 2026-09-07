@@ -132,6 +132,7 @@ export const EN: Record<string, string> = {
   'installApp.title': 'Download CSM Digitale',
   'installApp.alreadyInstalled': 'The app is already installed on this device.',
   'installApp.installNow': 'Install now',
+  'installApp.openApp': 'Open App',
   // Global offline indicator (app.component)
   'offline.title': 'You\'re offline',
   'offline.body': 'Login, registration and roadmap voting aren\'t available. Diary, community, map, consents and grounding sessions are saved on your device and synced automatically once you\'re back online.',
