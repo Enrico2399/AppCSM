@@ -80,12 +80,11 @@ export class NavbarComponent implements OnInit {
   }
 
   downloadApp() {
-    if (this.installService.platform() === 'android') {
-      this.installService.install();
-    } else {
-      this.installService.showNow();
-    }
+    // La logica di installazione vera e propria vive nella pagina dedicata
+    // /install-app (barra di progresso stabile, gesto utente fresco per il
+    // prompt nativo): qui ci limitiamo a portare l'utente li'.
     this.closeMobileMenu();
+    this.router.navigate(['/install-app']);
   }
 
   toggleTheme() {

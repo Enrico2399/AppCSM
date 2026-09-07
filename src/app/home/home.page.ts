@@ -256,6 +256,14 @@ export class HomePage implements OnInit {
   }
 
   async handleLogin() {
+    if (!navigator.onLine) {
+      // Il login legge/scrive contro Firebase Auth: non ha senso avviarlo
+      // offline, e senza questo controllo l'utente vedrebbe solo un errore
+      // generico dopo un tentativo che non poteva funzionare.
+      this.showStatus(this.i18n.t('home.offlineTitle'), this.i18n.t('home.loginOffline'));
+      return;
+    }
+
     try {
       await this.authService.loginWithGoogle();
     } catch (err) {
@@ -294,6 +302,14 @@ export class HomePage implements OnInit {
   }
 
   async handleEmailLogin() {
+    if (!navigator.onLine) {
+      // Il login legge/scrive contro Firebase Auth: non ha senso avviarlo
+      // offline, e senza questo controllo l'utente vedrebbe solo un errore
+      // generico dopo un tentativo che non poteva funzionare.
+      this.showStatus(this.i18n.t('home.offlineTitle'), this.i18n.t('home.loginOffline'));
+      return;
+    }
+
     try {
       await this.authService.loginWithEmail(this.email(), this.password());
     } catch (err: any) {
@@ -302,6 +318,14 @@ export class HomePage implements OnInit {
   }
 
   async handleRegister() {
+    if (!navigator.onLine) {
+      // Il login legge/scrive contro Firebase Auth: non ha senso avviarlo
+      // offline, e senza questo controllo l'utente vedrebbe solo un errore
+      // generico dopo un tentativo che non poteva funzionare.
+      this.showStatus(this.i18n.t('home.offlineTitle'), this.i18n.t('home.loginOffline'));
+      return;
+    }
+
     try {
       await this.authService.registerWithEmail(this.email(), this.password(), this.name());
     } catch (err: any) {
@@ -327,6 +351,14 @@ export class HomePage implements OnInit {
   }
 
   async handleAnonymousLogin() {
+    if (!navigator.onLine) {
+      // Il login legge/scrive contro Firebase Auth: non ha senso avviarlo
+      // offline, e senza questo controllo l'utente vedrebbe solo un errore
+      // generico dopo un tentativo che non poteva funzionare.
+      this.showStatus(this.i18n.t('home.offlineTitle'), this.i18n.t('home.loginOffline'));
+      return;
+    }
+
     try {
       await this.authService.loginAnonymously();
       // Create or load anonymous session
@@ -366,6 +398,14 @@ export class HomePage implements OnInit {
   }
 
   async handlePhoneLogin() {
+    if (!navigator.onLine) {
+      // Il login legge/scrive contro Firebase Auth: non ha senso avviarlo
+      // offline, e senza questo controllo l'utente vedrebbe solo un errore
+      // generico dopo un tentativo che non poteva funzionare.
+      this.showStatus(this.i18n.t('home.offlineTitle'), this.i18n.t('home.loginOffline'));
+      return;
+    }
+
     try {
       if (!this.recaptchaVerifier) {
         this.recaptchaVerifier = this.authService.setupRecaptcha('recaptcha-container');

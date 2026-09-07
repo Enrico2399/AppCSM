@@ -17,22 +17,11 @@
   </div>
 
   <div class="install-actions">
-    <button *ngIf="installService.platform() === 'android'" type="button" class="install-btn" (click)="installService.install()">
+    <a routerLink="/install-app" class="install-btn" (click)="installService.dismiss()">
       {{ 'installPrompt.install' | translate }}
-    </button>
+    </a>
     <button type="button" class="dismiss-btn" (click)="installService.dismiss()">
       {{ 'installPrompt.notNow' | translate }}
     </button>
-  </div>
-</div>
-
-<div class="install-progress-overlay" *ngIf="installService.installing()" role="alertdialog" aria-live="assertive" [attr.aria-label]="'installPrompt.downloadingAria' | translate">
-  <div class="install-progress-card">
-    <div class="install-progress-icon" aria-hidden="true">📲</div>
-    <strong>{{ 'installPrompt.downloading' | translate }}</strong>
-    <div class="progress-track" role="progressbar" [attr.aria-valuenow]="installService.installProgress() * 100" aria-valuemin="0" aria-valuemax="100">
-      <div class="progress-fill" [style.width.%]="installService.installProgress() * 100"></div>
-    </div>
-    <p class="install-progress-warning">{{ 'installPrompt.dontLeave' | translate }}</p>
   </div>
 </div>

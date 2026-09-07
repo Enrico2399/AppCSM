@@ -119,6 +119,15 @@ export class RegistrationPage {
       return;
     }
 
+    if (!navigator.onLine) {
+      // Evita di avviare la registrazione (con tanto di loading spinner)
+      // quando non puo' comunque riuscire: il codice 'auth/network-request-failed'
+      // qui sotto la gestisce gia' se la connessione cade a meta', ma partire
+      // gia' offline non ha motivo di provarci.
+      await this.showError(this.i18n.t('registration.offlineError'));
+      return;
+    }
+
     this.isLoading.set(true);
 
     const loading = await this.loadingCtrl.create({

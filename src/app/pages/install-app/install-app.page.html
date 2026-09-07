@@ -1,0 +1,57 @@
+<ion-content [fullscreen]="true" class="install-app-content">
+  <div class="install-app-container">
+    <a routerLink="/home" class="back-link">{{ 'installApp.back' | translate }}</a>
+
+    <div class="install-app-icon" aria-hidden="true">📲</div>
+    <h1>{{ 'installApp.title' | translate }}</h1>
+
+    <ng-container *ngIf="installService.isStandalone(); else notStandalone">
+      <p class="install-app-status">{{ 'installApp.alreadyInstalled' | translate }}</p>
+    </ng-container>
+
+    <ng-template #notStandalone>
+      <div
+        *ngIf="installService.installing()"
+        class="install-progress-block"
+        role="alertdialog"
+        aria-live="assertive"
+        [attr.aria-label]="'installPrompt.downloadingAria' | translate"
+      >
+        <strong>{{ 'installPrompt.downloading' | translate }}</strong>
+
+        <div
+          class="progress-track"
+          role="progressbar"
+          [attr.aria-valuenow]="installService.installProgress() * 100"
+          aria-valuemin="0"
+          aria-valuemax="100"
+        >
+          <div class="progress-fill" [style.width.%]="installService.installProgress() * 100"></div>
+        </div>
+
+        <p class="install-progress-warning">{{ 'installPrompt.dontLeave' | translate }}</p>
+      </div>
+
+      <ng-container *ngIf="!installService.installing()">
+        <div *ngIf="installService.platform() === 'android'" class="install-app-section">
+          <p>{{ 'installPrompt.androidBody' | translate }}</p>
+          <button type="button" class="install-app-btn" (click)="installService.install()">
+            {{ 'installApp.installNow' | translate }}
+          </button>
+        </div>
+
+        <div *ngIf="installService.platform() === 'ios'" class="install-app-section">
+          <p>
+            {{ 'installPrompt.iosBody1' | translate }} <strong>{{ 'installPrompt.share' | translate }}</strong>
+            <span aria-hidden="true">⬆️</span> {{ 'installPrompt.iosBody2' | translate }}
+            <strong>{{ 'installPrompt.addToHome' | translate }}</strong>.
+          </p>
+        </div>
+
+        <div *ngIf="!installService.platform()" class="install-app-section">
+          <p>{{ 'installPrompt.notAvailable' | translate }}</p>
+        </div>
+      </ng-container>
+    </ng-template>
+  </div>
+</ion-content>

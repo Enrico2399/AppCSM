@@ -170,6 +170,14 @@ export const routes: Routes = [
 
   {
 
+    path: 'install-app',
+
+    loadComponent: () => import('./pages/install-app/install-app.page').then(m => m.InstallAppPage)
+
+  },
+
+  {
+
     path: '**',
 
     redirectTo: 'home'

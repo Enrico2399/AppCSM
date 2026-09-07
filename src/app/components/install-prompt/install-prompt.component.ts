@@ -1,5 +1,6 @@
 import { Component, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { RouterModule } from '@angular/router';
 import { TranslatePipe } from '../../pipes/translate.pipe';
 import { InstallPromptService } from '../../services/install-prompt/install-prompt.service';
 
@@ -15,12 +16,14 @@ import { InstallPromptService } from '../../services/install-prompt/install-prom
  *
  * Lo stato e la logica vivono in InstallPromptService (condiviso con la
  * voce di menu "Scarica App" nella navbar): questo componente e' solo la
- * vista del banner spontaneo.
+ * vista del banner spontaneo. Il pulsante "Installa" porta alla pagina
+ * dedicata /install-app (dove avviene il download vero e proprio), invece
+ * di avviare l'installazione direttamente da qui.
  */
 @Component({
   selector: 'app-install-prompt',
   standalone: true,
-  imports: [CommonModule, TranslatePipe],
+  imports: [CommonModule, RouterModule, TranslatePipe],
   templateUrl: './install-prompt.component.html',
   styleUrls: ['./install-prompt.component.scss']
 })

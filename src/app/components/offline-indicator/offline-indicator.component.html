@@ -1,0 +1,7 @@
+<div class="offline-indicator" *ngIf="!networkStatus.isOnline()" role="status" aria-live="polite">
+  <span class="offline-dot" aria-hidden="true"></span>
+  <div class="offline-text">
+    <strong>{{ 'offline.title' | translate }}</strong>
+    <span>{{ 'offline.body' | translate }}</span>
+  </div>
+</div>

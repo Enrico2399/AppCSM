@@ -1,0 +1,59 @@
+.offline-indicator {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 9800;
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  padding: 10px 16px;
+  padding-top: calc(10px + env(safe-area-inset-top));
+  background: #4a3200;
+  color: #ffe9b3;
+  font-size: 0.78rem;
+  line-height: 1.4;
+
+  // Piccola animazione di ingresso: non deve sembrare un errore critico
+  // che compare a scatto, e' solo un avviso informativo.
+  animation: offline-indicator-in 0.25s ease-out;
+}
+
+@keyframes offline-indicator-in {
+  from {
+    opacity: 0;
+    transform: translateY(-8px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.offline-dot {
+  flex: none;
+  width: 8px;
+  height: 8px;
+  margin-top: 4px;
+  border-radius: 50%;
+  background: #ffb300;
+}
+
+.offline-text {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+
+  strong {
+    font-size: 0.82rem;
+  }
+}
+
+body.light-theme .offline-indicator {
+  background: #fff3cd;
+  color: #664d03;
+}
+
+body.light-theme .offline-dot {
+  background: #cc8a00;
+}

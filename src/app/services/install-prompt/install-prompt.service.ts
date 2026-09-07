@@ -1,12 +1,16 @@
 import { Injectable, inject, signal } from '@angular/core';
 import { take } from 'rxjs';
 import { AuthService } from '../auth';
-import { I18nService } from '../i18n/i18n.service';
 
 const DISMISS_STORAGE_KEY = 'csm-install-prompt-last-dismissed';
 const PRIVACY_BANNER_DISMISSED_KEY = 'csm-privacy-banner-dismissed-v1';
 const REPROMPT_AFTER_DAYS = 7;
 const FIRST_SHOW_DELAY_MS = 2500;
+// La preparazione offline (primeOfflineCache) e' spesso troppo rapida
+// (pochi fetch, sotto il secondo su una buona connessione) perche' la barra
+// di progresso sia percepibile: la teniamo visibile almeno questo tanto,
+// cosi' non lampeggia e sparisce senza che l'utente faccia in tempo a vederla.
+const MIN_INSTALLING_DISPLAY_MS = 1500;
 
 // L'evento 'beforeinstallprompt' non ha ancora un tipo ufficiale nelle
 // definizioni standard del DOM: lo tipizziamo qui con solo cio' che usiamo.
@@ -31,7 +35,6 @@ interface BeforeInstallPromptEvent extends Event {
 @Injectable({ providedIn: 'root' })
 export class InstallPromptService {
   private authService = inject(AuthService);
-  private i18n = inject(I18nService);
 
   visible = signal(false);
   platform = signal<'android' | 'ios' | null>(null);
@@ -87,8 +90,10 @@ export class InstallPromptService {
 
   /**
    * Avvia l'installazione vera e propria (solo Android: su iOS non esiste
-   * un prompt programmabile, vedi showNow()). Usata sia dal pulsante
-   * "Installa" del banner sia dalla voce di menu "Scarica App".
+   * un prompt programmabile, l'utente segue invece le istruzioni manuali
+   * mostrate nella pagina /install-app). Chiamata dal pulsante "Installa
+   * ora" di quella pagina, con un gesto utente fresco come richiede il
+   * browser per accettare il prompt nativo.
    */
   async install(): Promise<void> {
     if (this.platform() !== 'android' || !this.deferredEvent) {
@@ -96,44 +101,47 @@ export class InstallPromptService {
       return;
     }
 
-    this.installing.set(true);
-    this.installProgress.set(0);
-    window.addEventListener('beforeunload', this.beforeUnloadHandler);
     try {
+      // Il prompt nativo richiede un gesto utente "fresco" (il click che ha
+      // chiamato questo metodo): non mostriamo ancora nulla di nostro qui,
+      // perche' l'utente potrebbe anche rifiutare, e in quel caso non c'e'
+      // stato nessun "download" da mostrare.
       await this.deferredEvent.prompt();
       const choice = await this.deferredEvent.userChoice;
       if (choice.outcome === 'accepted') {
-        // L'installazione vera e propria (l'icona sulla home) e' gestita
-        // dal browser ed e' pressoche' istantanea: qui prepariamo invece
-        // l'uso offline, rifetchando gli asset dell'app corrente cosi' il
-        // service worker (sw.js) li mette in cache subito, invece di
-        // aspettare che l'utente visiti ogni pagina almeno una volta.
-        await this.primeOfflineCache();
+        await this.runInstallingPhase();
       }
     } catch (err) {
       console.warn('Prompt di installazione non riuscito:', err);
     } finally {
-      window.removeEventListener('beforeunload', this.beforeUnloadHandler);
-      this.installing.set(false);
+      this.deferredEvent = null;
+      this.dismiss();
     }
-    this.deferredEvent = null;
-    this.dismiss();
   }
 
   /**
-   * Mostra subito il banner/le istruzioni, ignorando il limite "non troppo
-   * spesso" (pensato solo per la comparsa spontanea): usata quando l'utente
-   * lo chiede esplicitamente, es. la voce di menu "Scarica App". Se non e'
-   * stata rilevata alcuna piattaforma installabile (browser desktop senza
-   * supporto, o 'beforeinstallprompt' non ancora arrivato), avvisa con un
-   * messaggio invece di non fare nulla in silenzio.
+   * L'installazione vera e propria (l'icona sulla home) e' gestita dal
+   * browser ed e' pressoche' istantanea: qui prepariamo invece l'uso
+   * offline, rifetchando gli asset dell'app corrente cosi' il service
+   * worker (sw.js) li mette in cache subito, invece di aspettare che
+   * l'utente visiti ogni pagina almeno una volta. Tenuta visibile almeno
+   * MIN_INSTALLING_DISPLAY_MS (vedi sopra) anche se finisce prima.
    */
-  showNow(): void {
-    if (this.platform()) {
-      this.visible.set(true);
-      return;
+  private async runInstallingPhase(): Promise<void> {
+    this.installing.set(true);
+    this.installProgress.set(0);
+    window.addEventListener('beforeunload', this.beforeUnloadHandler);
+    const start = Date.now();
+    try {
+      await this.primeOfflineCache();
+    } finally {
+      const elapsed = Date.now() - start;
+      if (elapsed < MIN_INSTALLING_DISPLAY_MS) {
+        await new Promise((resolve) => setTimeout(resolve, MIN_INSTALLING_DISPLAY_MS - elapsed));
+      }
+      window.removeEventListener('beforeunload', this.beforeUnloadHandler);
+      this.installing.set(false);
     }
-    alert(this.i18n.t('installPrompt.notAvailable'));
   }
 
   dismiss(): void {

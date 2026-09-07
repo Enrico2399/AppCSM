@@ -6,12 +6,13 @@ import { PanicButtonComponent } from './components/panic-button/panic-button.com
 import { AnonymousWarningComponent } from './components/anonymous-warning/anonymous-warning.component';
 import { PrivacyBannerComponent } from './components/privacy-banner/privacy-banner.component';
 import { InstallPromptComponent } from './components/install-prompt/install-prompt.component';
+import { OfflineIndicatorComponent } from './components/offline-indicator/offline-indicator.component';
 
 @Component({
   selector: 'app-root',
   templateUrl: 'app.component.html',
   styleUrls: ['app.component.scss'],
-  imports: [IonApp, IonRouterOutlet, NavbarComponent, PanicButtonComponent, AnonymousWarningComponent, PrivacyBannerComponent, InstallPromptComponent],
+  imports: [IonApp, IonRouterOutlet, NavbarComponent, PanicButtonComponent, AnonymousWarningComponent, PrivacyBannerComponent, InstallPromptComponent, OfflineIndicatorComponent],
 })
 export class AppComponent {
   constructor(private router: Router) {
