@@ -13,6 +13,7 @@ export const EN: Record<string, string> = {
   'nav.downloadApp': 'Download App',
   'nav.openApp': 'Open App',
   'nav.donate': 'Donate',
+  'nav.demo': 'Demo',
   'nav.ariaMobileNav': 'Mobile navigation',
   'nav.ariaOpenMenu': 'Open the navigation menu',
   'nav.ariaTheme': 'Change theme',

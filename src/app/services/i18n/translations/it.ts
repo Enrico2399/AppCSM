@@ -14,6 +14,7 @@ export const IT: Record<string, string> = {
   'nav.downloadApp': 'Scarica App',
   'nav.openApp': 'Apri App',
   'nav.donate': 'Dona',
+  'nav.demo': 'Demo',
   'nav.ariaMobileNav': 'Navigazione mobile',
   'nav.ariaOpenMenu': 'Apri il menu di navigazione',
   'nav.ariaTheme': 'Cambia tema',
