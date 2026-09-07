@@ -125,8 +125,8 @@
       <h2>{{ 'grounding.completedTitle' | translate }}</h2>
       <p>{{ 'grounding.completedShort' | translate }}</p>
       
-      <div class="completion-stats" *ngIf="session()?.duration">
-        <p>{{ 'grounding.duration' | translate: { seconds: session()?.duration } }}</p>
+      <div class="completion-stats" *ngIf="session()?.duration as duration">
+        <p>{{ 'grounding.duration' | translate: { seconds: duration } }}</p>
       </div>
 
       <div class="completion-actions">
